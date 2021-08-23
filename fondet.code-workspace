@@ -1,0 +1,26 @@
+{
+  "folders": [
+    {
+      "path": "."
+    }
+  ],
+  "settings": {
+    "files.exclude": {
+      "**/.git": true,
+      "**/node_modules": true,
+      "**/build": true,
+      "**/coverage": true
+    },
+    "editor.formatOnSave": true,
+    "eslint.validate": [
+      "html",
+      "javascript",
+      "javascriptreact",
+      "typescript",
+      "typescriptreact"
+    ],
+    "editor.codeActionsOnSave": { "source.fixAll.eslint": true },
+    "files.eol": "\n",
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
+}
