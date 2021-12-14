@@ -7,7 +7,7 @@ import logo from 'assets/logo.png';
 import { Link as RouterLink } from 'react-router-dom';
 import routes from 'constants/routes';
 
-function ElevationScroll({ children }: { children: React.ReactElement }) {
+function ElevationScroll({ children, override }: { children: React.ReactElement; override?: boolean }) {
   const trigger = useScrollTrigger({
     disableHysteresis: true,
     threshold: 0,
@@ -15,7 +15,7 @@ function ElevationScroll({ children }: { children: React.ReactElement }) {
 
   return React.cloneElement(children, {
     elevation: trigger ? 4 : 0,
-    style: { transition: 'background-color 0.25s', ...(trigger ? { backgroundColor: 'rgba(0,0,128,0.5)' } : { backgroundColor: 'transparent' }) },
+    style: { transition: 'background-color 0.25s', ...(trigger || override ? { backgroundColor: 'rgba(0,0,128,0.5)' } : { backgroundColor: 'transparent' }) },
   });
 }
 
@@ -23,7 +23,7 @@ const Header: React.FunctionComponent = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   return (
-    <ElevationScroll>
+    <ElevationScroll override={drawerOpen}>
       <AppBar>
         <Toolbar disableGutters style={{ justifyContent: 'center' }}>
           <Link component={RouterLink} to={routes.HOME} underline='none' color='white' display='inherit' style={{ position: 'absolute', left: 0 }}>
