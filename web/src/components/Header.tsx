@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { AppBar, Box, Button, IconButton, Link, Menu, MenuItem, Toolbar, Typography, useScrollTrigger } from '@mui/material';
+import { AppBar, Box, Button, IconButton, Link, Toolbar, Typography, useScrollTrigger } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 
 // Assets
@@ -20,6 +20,7 @@ function ElevationScroll({ children, override }: { children: React.ReactElement;
 }
 
 const Header: React.FunctionComponent = () => {
+  // TODO: close drawer when resize window up
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   return (
