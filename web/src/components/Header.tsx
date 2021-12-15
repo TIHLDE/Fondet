@@ -43,6 +43,7 @@ function ElevationScroll({ children, override }: { children: React.ReactElement;
 }
 
 const Header: React.FunctionComponent = () => {
+  const theme = useTheme();
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   // close drawer if width exeeds breakpoint
@@ -70,7 +71,7 @@ const Header: React.FunctionComponent = () => {
           </Link>
           <Box ml={10} sx={{ display: { xs: 'none', md: 'inherit' } }}>
             {menu.map((item, i) => (
-              <Button key={i} component={RouterLink} to={item.link} sx={{ color: 'white', display: 'block' }}>
+              <Button key={i} component={RouterLink} to={item.link} sx={{ color: theme.palette.text.primary, display: 'block' }}>
                 {item.label}
               </Button>
             ))}
@@ -91,7 +92,7 @@ const Header: React.FunctionComponent = () => {
               key={i}
               component={RouterLink}
               to={item.link}
-              sx={{ color: 'white', display: 'block', textAlign: 'right' }}
+              sx={{ color: theme.palette.text.primary, display: 'block', textAlign: 'right' }}
               onClick={() => setDrawerOpen(false)}
               fullWidth>
               {item.label}
