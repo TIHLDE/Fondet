@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { AppBar, Box, Button, IconButton, Link, Toolbar, Typography, useScrollTrigger } from '@mui/material';
+import { AppBar, Box, Button, IconButton, Link, Toolbar, Typography, useScrollTrigger, useTheme } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 
 // Utils
@@ -26,14 +26,19 @@ const menu = [
 ];
 
 function ElevationScroll({ children, override }: { children: React.ReactElement; override?: boolean }) {
+  const theme = useTheme();
+
   const trigger = useScrollTrigger({
     disableHysteresis: true,
-    threshold: 0,
+    threshold: 4,
   });
 
   return React.cloneElement(children, {
-    elevation: trigger ? 4 : 0,
-    style: { transition: 'background-color 0.25s', ...(trigger || override ? { backgroundColor: 'rgba(0,0,128,0.5)' } : { backgroundColor: 'transparent' }) },
+    elevation: trigger ? 1 : 0,
+    style: {
+      transition: 'background-color 0.25s',
+      ...(trigger || override ? { background: `${theme.palette.background.paper}bf` } : { backgroundColor: 'transparent' }),
+    },
   });
 }
 
@@ -65,7 +70,7 @@ const Header: React.FunctionComponent = () => {
           </Link>
           <Box ml={10} sx={{ display: { xs: 'none', md: 'inherit' } }}>
             {menu.map((item, i) => (
-              <Button key={i} component={RouterLink} to={item.link}>
+              <Button key={i} component={RouterLink} to={item.link} sx={{ color: 'white', display: 'block' }}>
                 {item.label}
               </Button>
             ))}
@@ -82,7 +87,13 @@ const Header: React.FunctionComponent = () => {
           alignItems='start'
           style={{ transition: 'height 0.25s', overflow: 'hidden', ...(drawerOpen ? { height: '100vh' } : { height: 0 }) }}>
           {menu.map((item, i) => (
-            <Button key={i} component={RouterLink} to={item.link} onClick={() => setDrawerOpen(false)} fullWidth>
+            <Button
+              key={i}
+              component={RouterLink}
+              to={item.link}
+              sx={{ color: 'white', display: 'block', textAlign: 'right' }}
+              onClick={() => setDrawerOpen(false)}
+              fullWidth>
               {item.label}
             </Button>
           ))}

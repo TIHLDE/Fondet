@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import { Container, ThemeProvider } from '@mui/material';
 import './App.css';
 
 // Views
@@ -13,27 +14,38 @@ import Header from 'components/Header';
 
 // Constants
 import routes from 'constants/routes';
+
+// Themes
+import dark from 'themes/dark';
+
+const selectedTheme = dark;
+
 const App: React.FunctionComponent = () => {
+  document.body.style.color = selectedTheme.palette.text.primary;
+  document.body.style.backgroundColor = selectedTheme.palette.background.default;
+
   return (
-    <Router>
-      <Header />
-      <div style={{ marginTop: 64 }}>
-        <Switch>
-          <Route exact path={routes.HOME}>
-            <Home />
-          </Route>
-          <Route exact path={routes.APPLY}>
-            <Apply />
-          </Route>
-          <Route exact path={routes.ABOUT}>
-            <About />
-          </Route>
-          <Route exact path={routes.GROUP}>
-            <Group />
-          </Route>
-        </Switch>
-      </div>
-    </Router>
+    <ThemeProvider theme={selectedTheme}>
+      <Router>
+        <Header />
+        <Container style={{ marginTop: 64 }}>
+          <Switch>
+            <Route exact path={routes.HOME}>
+              <Home />
+            </Route>
+            <Route exact path={routes.APPLY}>
+              <Apply />
+            </Route>
+            <Route exact path={routes.ABOUT}>
+              <About />
+            </Route>
+            <Route exact path={routes.GROUP}>
+              <Group />
+            </Route>
+          </Switch>
+        </Container>
+      </Router>
+    </ThemeProvider>
   );
 };
 
