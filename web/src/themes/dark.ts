@@ -17,6 +17,7 @@ const dark = createTheme({
       primary: '#fff',
     },
   },
+  shape: { borderRadius: 16 },
 });
 
 export default dark;

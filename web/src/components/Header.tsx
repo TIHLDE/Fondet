@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useLocation } from 'react-router-dom';
 
 // Material
 import { AppBar, Box, Button, Container, IconButton, Link, Toolbar, Typography, useScrollTrigger, useTheme } from '@mui/material';
@@ -47,6 +47,7 @@ function ElevationScroll({ children, override }: { children: React.ReactElement;
 }
 
 const Header: React.FunctionComponent = () => {
+  const location = useLocation();
   const theme = useTheme();
   const [drawerOpen, setDrawerOpen] = useState(false);
 
@@ -80,7 +81,16 @@ const Header: React.FunctionComponent = () => {
             </Link>
             <Box sx={{ display: { xs: 'none', md: 'flex' } }} flexDirection='row' justifyContent='center'>
               {menu.map((item, i) => (
-                <Button key={i} component={RouterLink} to={item.link} color='info'>
+                <Button
+                  key={i}
+                  component={RouterLink}
+                  to={item.link}
+                  color='info'
+                  style={
+                    location.pathname === item.link
+                      ? { fontWeight: 600, borderBottomLeftRadius: 0, borderBottomRightRadius: 0, borderBottom: '2px solid white' }
+                      : { fontWeight: 300 }
+                  }>
                   {item.label}
                 </Button>
               ))}
@@ -101,21 +111,14 @@ const Header: React.FunctionComponent = () => {
           <Box
             flexDirection='column'
             sx={{ display: { xs: 'flex', md: 'none' } }}
-            alignItems='start'
+            alignItems='end'
             style={{ transition: 'height 0.25s', overflow: 'hidden', ...(drawerOpen ? { height: 36.5 * (menu.length + 1) + 12 } : { height: 0 }) }}>
             {menu.map((item, i) => (
-              <Button
-                key={i}
-                component={RouterLink}
-                to={item.link}
-                color='info'
-                sx={{ display: 'block', textAlign: 'right' }}
-                onClick={() => setDrawerOpen(false)}
-                fullWidth>
+              <Button key={i} component={RouterLink} to={item.link} color='info' onClick={() => setDrawerOpen(false)}>
                 {item.label}
               </Button>
             ))}
-            <Button href='https://tihlde.org/' color='info' sx={{ display: 'block', textAlign: 'right' }} onClick={() => setDrawerOpen(false)} fullWidth>
+            <Button href='https://tihlde.org/' color='info' onClick={() => setDrawerOpen(false)}>
               tihlde.org
             </Button>
           </Box>
