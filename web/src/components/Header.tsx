@@ -68,6 +68,7 @@ const Header: React.FunctionComponent = () => {
               underline='none'
               color='white'
               style={{
+                marginLeft: '-8.5px',
                 display: 'flex',
                 flexDirection: 'row',
                 alignItems: 'center',
@@ -85,7 +86,7 @@ const Header: React.FunctionComponent = () => {
               ))}
             </Box>
             <Box sx={{ display: { xs: 'flex', md: 'none' } }} flexDirection='row' justifyContent='end'>
-              <IconButton size='large' onClick={() => setDrawerOpen(!drawerOpen)} color='inherit'>
+              <IconButton size='large' onClick={() => setDrawerOpen(!drawerOpen)} color='inherit' sx={{ mr: -1.5 }}>
                 <MenuIcon />
               </IconButton>
             </Box>
