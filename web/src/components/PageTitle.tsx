@@ -8,7 +8,7 @@ interface PageTitleProps {
 
 const PageTitle: React.FC<PageTitleProps> = ({ children }: PageTitleProps) => (
   <WaveContainer>
-    <Typography variant='h1' sx={{ fontSize: { xs: '2rem', sm: '3rem' }, marginTop: { xs: '2rem', sm: '3rem' } }}>
+    <Typography variant='h1' sx={{ fontSize: { xs: '2rem', sm: '2.5rem', md: '3rem' }, marginTop: { xs: '2rem', sm: '3rem' } }}>
       {children}
     </Typography>
   </WaveContainer>

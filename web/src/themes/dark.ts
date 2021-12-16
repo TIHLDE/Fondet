@@ -40,7 +40,16 @@ const dark = createTheme({
   shape: { borderRadius: 16 },
   components: {
     MuiContainer: {
-      defaultProps: { maxWidth: 'md' },
+      defaultProps: { maxWidth: 'lg' },
+    },
+  },
+  breakpoints: {
+    values: {
+      xs: 0,
+      sm: 500,
+      md: 800,
+      lg: 1000,
+      xl: 1300,
     },
   },
 });
