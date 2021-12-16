@@ -96,7 +96,7 @@ const Header: React.FunctionComponent = () => {
             flexDirection='column'
             sx={{ display: { xs: 'flex', md: 'none' } }}
             alignItems='start'
-            style={{ transition: 'height 0.25s', overflow: 'hidden', ...(drawerOpen ? { height: 122 } : { height: 0 }) }}>
+            style={{ transition: 'height 0.25s', overflow: 'hidden', ...(drawerOpen ? { height: 36.5 * menu.length + 12 } : { height: 0 }) }}>
             {menu.map((item, i) => (
               <Button
                 key={i}
