@@ -38,7 +38,6 @@ function ElevationScroll({ children, override }: { children: React.ReactElement;
   });
 
   return React.cloneElement(children, {
-    elevation: trigger ? 1 : 0,
     style: {
       transition: 'background-color 0.25s',
       ...(trigger || override ? { background: `${theme.palette.background.paper}bf` } : { backgroundColor: 'transparent' }),
@@ -58,73 +57,86 @@ const Header: React.FunctionComponent = () => {
   }
 
   return (
-    <ElevationScroll override={drawerOpen}>
-      <AppBar>
-        <Toolbar disableGutters>
-          <Container sx={{ gridTemplateColumns: { xs: 'auto auto', md: '180px 1fr 180px' } }} style={{ display: 'grid' }}>
-            <Link
-              component={RouterLink}
-              to={ROUTES.HOME}
-              onClick={() => setDrawerOpen(false)}
-              underline='none'
-              color='white'
-              style={{
-                marginLeft: '-8.5px',
-                display: 'flex',
-                flexDirection: 'row',
-                alignItems: 'center',
-              }}>
-              <img height={30} src={logo} />
-              <Typography variant='h4' ml={1} fontWeight='bold'>
-                Fondet
-              </Typography>
-            </Link>
-            <Box sx={{ display: { xs: 'none', md: 'flex' } }} flexDirection='row' justifyContent='center'>
+    <>
+      <ElevationScroll override={drawerOpen}>
+        <AppBar elevation={0}>
+          <Toolbar disableGutters>
+            <Container sx={{ gridTemplateColumns: { xs: 'auto auto', md: '180px 1fr 180px' } }} style={{ display: 'grid' }}>
+              <Link
+                component={RouterLink}
+                to={ROUTES.HOME}
+                onClick={() => setDrawerOpen(false)}
+                underline='none'
+                color='white'
+                style={{
+                  marginLeft: '-8.5px',
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                }}>
+                <img height={30} src={logo} />
+                <Typography variant='h4' ml={1} fontWeight='bold'>
+                  Fondet
+                </Typography>
+              </Link>
+              <Box sx={{ display: { xs: 'none', md: 'flex' } }} flexDirection='row' justifyContent='center'>
+                {menu.map((item, i) => (
+                  <Button
+                    key={i}
+                    component={RouterLink}
+                    to={item.link}
+                    color='info'
+                    style={
+                      location.pathname === item.link
+                        ? { fontWeight: 600, borderBottomLeftRadius: 0, borderBottomRightRadius: 0, borderBottom: '2px solid white' }
+                        : { fontWeight: 300 }
+                    }>
+                    {item.label}
+                  </Button>
+                ))}
+              </Box>
+              <Box sx={{ display: { xs: 'none', md: 'flex' } }} flexDirection='row' justifyContent='end'>
+                <Button variant='outlined' href='https://tihlde.org/' color='info'>
+                  tihlde.org
+                </Button>
+              </Box>
+              <Box sx={{ display: { xs: 'flex', md: 'none' } }} flexDirection='row' justifyContent='end'>
+                <IconButton size='large' onClick={() => setDrawerOpen(!drawerOpen)} color='info' sx={{ mr: -1.5 }}>
+                  <MenuIcon />
+                </IconButton>
+              </Box>
+            </Container>
+          </Toolbar>
+          <Container>
+            <Box
+              flexDirection='column'
+              sx={{ display: { xs: 'flex', md: 'none' } }}
+              alignItems='end'
+              style={{ transition: 'height 0.25s', overflow: 'hidden', ...(drawerOpen ? { height: 36.5 * (menu.length + 1) + 12 } : { height: 0 }) }}>
               {menu.map((item, i) => (
-                <Button
-                  key={i}
-                  component={RouterLink}
-                  to={item.link}
-                  color='info'
-                  style={
-                    location.pathname === item.link
-                      ? { fontWeight: 600, borderBottomLeftRadius: 0, borderBottomRightRadius: 0, borderBottom: '2px solid white' }
-                      : { fontWeight: 300 }
-                  }>
+                <Button key={i} component={RouterLink} to={item.link} color='info' onClick={() => setDrawerOpen(false)}>
                   {item.label}
                 </Button>
               ))}
-            </Box>
-            <Box sx={{ display: { xs: 'none', md: 'flex' } }} flexDirection='row' justifyContent='end'>
-              <Button variant='outlined' href='https://tihlde.org/' color='info'>
+              <Button href='https://tihlde.org/' color='info' onClick={() => setDrawerOpen(false)}>
                 tihlde.org
               </Button>
             </Box>
-            <Box sx={{ display: { xs: 'flex', md: 'none' } }} flexDirection='row' justifyContent='end'>
-              <IconButton size='large' onClick={() => setDrawerOpen(!drawerOpen)} color='info' sx={{ mr: -1.5 }}>
-                <MenuIcon />
-              </IconButton>
-            </Box>
           </Container>
-        </Toolbar>
-        <Container>
-          <Box
-            flexDirection='column'
-            sx={{ display: { xs: 'flex', md: 'none' } }}
-            alignItems='end'
-            style={{ transition: 'height 0.25s', overflow: 'hidden', ...(drawerOpen ? { height: 36.5 * (menu.length + 1) + 12 } : { height: 0 }) }}>
-            {menu.map((item, i) => (
-              <Button key={i} component={RouterLink} to={item.link} color='info' onClick={() => setDrawerOpen(false)}>
-                {item.label}
-              </Button>
-            ))}
-            <Button href='https://tihlde.org/' color='info' onClick={() => setDrawerOpen(false)}>
-              tihlde.org
-            </Button>
-          </Box>
-        </Container>
-      </AppBar>
-    </ElevationScroll>
+        </AppBar>
+      </ElevationScroll>
+      <div
+        onClick={() => setDrawerOpen(false)}
+        style={{
+          display: drawerOpen ? 'block' : 'none',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+        }}
+      />
+    </>
   );
 };
 

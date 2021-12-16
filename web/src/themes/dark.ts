@@ -17,7 +17,32 @@ const dark = createTheme({
       primary: '#fff',
     },
   },
+  typography: {
+    fontFamily: [
+      '"Roboto"',
+      '-apple-system',
+      'BlinkMacSystemFont',
+      '"Segoe UI"',
+      'Roboto',
+      '"Helvetica Neue"',
+      'Arial',
+      'sans-serif',
+      '"Apple Color Emoji"',
+      '"Segoe UI Emoji"',
+      '"Segoe UI Symbol"',
+    ].join(','),
+    h1: {
+      marginTop: '3rem',
+      fontWeight: 'bold',
+      fontSize: '3rem',
+    },
+  },
   shape: { borderRadius: 16 },
+  components: {
+    MuiContainer: {
+      defaultProps: { maxWidth: 'md' },
+    },
+  },
 });
 
 export default dark;

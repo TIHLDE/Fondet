@@ -1,10 +1,8 @@
 import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 
-import './App.css';
-
 // Material
-import { Container, ThemeProvider } from '@mui/material';
+import { ThemeProvider } from '@mui/material';
 
 // Views
 import About from 'views/About';
@@ -35,22 +33,21 @@ const App: React.FunctionComponent = () => {
       <Router>
         <ScrollToTop />
         <Header />
-        <Container style={{ paddingTop: 64 }}>
-          <Switch>
-            <Route exact path={ROUTES.HOME}>
-              <Home />
-            </Route>
-            <Route exact path={ROUTES.APPLY}>
-              <Apply />
-            </Route>
-            <Route exact path={ROUTES.ABOUT}>
-              <About />
-            </Route>
-            <Route exact path={ROUTES.GROUP}>
-              <Group />
-            </Route>
-          </Switch>
-        </Container>
+
+        <Switch>
+          <Route exact path={ROUTES.HOME}>
+            <Home />
+          </Route>
+          <Route exact path={ROUTES.APPLY}>
+            <Apply />
+          </Route>
+          <Route exact path={ROUTES.ABOUT}>
+            <About />
+          </Route>
+          <Route exact path={ROUTES.GROUP}>
+            <Group />
+          </Route>
+        </Switch>
       </Router>
     </ThemeProvider>
   );
