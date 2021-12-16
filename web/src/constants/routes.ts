@@ -1,6 +1,6 @@
 export default {
   HOME: '/',
-  APPLY: '/sok-støtte',
+  APPLY: '/søknad',
   ABOUT: '/om-fondet',
   GROUP: '/forvaltningsgruppen',
 };
