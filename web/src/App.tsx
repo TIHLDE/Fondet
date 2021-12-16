@@ -31,7 +31,7 @@ const App: React.FunctionComponent = () => {
     <ThemeProvider theme={selectedTheme}>
       <Router>
         <Header />
-        <Container style={{ marginTop: 64 }}>
+        <Container style={{ paddingTop: 64 }}>
           <Switch>
             <Route exact path={ROUTES.HOME}>
               <Home />
