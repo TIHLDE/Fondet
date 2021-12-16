@@ -114,7 +114,17 @@ const Header: React.FunctionComponent = () => {
               alignItems='end'
               style={{ transition: 'height 0.25s', overflow: 'hidden', ...(drawerOpen ? { height: 36.5 * (menu.length + 1) + 12 } : { height: 0 }) }}>
               {menu.map((item, i) => (
-                <Button key={i} component={RouterLink} to={item.link} color='info' onClick={() => setDrawerOpen(false)}>
+                <Button
+                  key={i}
+                  component={RouterLink}
+                  to={item.link}
+                  color='info'
+                  onClick={() => setDrawerOpen(false)}
+                  style={
+                    location.pathname === item.link
+                      ? { fontWeight: 600, borderBottomRightRadius: 0, borderTopRightRadius: 0, borderRight: '2px solid white' }
+                      : { fontWeight: 300 }
+                  }>
                   {item.label}
                 </Button>
               ))}
