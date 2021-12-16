@@ -61,7 +61,7 @@ const Header: React.FunctionComponent = () => {
       <ElevationScroll override={drawerOpen}>
         <AppBar elevation={0}>
           <Toolbar disableGutters>
-            <Container sx={{ gridTemplateColumns: { xs: 'auto auto', md: '180px 1fr 180px' } }} style={{ display: 'grid' }}>
+            <Container style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
               <Link
                 component={RouterLink}
                 to={ROUTES.HOME}
@@ -86,16 +86,17 @@ const Header: React.FunctionComponent = () => {
                     component={RouterLink}
                     to={item.link}
                     color='info'
-                    style={
-                      location.pathname === item.link
+                    style={{
+                      textAlign: 'center',
+                      ...(location.pathname === item.link
                         ? { fontWeight: 600, borderBottomLeftRadius: 0, borderBottomRightRadius: 0, borderBottom: '2px solid white' }
-                        : { fontWeight: 300 }
-                    }>
+                        : { fontWeight: 300 }),
+                    }}>
                     {item.label}
                   </Button>
                 ))}
               </Box>
-              <Box sx={{ display: { xs: 'none', md: 'flex' } }} flexDirection='row' justifyContent='end'>
+              <Box sx={{ display: { xs: 'none', md: 'flex' } }} flexDirection='row' justifyContent='end' alignItems='center'>
                 <Button variant='outlined' href='https://tihlde.org/' color='info'>
                   tihlde.org
                 </Button>
