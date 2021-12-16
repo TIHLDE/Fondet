@@ -15,6 +15,9 @@ import Home from 'views/Home';
 // Components
 import Header from 'components/Header';
 
+// Utils
+import ScrollToTop from 'utils/ScrollToTop';
+
 // Constants
 import ROUTES from 'constants/routes';
 
@@ -30,6 +33,7 @@ const App: React.FunctionComponent = () => {
   return (
     <ThemeProvider theme={selectedTheme}>
       <Router>
+        <ScrollToTop />
         <Header />
         <Container style={{ paddingTop: 64 }}>
           <Switch>
