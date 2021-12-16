@@ -6,7 +6,7 @@ const Group: React.FunctionComponent = () => (
   <>
     <PageTitle>Forvaltningsgruppen</PageTitle>
     <Container>
-      <h2>Her kommer det informasjon om forvaltningsgruppen.</h2>
+      <h2>Her kommer det informasjon om forvaltningsgruppen</h2>
 
       <br />
       <br />

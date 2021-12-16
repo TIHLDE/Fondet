@@ -6,7 +6,7 @@ const Home: React.FunctionComponent = () => (
   <>
     <PageTitle>TIHLDE-Fondet</PageTitle>
     <Container>
-      <h2>Her kommer det informasjon om fondets sammensetning og historisk avkastning.</h2>
+      <h2>Her kommer det informasjon om fondets sammensetning og historisk avkastning</h2>
 
       <br />
       <br />
