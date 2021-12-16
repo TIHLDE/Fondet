@@ -41,7 +41,7 @@ function ElevationScroll({ children, override }: { children: React.ReactElement;
     elevation: trigger ? 1 : 0,
     style: {
       transition: 'background-color 0.25s',
-      ...(trigger || override ? { background: `${theme.palette.background.paper}d9` } : { backgroundColor: 'transparent' }),
+      ...(trigger || override ? { background: `${theme.palette.background.paper}bf` } : { backgroundColor: 'transparent' }),
     },
   });
 }
@@ -80,13 +80,18 @@ const Header: React.FunctionComponent = () => {
             </Link>
             <Box sx={{ display: { xs: 'none', md: 'flex' } }} flexDirection='row' justifyContent='center'>
               {menu.map((item, i) => (
-                <Button key={i} component={RouterLink} to={item.link} sx={{ color: theme.palette.text.primary }}>
+                <Button key={i} component={RouterLink} to={item.link} color='info'>
                   {item.label}
                 </Button>
               ))}
             </Box>
+            <Box sx={{ display: { xs: 'none', md: 'flex' } }} flexDirection='row' justifyContent='end'>
+              <Button variant='outlined' href='https://tihlde.org/' color='info'>
+                tihlde.org
+              </Button>
+            </Box>
             <Box sx={{ display: { xs: 'flex', md: 'none' } }} flexDirection='row' justifyContent='end'>
-              <IconButton size='large' onClick={() => setDrawerOpen(!drawerOpen)} color='inherit' sx={{ mr: -1.5 }}>
+              <IconButton size='large' onClick={() => setDrawerOpen(!drawerOpen)} color='info' sx={{ mr: -1.5 }}>
                 <MenuIcon />
               </IconButton>
             </Box>
@@ -97,18 +102,22 @@ const Header: React.FunctionComponent = () => {
             flexDirection='column'
             sx={{ display: { xs: 'flex', md: 'none' } }}
             alignItems='start'
-            style={{ transition: 'height 0.25s', overflow: 'hidden', ...(drawerOpen ? { height: 36.5 * menu.length + 12 } : { height: 0 }) }}>
+            style={{ transition: 'height 0.25s', overflow: 'hidden', ...(drawerOpen ? { height: 36.5 * (menu.length + 1) + 12 } : { height: 0 }) }}>
             {menu.map((item, i) => (
               <Button
                 key={i}
                 component={RouterLink}
                 to={item.link}
-                sx={{ color: theme.palette.text.primary, display: 'block', textAlign: 'right' }}
+                color='info'
+                sx={{ display: 'block', textAlign: 'right' }}
                 onClick={() => setDrawerOpen(false)}
                 fullWidth>
                 {item.label}
               </Button>
             ))}
+            <Button href='https://tihlde.org/' color='info' sx={{ display: 'block', textAlign: 'right' }} onClick={() => setDrawerOpen(false)} fullWidth>
+              tihlde.org
+            </Button>
           </Box>
         </Container>
       </AppBar>
