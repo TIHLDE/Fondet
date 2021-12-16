@@ -1,7 +1,7 @@
 import React from 'react';
 
 const Home: React.FunctionComponent = () => (
-  <div>
+  <div style={{ textAlign: 'justify' }}>
     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris ut rhoncus elit. Nam quis mauris ut diam suscipit mollis nec cursus sapien. Nullam sagittis
     ipsum volutpat justo euismod sagittis. Fusce a purus sit amet ipsum tincidunt cursus. Class aptent taciti sociosqu ad litora torquent per conubia nostra,
     per inceptos himenaeos. Vivamus posuere porta diam vel tempor. Morbi eu nunc elementum, lacinia erat id, dictum sem. Sed magna quam, condimentum vitae dolor

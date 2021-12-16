@@ -1,26 +1,30 @@
 import React, { useState } from 'react';
-import { AppBar, Box, Button, IconButton, Link, Toolbar, Typography, useScrollTrigger, useTheme } from '@mui/material';
+import { Link as RouterLink } from 'react-router-dom';
+
+// Material
+import { AppBar, Box, Button, Container, IconButton, Link, Toolbar, Typography, useScrollTrigger, useTheme } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
+
+// Constants
+import ROUTES from 'constants/routes';
 
 // Utils
 import useWindowSize from 'utils/useWindowSize';
 
 // Assets
 import logo from 'assets/logo.png';
-import { Link as RouterLink } from 'react-router-dom';
-import routes from 'constants/routes';
 
 const menu = [
   {
-    link: routes.APPLY,
+    link: ROUTES.APPLY,
     label: 'Søk om støtte',
   },
   {
-    link: routes.ABOUT,
+    link: ROUTES.ABOUT,
     label: 'Om fondet',
   },
   {
-    link: routes.GROUP,
+    link: ROUTES.GROUP,
     label: 'Forvaltningsgruppen',
   },
 ];
@@ -37,7 +41,7 @@ function ElevationScroll({ children, override }: { children: React.ReactElement;
     elevation: trigger ? 1 : 0,
     style: {
       transition: 'background-color 0.25s',
-      ...(trigger || override ? { background: `${theme.palette.background.paper}bf` } : { backgroundColor: 'transparent' }),
+      ...(trigger || override ? { background: `${theme.palette.background.paper}d9` } : { backgroundColor: 'transparent' }),
     },
   });
 }
@@ -55,50 +59,57 @@ const Header: React.FunctionComponent = () => {
   return (
     <ElevationScroll override={drawerOpen}>
       <AppBar>
-        <Toolbar disableGutters style={{ justifyContent: 'center' }}>
-          <Link
-            component={RouterLink}
-            to={routes.HOME}
-            onClick={() => setDrawerOpen(false)}
-            underline='none'
-            color='white'
-            display='inherit'
-            style={{ position: 'absolute', left: 0 }}>
-            <img height={40} style={{ marginLeft: 12 }} src={logo} />
-            <Typography variant='h4' ml={2} fontWeight='bold'>
-              Fondet
-            </Typography>
-          </Link>
-          <Box ml={10} sx={{ display: { xs: 'none', md: 'inherit' } }}>
+        <Toolbar disableGutters>
+          <Container sx={{ gridTemplateColumns: { xs: 'auto auto', md: '180px 1fr 180px' } }} style={{ display: 'grid' }}>
+            <Link
+              component={RouterLink}
+              to={ROUTES.HOME}
+              onClick={() => setDrawerOpen(false)}
+              underline='none'
+              color='white'
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+              }}>
+              <img height={30} src={logo} />
+              <Typography variant='h4' ml={1} fontWeight='bold'>
+                Fondet
+              </Typography>
+            </Link>
+            <Box sx={{ display: { xs: 'none', md: 'flex' } }} flexDirection='row' justifyContent='center'>
+              {menu.map((item, i) => (
+                <Button key={i} component={RouterLink} to={item.link} sx={{ color: theme.palette.text.primary }}>
+                  {item.label}
+                </Button>
+              ))}
+            </Box>
+            <Box sx={{ display: { xs: 'flex', md: 'none' } }} flexDirection='row' justifyContent='end'>
+              <IconButton size='large' onClick={() => setDrawerOpen(!drawerOpen)} color='inherit'>
+                <MenuIcon />
+              </IconButton>
+            </Box>
+          </Container>
+        </Toolbar>
+        <Container>
+          <Box
+            flexDirection='column'
+            sx={{ display: { xs: 'flex', md: 'none' } }}
+            alignItems='start'
+            style={{ transition: 'height 0.25s', overflow: 'hidden', ...(drawerOpen ? { height: 122 } : { height: 0 }) }}>
             {menu.map((item, i) => (
-              <Button key={i} component={RouterLink} to={item.link} sx={{ color: theme.palette.text.primary, display: 'block' }}>
+              <Button
+                key={i}
+                component={RouterLink}
+                to={item.link}
+                sx={{ color: theme.palette.text.primary, display: 'block', textAlign: 'right' }}
+                onClick={() => setDrawerOpen(false)}
+                fullWidth>
                 {item.label}
               </Button>
             ))}
           </Box>
-          <Box pr={1} sx={{ display: { xs: 'flex', md: 'none' } }} style={{ position: 'absolute', right: 0 }}>
-            <IconButton size='large' onClick={() => setDrawerOpen(!drawerOpen)} color='inherit'>
-              <MenuIcon />
-            </IconButton>
-          </Box>
-        </Toolbar>
-        <Box
-          flexDirection='column'
-          sx={{ display: { xs: 'flex', md: 'none' } }}
-          alignItems='start'
-          style={{ transition: 'height 0.25s', overflow: 'hidden', ...(drawerOpen ? { height: '100vh' } : { height: 0 }) }}>
-          {menu.map((item, i) => (
-            <Button
-              key={i}
-              component={RouterLink}
-              to={item.link}
-              sx={{ color: theme.palette.text.primary, display: 'block', textAlign: 'right' }}
-              onClick={() => setDrawerOpen(false)}
-              fullWidth>
-              {item.label}
-            </Button>
-          ))}
-        </Box>
+        </Container>
       </AppBar>
     </ElevationScroll>
   );
