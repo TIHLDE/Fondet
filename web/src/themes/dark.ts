@@ -42,6 +42,9 @@ const dark = createTheme({
     MuiContainer: {
       defaultProps: { maxWidth: 'lg' },
     },
+    MuiButton: {
+      styleOverrides: { root: { fontWeight: 300 } },
+    },
   },
   breakpoints: {
     values: {

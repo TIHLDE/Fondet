@@ -90,7 +90,7 @@ const Header: React.FunctionComponent = () => {
                       textAlign: 'center',
                       ...(location.pathname === item.link
                         ? { fontWeight: 600, borderBottomLeftRadius: 0, borderBottomRightRadius: 0, borderBottom: '2px solid white' }
-                        : { fontWeight: 300 }),
+                        : {}),
                     }}>
                     {item.label}
                   </Button>
@@ -124,7 +124,7 @@ const Header: React.FunctionComponent = () => {
                   style={
                     location.pathname === item.link
                       ? { fontWeight: 600, borderBottomRightRadius: 0, borderTopRightRadius: 0, borderRight: '2px solid white' }
-                      : { fontWeight: 300 }
+                      : {}
                   }>
                   {item.label}
                 </Button>
@@ -140,7 +140,7 @@ const Header: React.FunctionComponent = () => {
         onClick={() => setDrawerOpen(false)}
         style={{
           display: drawerOpen ? 'block' : 'none',
-          position: 'absolute',
+          position: 'fixed',
           top: 0,
           left: 0,
           width: '100%',
