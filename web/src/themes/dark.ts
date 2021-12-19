@@ -36,6 +36,15 @@ const dark = createTheme({
       fontWeight: 'bold',
       fontSize: '3rem',
     },
+    h2: {
+      fontSize: '2.5rem',
+      fontWeight: 'normal',
+      marginBottom: '1rem',
+    },
+    h4: {
+      fontSize: '1.5rem',
+      fontWeight: 'bold',
+    },
   },
   shape: { borderRadius: 16 },
   components: {
