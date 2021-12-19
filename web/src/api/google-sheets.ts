@@ -21,6 +21,7 @@ class GoogleSheetsApi {
     const rows = await sheet.getRows();
 
     return rows
+      .filter((row) => row['Synlig'])
       .map((row) => ({
         applicant: row['Søker'],
         purpose: row['Formål'],
