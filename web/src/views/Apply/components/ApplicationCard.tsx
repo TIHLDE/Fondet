@@ -9,7 +9,7 @@ interface ApplicationCardProps {
 
 const ApplicationCard: React.FC<ApplicationCardProps> = ({ application }) => (
   <Accordion variant='outlined'>
-    <AccordionSummary expandIcon={<ExpandMore />}>
+    <AccordionSummary expandIcon={<ExpandMore />} sx={{ gap: 2 }}>
       <Box
         sx={{
           display: 'grid',

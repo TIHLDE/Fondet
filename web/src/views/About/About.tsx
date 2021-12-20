@@ -1,4 +1,4 @@
-import { Container, Link, Typography } from '@mui/material';
+import { Box, Container, Link, Typography } from '@mui/material';
 import PageTitle from 'components/PageTitle';
 import React from 'react';
 
@@ -57,10 +57,7 @@ const About: React.FunctionComponent = () => (
           </li>
         </ul>
       </Typography>
-      <br />
-      <br />
-      <br />
-      <br />
+      <Box height={150} />
     </Container>
   </>
 );

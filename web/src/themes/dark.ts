@@ -52,6 +52,10 @@ const dark = createTheme({
       fontSize: '1.5rem',
       fontWeight: 'bold',
     },
+    subtitle1: {
+      fontSize: '1.25rem',
+      fontWeight: 'bold',
+    },
   },
   shape: { borderRadius: 16 },
   components: {

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Typography } from '@mui/material';
+import { Box, Container, Typography } from '@mui/material';
 import PageTitle from 'components/PageTitle';
 
 // Api
@@ -28,13 +28,14 @@ const Apply: React.FunctionComponent = () => {
         <br />
         <br />
         <Typography variant='h2'>Tidligere søknader</Typography>
-        {applications.map((application, i) => (
-          <ApplicationCard key={i} application={application} />
-        ))}
-        <br />
-        <br />
-        <br />
-        <br />
+        {applications.length > 0 && (
+          <div>
+            {applications.map((application, i) => (
+              <ApplicationCard key={i} application={application} />
+            ))}
+          </div>
+        )}
+        <Box height={150} />
       </Container>
     </>
   );
