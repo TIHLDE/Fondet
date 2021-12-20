@@ -58,7 +58,7 @@ const dark = createTheme({
       styleOverrides: { root: { color: '#7faeff' } },
     },
     MuiAccordionSummary: {
-      styleOverrides: { content: { '&.Mui-expanded': { marginBottom: 10 } } },
+      styleOverrides: { content: { '&.Mui-expanded': { marginBottom: 5 } } },
     },
   },
   breakpoints: {

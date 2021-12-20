@@ -14,15 +14,18 @@ const ApplicationCard: React.FC<ApplicationCardProps> = ({ application }) => (
         sx={{
           display: 'grid',
           width: '100%',
-          rowGap: 2,
-          columnGap: { xs: 0, sm: 1, md: 2 },
+          rowGap: { xs: 0, sm: 1 },
+          columnGap: 2,
           alignItems: 'center',
           gridTemplateColumns: {
-            xs: '1fr auto',
+            sm: '1fr auto',
             md: '2fr 3fr auto',
           },
           gridTemplateAreas: {
-            xs: `"a b"
+            xs: `"a"
+                 "b"
+                 "c"`,
+            sm: `"a b"
                  "c c"`,
             md: '"a c b"',
           },
@@ -38,7 +41,7 @@ const ApplicationCard: React.FC<ApplicationCardProps> = ({ application }) => (
           </Typography>
         )}
         {application.dateReceived && (
-          <Typography variant='body1' sx={{ gridArea: 'b', textAlign: 'right' }}>
+          <Typography variant='body1' sx={{ gridArea: 'b', textAlign: { sm: 'right' } }}>
             {application.dateReceived}
           </Typography>
         )}
@@ -49,16 +52,21 @@ const ApplicationCard: React.FC<ApplicationCardProps> = ({ application }) => (
         sx={{
           display: 'grid',
           width: '100%',
-          rowGap: 2,
-          columnGap: { xs: 0, sm: 1, md: 2 },
+          rowGap: { xs: 1, sm: 2 },
+          columnGap: 2,
           alignItems: 'center',
           justifyItems: 'start',
           gridTemplateColumns: {
-            xs: '1fr 1fr 1fr',
+            xs: '1fr 1fr',
+            sm: '1fr 1fr 1fr',
             md: '1fr 1fr 2fr 1fr 1fr  ',
           },
           gridTemplateAreas: {
-            xs: `"a b b"
+            xs: `"a a"
+                 "b b"
+                 "c c"
+                 "d e"`,
+            sm: `"a b b"
                  "c d e"`,
             md: '"c a b d e"',
           },
@@ -69,7 +77,7 @@ const ApplicationCard: React.FC<ApplicationCardProps> = ({ application }) => (
           </Link>
         )}
         {application.decisionUrl && (
-          <Link href={application.decisionUrl} target='_blank' sx={{ gridArea: 'b', justifySelf: { xs: 'end', sm: 'start' } }}>
+          <Link href={application.decisionUrl} target='_blank' sx={{ gridArea: 'b' }}>
             <Typography variant='body1'>Beslutningsgrunnlag (PDF)</Typography>
           </Link>
         )}
