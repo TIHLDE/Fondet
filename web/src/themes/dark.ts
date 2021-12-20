@@ -54,6 +54,12 @@ const dark = createTheme({
     MuiButton: {
       styleOverrides: { root: { fontWeight: 300 } },
     },
+    MuiLink: {
+      styleOverrides: { root: { color: '#7faeff' } },
+    },
+    MuiAccordionSummary: {
+      styleOverrides: { content: { '&.Mui-expanded': { marginBottom: 10 } } },
+    },
   },
   breakpoints: {
     values: {

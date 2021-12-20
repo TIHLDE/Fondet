@@ -73,6 +73,7 @@ const Header: React.FunctionComponent = () => {
                   display: 'flex',
                   flexDirection: 'row',
                   alignItems: 'center',
+                  color: 'white',
                 }}>
                 <img height={30} src={logo} />
                 <Typography variant='h4' ml={1} fontWeight='bold'>

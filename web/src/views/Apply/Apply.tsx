@@ -31,6 +31,9 @@ const Apply: React.FunctionComponent = () => {
         {applications.map((application, i) => (
           <ApplicationCard key={i} application={application} />
         ))}
+        <br />
+        <br />
+        <br />
       </Container>
     </>
   );
