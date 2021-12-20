@@ -14,7 +14,8 @@ const ApplicationCard: React.FC<ApplicationCardProps> = ({ application }) => (
         sx={{
           display: 'grid',
           width: '100%',
-          gap: 2,
+          rowGap: 2,
+          columnGap: { xs: 0, sm: 1, md: 2 },
           alignItems: 'center',
           gridTemplateColumns: {
             xs: '1fr auto',
@@ -48,7 +49,8 @@ const ApplicationCard: React.FC<ApplicationCardProps> = ({ application }) => (
         sx={{
           display: 'grid',
           width: '100%',
-          gap: 2,
+          rowGap: 2,
+          columnGap: { xs: 0, sm: 1, md: 2 },
           alignItems: 'center',
           justifyItems: 'start',
           gridTemplateColumns: {
@@ -67,7 +69,7 @@ const ApplicationCard: React.FC<ApplicationCardProps> = ({ application }) => (
           </Link>
         )}
         {application.decisionUrl && (
-          <Link href={application.decisionUrl} target='_blank' sx={{ gridArea: 'b' }}>
+          <Link href={application.decisionUrl} target='_blank' sx={{ gridArea: 'b', justifySelf: { xs: 'end', sm: 'start' } }}>
             <Typography variant='body1'>Beslutningsgrunnlag (PDF)</Typography>
           </Link>
         )}
