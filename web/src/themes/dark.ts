@@ -6,13 +6,13 @@ const dark = createTheme({
     primary: {
       main: '#1c458a',
       light: '#5470bb',
-      dark: '#001f5c',
+      dark: '#0d2339',
       contrastText: '#fff',
     },
     info: {
       main: '#fff',
     },
-    background: { default: '#001328', paper: '#0d2339' },
+    background: { default: '#001328', paper: '#011830' },
     text: {
       primary: '#fff',
     },
@@ -55,7 +55,7 @@ const dark = createTheme({
       styleOverrides: { root: { fontWeight: 300 } },
     },
     MuiLink: {
-      styleOverrides: { root: { color: '#7faeff' } },
+      styleOverrides: { root: { color: '#9ec0ff' } },
     },
     MuiAccordionSummary: {
       styleOverrides: { content: { '&.Mui-expanded': { marginBottom: 5 } } },

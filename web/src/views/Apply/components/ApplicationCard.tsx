@@ -8,7 +8,7 @@ interface ApplicationCardProps {
 }
 
 const ApplicationCard: React.FC<ApplicationCardProps> = ({ application }) => (
-  <Accordion>
+  <Accordion variant='outlined'>
     <AccordionSummary expandIcon={<ExpandMore />}>
       <Box
         sx={{
