@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Container, Typography } from '@mui/material';
+import { Box, Container, Skeleton, Typography } from '@mui/material';
 import PageTitle from 'components/PageTitle';
 
 // Api
@@ -8,9 +8,12 @@ import ApplicationCard from './components/ApplicationCard';
 
 const Apply: React.FunctionComponent = () => {
   const [applications, setApplications] = useState<Application[]>([]);
-
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
-    Api.getPreviousApplications().then((apps) => setApplications(apps));
+    Api.getPreviousApplications().then((apps) => {
+      setApplications(apps);
+      setLoading(false);
+    });
   }, []);
 
   return (
@@ -28,12 +31,18 @@ const Apply: React.FunctionComponent = () => {
         <br />
         <br />
         <Typography variant='h2'>Tidligere søknader</Typography>
-        {applications.length > 0 && (
-          <div>
-            {applications.map((application, i) => (
-              <ApplicationCard key={i} application={application} />
-            ))}
-          </div>
+        {!loading ? (
+          applications.length > 0 ? (
+            <div>
+              {applications.map((application, i) => (
+                <ApplicationCard key={i} application={application} />
+              ))}
+            </div>
+          ) : (
+            <Typography variant='body1'>Når noen sender oss en søknad kommer den til slutt her, selv om det kanskje ikke var så mange akkurat nå.</Typography>
+          )
+        ) : (
+          [...Array(4).keys()].map((i) => <Skeleton key={i} variant='rectangular' height={50} sx={{ mb: 1 }} animation='wave' />)
         )}
         <Box height={150} />
       </Container>
