@@ -12,7 +12,7 @@ const WaveContainer: React.FC<WaveContainerProps> = ({ children, paddingTop = 64
   const theme = useTheme();
   const size = useWindowSize();
 
-  const height = (size.width ?? 0) * 0.05;
+  const height = (size.width ?? 0) * 0.04;
 
   return (
     <div style={{ marginBottom: 32 }}>
@@ -25,7 +25,7 @@ const WaveContainer: React.FC<WaveContainerProps> = ({ children, paddingTop = 64
         }}>
         <Container>{children}</Container>
       </div>
-      <svg viewBox='0 1.4 20 1.2' width={size.width} height={height} preserveAspectRatio='none'>
+      <svg viewBox='0 1.4 20 1.2' width='100%' height={height} preserveAspectRatio='none'>
         <path fill={theme.palette.background.paper} d='M 0 2 C 10 4 10 0 20 2 L 20 0 L 0 0 Z' />
       </svg>
     </div>
