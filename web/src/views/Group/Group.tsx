@@ -27,20 +27,23 @@ const Group: React.FunctionComponent = () => {
           sx={{
             display: 'grid',
             gap: { xs: 4, lg: 6 },
-            //gridTemplateColumns: { sx: '1fr', sm: '1fr 1fr', md: '1fr 1fr 1fr' },
-            gridTemplateColumns: { sx: '1fr', sm: 'repeat(4, 1fr)', md: 'repeat(6, 1fr)' },
-            gridTemplateAreas: {
-              xs: '',
-              sm: `"a1 a1 a2 a2"
+            gridTemplateColumns:
+              currentMembers.length === 5 ? { sx: '1fr', sm: 'repeat(4, 1fr)', md: 'repeat(6, 1fr)' } : { sx: '1fr', sm: '1fr 1fr', md: '1fr 1fr 1fr' },
+            gridTemplateAreas:
+              currentMembers.length === 5
+                ? {
+                    xs: '',
+                    sm: `"a1 a1 a2 a2"
                    "a3 a3 a4 a4"
                     ". a5 a5 ."`,
-              md: `". a1 a1 a2 a2 ."
+                    md: `". a1 a1 a2 a2 ."
                   "a3 a3 a4 a4 a5 a5"`,
-            },
+                  }
+                : {},
             mb: 10,
           }}>
           {currentMembers.map((member, i) => (
-            <BigAvatar key={i} member={member} sx={{ gridArea: { xs: '', sm: `a${i + 1}` } }} />
+            <BigAvatar key={i} member={member} sx={{ gridArea: currentMembers.length === 5 ? { xs: '', sm: `a${i + 1}` } : {} }} />
           ))}
         </Box>
         <Typography variant='h2'>Tidligere medlemmer</Typography>
