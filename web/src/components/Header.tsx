@@ -52,7 +52,7 @@ const Header: React.FunctionComponent = () => {
 
   // close drawer if width exeeds breakpoint
   const windowSize = useWindowSize();
-  if ((windowSize.width ?? 0) >= theme.breakpoints.values.md && drawerOpen) {
+  if (windowSize.width >= theme.breakpoints.values.md && drawerOpen) {
     setDrawerOpen(false);
   }
 

@@ -12,7 +12,7 @@ const WaveContainer: React.FC<WaveContainerProps> = ({ children, paddingTop = 64
   const theme = useTheme();
   const size = useWindowSize();
 
-  const height = (size.width ?? 0) * 0.04;
+  const height = Math.max(size.width * 0.04, 16);
 
   return (
     <div style={{ marginBottom: 32 }}>

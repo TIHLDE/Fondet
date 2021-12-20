@@ -3,14 +3,14 @@ import { Container, Typography } from '@mui/material';
 import PageTitle from 'components/PageTitle';
 
 // Api
-import GoogleSheetsApi, { Application } from 'api/google-sheets';
+import Api, { Application } from 'api/google-sheets';
 import ApplicationCard from './components/ApplicationCard';
 
 const Apply: React.FunctionComponent = () => {
   const [applications, setApplications] = useState<Application[]>([]);
 
   useEffect(() => {
-    GoogleSheetsApi.getPreviousApplications().then((apps) => setApplications(apps));
+    Api.getPreviousApplications().then((apps) => setApplications(apps));
   }, []);
 
   return (
@@ -31,6 +31,7 @@ const Apply: React.FunctionComponent = () => {
         {applications.map((application, i) => (
           <ApplicationCard key={i} application={application} />
         ))}
+        <br />
         <br />
         <br />
         <br />

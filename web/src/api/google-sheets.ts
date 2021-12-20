@@ -3,6 +3,13 @@ import { GoogleSpreadsheet } from 'google-spreadsheet';
 const doc = new GoogleSpreadsheet('1u6bBCsJAUlSKctGSSM26biK9-IQ8Lvf8vrzBJRsunGQ');
 doc.useApiKey('AIzaSyBgmnwf2-FfY_6OfddaZPyqz0c4jkJ8Eas');
 
+let sheetLoaded = false;
+function loadInfo(): Promise<void> | void {
+  if (sheetLoaded) return;
+  return doc.loadInfo().then(() => {
+    sheetLoaded = true;
+  });
+}
 export interface Application {
   applicant: string;
   purpose: string;
@@ -14,13 +21,15 @@ export interface Application {
   decisionUrl: string;
 }
 
-class GoogleSheetsApi {
-  public static async getPreviousApplications(): Promise<Application[]> {
-    await doc.loadInfo();
+let applications: Application[] | undefined = undefined;
+
+async function getPreviousApplications(): Promise<Application[]> {
+  if (applications === undefined) {
+    await loadInfo();
     const sheet = doc.sheetsByTitle['Søknader'];
     const rows = await sheet.getRows();
 
-    return rows
+    applications = rows
       .filter((row) => row['Synlig'])
       .map((row) => ({
         applicant: row['Søker'],
@@ -34,6 +43,11 @@ class GoogleSheetsApi {
       }))
       .reverse();
   }
+  return applications;
 }
 
-export default GoogleSheetsApi;
+const Api = {
+  getPreviousApplications,
+};
+
+export default Api;

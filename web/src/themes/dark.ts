@@ -37,9 +37,16 @@ const dark = createTheme({
       fontSize: '3rem',
     },
     h2: {
-      fontSize: '2.5rem',
+      fontSize: '2rem',
       fontWeight: 'normal',
+      marginTop: '2rem',
       marginBottom: '1rem',
+    },
+    h3: {
+      fontSize: '1.5rem',
+      fontWeight: 'bold',
+      marginTop: '1.5rem',
+      marginBottom: '0.75rem',
     },
     h4: {
       fontSize: '1.5rem',
