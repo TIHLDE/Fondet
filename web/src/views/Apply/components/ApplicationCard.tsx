@@ -7,7 +7,7 @@ interface ApplicationCardProps {
   application: Application;
 }
 
-const ApplicationCard: React.FC<ApplicationCardProps> = ({ application }: ApplicationCardProps) => (
+const ApplicationCard: React.FC<ApplicationCardProps> = ({ application }) => (
   <Card
     sx={{
       maxWidth: 600,

@@ -8,7 +8,7 @@ interface WaveContainerProps {
   paddingBottom?: string | number;
 }
 
-const WaveContainer: React.FC<WaveContainerProps> = ({ children, paddingTop = 64, paddingBottom = 16 }: WaveContainerProps) => {
+const WaveContainer: React.FC<WaveContainerProps> = ({ children, paddingTop = 64, paddingBottom = 16 }) => {
   const theme = useTheme();
   const size = useWindowSize();
 
