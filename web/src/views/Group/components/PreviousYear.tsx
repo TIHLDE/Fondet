@@ -1,6 +1,6 @@
 import { ExpandMore } from '@mui/icons-material';
 import { Accordion, AccordionDetails, AccordionSummary, Avatar, List, ListItem, ListItemAvatar, ListItemText, Typography } from '@mui/material';
-import { Member } from 'api/google-sheets';
+import { Member } from 'api';
 import React from 'react';
 
 interface PreviousYearProps {

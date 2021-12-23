@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 import { Box, Container, Skeleton, Typography } from '@mui/material';
 import PageTitle from 'components/PageTitle';
-import Api, { Member } from 'api/google-sheets';
+import Api, { Member } from 'api';
 import BigAvatar from './components/BigAvatar';
 import PreviousYear from './components/PreviousYear';
 import BigSkeleton from './components/BigSkeleton';
@@ -13,7 +13,7 @@ const Group: React.FunctionComponent = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    Promise.all([Api.getCurrentMembers(), Api.getPreviousMembers()]).then(([cM, pM]) => {
+    Promise.all([Api.CurrentMembers.get(), Api.PreviousMembers.get()]).then(([cM, pM]) => {
       setCurrentMembers(cM);
       setPreviousMembers(pM);
       setLoading(false);

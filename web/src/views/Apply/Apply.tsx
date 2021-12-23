@@ -3,14 +3,14 @@ import { Box, Container, Link, Skeleton, Typography } from '@mui/material';
 import PageTitle from 'components/PageTitle';
 
 // Api
-import Api, { Application } from 'api/google-sheets';
+import Api, { Application } from 'api';
 import ApplicationCard from './components/ApplicationCard';
 
 const Apply: React.FunctionComponent = () => {
   const [applications, setApplications] = useState<Application[]>([]);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
-    Api.getPreviousApplications().then((apps) => {
+    Api.PreviousApplications.get().then((apps) => {
       setApplications(apps);
       setLoading(false);
     });
@@ -32,7 +32,7 @@ const Apply: React.FunctionComponent = () => {
           støtteordninger er det bare å søke hos oss.
         </Typography>
         <Typography variant='h2'>Hvordan søke om støtte</Typography>
-        <Typography variant='body1'>
+        <Typography variant='body1' component='div'>
           Kravene en søknad må oppfylle er følgende:
           <ul>
             <li>Kun medlemmer av TIHLDE kan søke om støtte.</li>

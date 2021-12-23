@@ -1,5 +1,5 @@
 import { Avatar, Theme, Typography, Box, SxProps } from '@mui/material';
-import { Member } from 'api/google-sheets';
+import { Member } from 'api';
 import React from 'react';
 
 interface BigAvatarProps {

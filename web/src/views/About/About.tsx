@@ -17,7 +17,7 @@ const About: React.FunctionComponent = () => (
         kaffetrakter til større investeringer som en egen TIHLDE kjeller.
       </Typography>
       <Typography variant='h2'>Sammensetning</Typography>
-      <Typography variant='body1'>
+      <Typography variant='body1' component='div'>
         Fondet har totalt 5 medlemmer og består av:
         <ul>
           <li>1 Fondsforvalter</li>
@@ -43,7 +43,7 @@ const About: React.FunctionComponent = () => (
         linjeforeningen kan tjene på langsiktig.
       </Typography>
       <Typography variant='h2'>Strategi og vedtekter</Typography>
-      <Typography variant='body1'>
+      <Typography variant='body1' component='div'>
         <ul>
           <li>
             <Link href='https://drive.google.com/file/d/1gRtUYTxD5GrCkpfEPnVXi1t5HveNWg1z/view?usp=sharing' target='_blank'>

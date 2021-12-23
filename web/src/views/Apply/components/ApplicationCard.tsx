@@ -1,6 +1,6 @@
 import { Check, Close, ExpandMore } from '@mui/icons-material';
 import { Accordion, AccordionDetails, AccordionSummary, Box, Chip, Link, Typography } from '@mui/material';
-import { Application } from 'api/google-sheets';
+import { Application } from 'api';
 import React from 'react';
 
 interface ApplicationCardProps {
