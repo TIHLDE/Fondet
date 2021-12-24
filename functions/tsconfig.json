@@ -1,19 +1,13 @@
 {
   "compilerOptions": {
-    "outDir": "dist",
-    "target": "ES2021",
-    "lib": ["ES2021"],
-    "allowJs": true,
-    "skipLibCheck": true,
+    "module": "commonjs",
     "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "noFallthroughCasesInSwitch": true,
-    "module": "CommonJS",
+    "target": "es6",
     "moduleResolution": "node",
-    "resolveJsonModule": true,
+    "sourceMap": true,
+    "outDir": "build",
     "baseUrl": "src"
   },
+  "lib": ["es2015"],
   "include": ["src"]
 }

@@ -3,10 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "serve": "tsc && functions-framework --source=build --target=getPerformance",
+    "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "@google-cloud/functions-framework": "^2.1.0",
     "@types/axios": "^0.14.0",
+    "@types/express": "^4.17.13",
     "@types/node": "^12.20.36",
     "axios": "^0.24.0",
     "google-spreadsheet": "^3.2.0"
