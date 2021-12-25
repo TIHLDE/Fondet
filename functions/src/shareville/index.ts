@@ -1,1 +1,1 @@
-export { default } from './shareville';
+export * from "./shareville";

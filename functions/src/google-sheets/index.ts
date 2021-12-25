@@ -1,1 +1,1 @@
-export { default } from './google-sheets';
+export * from "./google-sheets";
