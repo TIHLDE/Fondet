@@ -34,7 +34,6 @@
           "ignoreTrailingComments": false
         }
       ],
-      "no-console": "warn",
       "no-implicit-coercion": "error",
       "no-invalid-this": "off",
       "no-lonely-if": "error",
