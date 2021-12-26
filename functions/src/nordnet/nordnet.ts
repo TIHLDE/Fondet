@@ -1,26 +1,32 @@
 import { Request, Response } from 'express';
 import { HttpFunction } from '@google-cloud/functions-framework';
 import axios from 'axios';
-import { Info, Position, Price } from './interfaces';
+//import { Storage } from '@google-cloud/storage';
+import { Info, Position, Price, NordnetData } from './interfaces';
 
-export const updateSharevilleData: HttpFunction = (_: Request, res: Response) => {
+//const storage = new Storage({ keyFile: 'key.json' });
+
+export const updateNordnetData: HttpFunction = (_: Request, res: Response) => {
   nordnetLogin()
     .then((session_id) =>
       Promise.all([getIndexInfo(session_id), getIndexPerformance(session_id), getFundInfo(), getFundPerformance(), getFundPositions()]).then(
         ([indexInfo, indexPerformance, fundInfo, fundPerformance, fundPositions]) => {
-          res.status(200).send({
+          const nordnetData: NordnetData = {
             indexInfo,
             indexPerformance,
             fundInfo,
             fundPerformance,
             fundPositions,
-          });
+          };
+
+          //storage.bucket('data').file('nordnet.json').save(JSON.stringify(nordnetData), { public: true });
+          console.log('Updated data from Nordnet.');
+          res.status(200).send(nordnetData);
         },
       ),
     )
     .catch((error) => {
-      // TODO: Log error
-      console.log(error);
+      console.error(error);
       res.sendStatus(500);
     });
 };

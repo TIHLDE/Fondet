@@ -1,2 +1,2 @@
-export * from './shareville';
+export * from './nordnet';
 export * from './googleSheets';

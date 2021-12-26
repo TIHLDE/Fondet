@@ -1,3 +1,9 @@
+export interface SheetsData {
+  previousApplications: Application[];
+  currentMembers: Member[];
+  previousMembers: Record<string, Member[]>;
+}
+
 export interface Application {
   applicant: string;
   purpose: string;

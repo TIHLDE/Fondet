@@ -1,3 +1,11 @@
+export interface NordnetData {
+  indexInfo: Info;
+  indexPerformance: Price[];
+  fundInfo: Info;
+  fundPerformance: Price[];
+  fundPositions: Position[];
+}
+
 export interface Price {
   timestamp: number;
   price: number;
