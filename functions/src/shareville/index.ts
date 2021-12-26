@@ -1,1 +1,1 @@
-export * from "./shareville";
+export * from './shareville';

@@ -5,6 +5,7 @@
   "scripts": {
     "serve": "tsc && node build/run.local.js",
     "build": "tsc",
+    "format": "eslint --fix src --ext .js,.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
