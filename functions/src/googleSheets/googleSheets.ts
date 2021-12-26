@@ -5,12 +5,11 @@ import { GoogleSpreadsheet } from 'google-spreadsheet';
 import groupBy from '../util/groupBy';
 import { Application, Member, SheetsData } from './interfaces';
 
-const doc = new GoogleSpreadsheet(process.env.SHEET_ID);
-doc.useApiKey(process.env.SHEETS_API_KEY ?? '');
-
 //const storage = new Storage({ keyFile: 'key.json' });
 
 export const updateSheetsData: HttpFunction = async (_: Request, res: Response) => {
+  const doc = new GoogleSpreadsheet(process.env.SHEET_ID);
+  doc.useApiKey(process.env.SHEETS_API_KEY ?? '');
   await doc.loadInfo();
 
   Promise.all([getPreviousApplications(doc), getCurrentMembers(doc), getPreviousMembers(doc)])
