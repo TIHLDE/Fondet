@@ -1,10 +1,11 @@
 import { Request, Response } from 'express';
 import { HttpFunction } from '@google-cloud/functions-framework';
 import axios from 'axios';
-//import { Storage } from '@google-cloud/storage';
+import { Storage } from '@google-cloud/storage';
 import { Info, Position, Price, NordnetData } from './interfaces';
 
-//const storage = new Storage({ keyFile: 'key.json' });
+const storage = new Storage({ keyFilename: 'key.json' });
+//const storage = new Storage();
 
 export const updateNordnetData: HttpFunction = (_: Request, res: Response) => {
   nordnetLogin()
@@ -19,9 +20,14 @@ export const updateNordnetData: HttpFunction = (_: Request, res: Response) => {
             fundPositions,
           };
 
-          //storage.bucket('data').file('nordnet.json').save(JSON.stringify(nordnetData), { public: true });
-          console.log('Updated data from Nordnet.');
-          res.status(200).send(nordnetData);
+          return storage
+            .bucket('tihlde-fondet-database')
+            .file('nordnet.json')
+            .save(JSON.stringify(nordnetData), { public: true })
+            .then(() => {
+              console.log('Updated data from Nordnet.');
+              res.status(200).send(nordnetData);
+            });
         },
       ),
     )
@@ -49,8 +55,8 @@ async function getIndexPerformance(session_id: string): Promise<Price[]> {
       Cookie: `NOW=${session_id}`,
     },
     params: {
-      from: `${today.getFullYear() - 5}-${today.getMonth()}-${today.getDate()}`,
-      to: `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`,
+      from: `${today.getFullYear() - 5}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`,
+      to: `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`,
     },
   });
 

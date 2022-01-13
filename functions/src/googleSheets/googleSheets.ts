@@ -1,11 +1,12 @@
-//import { Storage } from '@google-cloud/storage';
+import { Storage } from '@google-cloud/storage';
 import { Request, Response } from 'express';
 import { HttpFunction } from '@google-cloud/functions-framework';
 import { GoogleSpreadsheet } from 'google-spreadsheet';
 import groupBy from '../util/groupBy';
 import { Application, Member, SheetsData } from './interfaces';
 
-//const storage = new Storage({ keyFile: 'key.json' });
+const storage = new Storage({ keyFile: 'key.json' });
+//const storage = new Storage();
 
 export const updateSheetsData: HttpFunction = async (_: Request, res: Response) => {
   const doc = new GoogleSpreadsheet(process.env.SHEET_ID);
@@ -20,7 +21,7 @@ export const updateSheetsData: HttpFunction = async (_: Request, res: Response) 
         previousMembers: Object.fromEntries(previousMembers),
       };
 
-      //storage.bucket('data').file('sheets.json').save(JSON.stringify(sheetsData), { public: true });
+      storage.bucket('tihlde-fondet-database ').file('sheets.json').save(JSON.stringify(sheetsData), { public: true });
       console.log('Updated data from Google Sheets.');
       res.status(200).send(sheetsData);
     })
