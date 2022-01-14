@@ -14,7 +14,7 @@ class SheetsResource extends Resource<SheetsData> {
 class NordnetResource extends Resource<NordnetData> {
   protected async fetch(): Promise<NordnetData> {
     const { data }: { data: NordnetData } = await axios.get(
-      'https://firebasestorage.googleapis.com/v0/b/fondet.appspot.com/o/database%2Fnordnet.json?alt=media',
+      'https://firebasestorage.googleapis.com/v0/b/fondet.appspot.com/o/database%2Fnordnet.json?alt=media&token=6f7eb2d1-541a-4921-a959-1a23b69390fd',
     );
     return data;
   }
