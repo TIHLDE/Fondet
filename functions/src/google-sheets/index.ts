@@ -5,11 +5,15 @@ import groupBy from '../util/groupBy';
 import { Application, Member, SheetsData } from './interfaces';
 
 const sheet_id = functions.config().google_sheets.sheet_id;
-const api_key = functions.config().google_sheets.api_key;
+const sa_client_email = functions.config().google_sheets.sa_client_email;
+const sa_private_key = functions.config().google_sheets.sa_private_key;
 
 export const updateSheetsData = functions.https.onRequest(async (_, res) => {
   const doc = new GoogleSpreadsheet(sheet_id);
-  doc.useApiKey(api_key);
+  doc.useServiceAccountAuth({
+    client_email: sa_client_email,
+    private_key: sa_private_key,
+  });
   await doc.loadInfo();
 
   Promise.all([getPreviousApplications(doc), getCurrentMembers(doc), getPreviousMembers(doc)])
