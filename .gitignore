@@ -5,3 +5,6 @@ node_modules
 dist
 build
 .env*
+*.log
+.runtimeconfig.json
+functions/lib
