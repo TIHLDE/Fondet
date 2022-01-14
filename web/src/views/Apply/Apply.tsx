@@ -3,15 +3,15 @@ import { Box, Container, Link, Skeleton, Typography } from '@mui/material';
 import PageTitle from 'components/PageTitle';
 
 // Api
-import Api, { Application } from 'api';
+import Api, { SheetsData } from 'api';
 import ApplicationCard from './components/ApplicationCard';
 
 const Apply: React.FunctionComponent = () => {
-  const [applications, setApplications] = useState<Application[]>([]);
+  const [sheets, setSheets] = useState<SheetsData>();
   const [loading, setLoading] = useState(true);
   useEffect(() => {
-    Api.PreviousApplications.get().then((apps) => {
-      setApplications(apps);
+    Api.Sheets.get().then((s) => {
+      setSheets(s);
       setLoading(false);
     });
   }, []);
@@ -58,10 +58,10 @@ const Apply: React.FunctionComponent = () => {
           Søknaden sendes til <Link href='mailto:fondet@tihlde.org'>fondet@tihlde.org</Link>.
         </Typography>
         <Typography variant='h2'>Tidligere søknader</Typography>
-        {!loading ? (
-          applications.length > 0 ? (
+        {!loading && sheets ? (
+          sheets.previousApplications.length > 0 ? (
             <div>
-              {applications.map((application, i) => (
+              {sheets.previousApplications.map((application, i) => (
                 <ApplicationCard key={i} application={application} />
               ))}
             </div>

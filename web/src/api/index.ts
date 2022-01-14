@@ -1,68 +1,28 @@
-import { GoogleSpreadsheet } from 'google-spreadsheet';
+import axios from 'axios';
+import Resource from './resource';
+import { NordnetData, SheetsData } from './interfaces';
 
-import groupBy from 'utils/groupBy';
-
-import { Application, Member } from './interfaces';
-import SheetResource from './sheet-resource';
-
-const doc = new GoogleSpreadsheet('1u6bBCsJAUlSKctGSSM26biK9-IQ8Lvf8vrzBJRsunGQ');
-doc.useApiKey('AIzaSyBgmnwf2-FfY_6OfddaZPyqz0c4jkJ8Eas');
-
-class PreviousApplicationsResource extends SheetResource<Application[]> {
-  protected async fetch(): Promise<Application[]> {
-    const rows = await this.doc.sheetsByTitle['Søknader'].getRows();
-
-    return rows
-      .filter((row) => row['Synlig'])
-      .map((row) => ({
-        applicant: row['Søker'],
-        purpose: row['Formål'],
-        dateReceived: row['Dato mottatt'],
-        approved: row['Resultat'],
-        requestedSum: row['Sum søkt'],
-        approvedSum: row['Sum innvilget'],
-        applicationUrl: row['Url søknad'],
-        decisionUrl: row['Url beslutningsgrunnlag'],
-      }))
-      .reverse();
+class SheetsResource extends Resource<SheetsData> {
+  protected async fetch(): Promise<SheetsData> {
+    const { data }: { data: SheetsData } = await axios.get(
+      'https://firebasestorage.googleapis.com/v0/b/fondet.appspot.com/o/database%2Fsheet.json?alt=media&token=368f5be7-1f6d-4dbd-8274-d257b2d42ad5',
+    );
+    return data;
   }
 }
 
-class CurrentMembersResource extends SheetResource<Member[]> {
-  protected async fetch(): Promise<Member[]> {
-    const rows = await this.doc.sheetsByTitle['Medlemmer'].getRows();
-
-    return rows
-      .filter((row) => row['Synlig'])
-      .map((row) => ({
-        name: row['Navn'],
-        title: row['Tittel'],
-        imageUrl: row['Url bilde'],
-      }));
-  }
-}
-
-class PreviousMembersResource extends SheetResource<Map<string, Member[]>> {
-  protected async fetch(): Promise<Map<string, Member[]>> {
-    const rows = await this.doc.sheetsByTitle['Tidligere medlemmer'].getRows();
-
-    const previousMembersList = rows
-      .filter((row) => row['Synlig'])
-      .map((row) => ({
-        name: row['Navn'],
-        title: row['Tittel'],
-        imageUrl: row['Url bilde'],
-        year: row['År'],
-      }));
-
-    return new Map([...groupBy(previousMembersList, (m: Member) => m.year ?? 'Ingen år')].reverse());
+class NordnetResource extends Resource<NordnetData> {
+  protected async fetch(): Promise<NordnetData> {
+    const { data }: { data: NordnetData } = await axios.get(
+      'https://firebasestorage.googleapis.com/v0/b/fondet.appspot.com/o/database%2Fnordnet.json?alt=media',
+    );
+    return data;
   }
 }
 
 export * from './interfaces';
 
 export default {
-  PreviousApplications: new PreviousApplicationsResource(doc),
-  CurrentMembers: new CurrentMembersResource(doc),
-  PreviousMembers: new PreviousMembersResource(doc),
+  Sheets: new SheetsResource(),
+  Nordnet: new NordnetResource(),
 };

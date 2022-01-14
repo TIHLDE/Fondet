@@ -2,20 +2,18 @@ import React, { useEffect, useState } from 'react';
 
 import { Box, Container, Skeleton, Typography } from '@mui/material';
 import PageTitle from 'components/PageTitle';
-import Api, { Member } from 'api';
+import Api, { SheetsData } from 'api';
 import BigAvatar from './components/BigAvatar';
 import PreviousYear from './components/PreviousYear';
 import BigSkeleton from './components/BigSkeleton';
 
 const Group: React.FunctionComponent = () => {
-  const [currentMembers, setCurrentMembers] = useState<Member[]>([]);
-  const [previousMembers, setPreviousMembers] = useState<Map<string, Member[]>>(new Map());
+  const [sheets, setSheets] = useState<SheetsData>();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    Promise.all([Api.CurrentMembers.get(), Api.PreviousMembers.get()]).then(([cM, pM]) => {
-      setCurrentMembers(cM);
-      setPreviousMembers(pM);
+    Api.Sheets.get().then((s) => {
+      setSheets(s);
       setLoading(false);
     });
   }, []);
@@ -29,11 +27,11 @@ const Group: React.FunctionComponent = () => {
             display: 'grid',
             gap: { xs: 4, lg: 6 },
             gridTemplateColumns:
-              currentMembers.length === 5 || loading
+              sheets?.currentMembers.length === 5 || loading
                 ? { sx: '1fr', sm: 'repeat(4, 1fr)', md: 'repeat(6, 1fr)' }
                 : { sx: '1fr', sm: '1fr 1fr', md: '1fr 1fr 1fr' },
             gridTemplateAreas:
-              currentMembers.length === 5 || loading
+              sheets?.currentMembers.length === 5 || loading
                 ? {
                     xs: '',
                     sm: `"a1 a1 a2 a2"
@@ -46,16 +44,16 @@ const Group: React.FunctionComponent = () => {
             mb: 10,
           }}>
           {!loading
-            ? currentMembers.map((member, i) => (
-                <BigAvatar key={i} member={member} sx={{ gridArea: currentMembers.length === 5 ? { xs: '', sm: `a${i + 1}` } : {} }} />
+            ? sheets?.currentMembers.map((member, i) => (
+                <BigAvatar key={i} member={member} sx={{ gridArea: sheets.currentMembers.length === 5 ? { xs: '', sm: `a${i + 1}` } : {} }} />
               ))
             : [...Array(5).keys()].map((i) => <BigSkeleton key={i} sx={{ gridArea: { xs: '', sm: `a${i + 1}` } }} />)}
         </Box>
         <Typography variant='h2'>Tidligere medlemmer</Typography>
-        {!loading ? (
-          previousMembers.size > 0 ? (
+        {!loading && sheets ? (
+          Object.keys(sheets.previousMembers).length > 0 ? (
             <div>
-              {Array.from(previousMembers).map(([year, members], i) => (
+              {Object.entries(sheets.previousMembers).map(([year, members], i) => (
                 <PreviousYear key={i} year={year} members={members} />
               ))}
             </div>

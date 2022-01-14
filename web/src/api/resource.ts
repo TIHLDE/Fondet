@@ -1,4 +1,4 @@
-export default abstract class BaseResource<T> {
+export default abstract class Resource<T> {
   protected data: T | undefined;
 
   constructor() {
