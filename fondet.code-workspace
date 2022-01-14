@@ -12,7 +12,8 @@
       "**/.git": true,
       "**/node_modules": true,
       "**/build": true,
-      "**/coverage": true
+      "**/coverage": true,
+      "**/lib": true
     },
     "eslint.validate": [
       "html",
@@ -20,6 +21,10 @@
       "javascriptreact",
       "typescript",
       "typescriptreact"
+    ],
+    "eslint.workingDirectories": [
+      "./functions",
+      "./web",
     ],
     "editor.codeActionsOnSave": { "source.fixAll.eslint": true },
     "files.eol": "\n",
