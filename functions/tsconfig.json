@@ -1,15 +1,15 @@
 {
   "compilerOptions": {
-    "lib": ["es2021"],
-    "target": "es2021",
     "module": "commonjs",
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "skipLibCheck": true,
-    "esModuleInterop": true,
-    "moduleResolution": "node",
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "outDir": "lib",
     "sourceMap": true,
-    "outDir": "build",
+    "strict": true,
+    "target": "es2017"
   },
-  "include": ["src"]
+  "compileOnSave": true,
+  "include": [
+    "src"
+  ]
 }

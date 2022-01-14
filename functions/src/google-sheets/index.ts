@@ -1,16 +1,15 @@
-import { Storage } from '@google-cloud/storage';
-import { Request, Response } from 'express';
-import { HttpFunction } from '@google-cloud/functions-framework';
+import * as functions from 'firebase-functions';
+import * as admin from 'firebase-admin';
 import { GoogleSpreadsheet } from 'google-spreadsheet';
 import groupBy from '../util/groupBy';
 import { Application, Member, SheetsData } from './interfaces';
 
-const storage = new Storage({ keyFile: 'key.json' });
-//const storage = new Storage();
+const sheet_id = functions.config().google_sheets.sheet_id;
+const api_key = functions.config().google_sheets.api_key;
 
-export const updateSheetsData: HttpFunction = async (_: Request, res: Response) => {
-  const doc = new GoogleSpreadsheet(process.env.SHEET_ID);
-  doc.useApiKey(process.env.SHEETS_API_KEY ?? '');
+export const updateSheetsData = functions.https.onRequest(async (_, res) => {
+  const doc = new GoogleSpreadsheet(sheet_id);
+  doc.useApiKey(api_key);
   await doc.loadInfo();
 
   Promise.all([getPreviousApplications(doc), getCurrentMembers(doc), getPreviousMembers(doc)])
@@ -21,15 +20,24 @@ export const updateSheetsData: HttpFunction = async (_: Request, res: Response) 
         previousMembers: Object.fromEntries(previousMembers),
       };
 
-      storage.bucket('tihlde-fondet-database ').file('sheets.json').save(JSON.stringify(sheetsData), { public: true });
-      console.log('Updated data from Google Sheets.');
-      res.status(200).send(sheetsData);
+      return admin
+        .storage()
+        .bucket()
+        .file('database/sheet.json')
+        .save(JSON.stringify(sheetsData), {
+          gzip: true,
+          contentType: 'application/json',
+        })
+        .then(() => {
+          functions.logger.info('Updated data from Google Sheets.');
+          res.sendStatus(204);
+        });
     })
     .catch((error) => {
-      console.error(error);
+      functions.logger.error(error);
       res.sendStatus(500);
     });
-};
+});
 
 async function getPreviousApplications(doc: GoogleSpreadsheet): Promise<Application[]> {
   const rows = await doc.sheetsByTitle['Søknader'].getRows();
