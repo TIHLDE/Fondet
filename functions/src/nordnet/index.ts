@@ -11,7 +11,8 @@ const shareville_id = functions.config().nordnet.shareville_id;
 export const updateNordnetData = functions.pubsub
   .schedule('0 23 * * 1-5')
   .timeZone('Europe/Oslo')
-  .onRun(() =>
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  .onRun((context) =>
     nordnetLogin()
       .then((session_id) =>
         Promise.all([getIndexInfo(session_id), getIndexPerformance(session_id), getFundInfo(), getFundPerformance(), getFundPositions()]).then(
