@@ -1,0 +1,20 @@
+name: Push Apps Script
+on:
+  push:
+    branches:
+      - main
+jobs:
+  push_apps_script:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: daikikatsuragawa/clasp-action@v1.1.0
+        with:
+          accessToken: ${{ secrets.CLASP_ACCESS_TOKEN }}
+          idToken: ${{ secrets.CLASP_ID_TOKEN }}
+          refreshToken: ${{ secrets.CLASP_REFRESH_TOKEN }}
+          clientId: ${{ secrets.CLASP_CLIENT_ID }}     
+          clientSecret: ${{ secrets.CLASP_CLIENT_SECRET }}
+          scriptId: ${{ secrets.CLASP_SCRIPT_ID }}
+          rootDir: 'appsscript'
+          command: 'push'
