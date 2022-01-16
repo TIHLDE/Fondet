@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <base target="_top">
+  <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">
+</head>
+<script>
+  function getFile() {
+    document.getElementById("uploadButton").disabled = true;
+    const file = document.getElementById('file').files[0];
+    const fr = new FileReader();
+    fr.onload = (e) => {
+      const data = e.target.result.split(",");
+      const obj = { name: file.name, type: data[0].match(/:(\w.+);/)[1], data: data[1] };
+      google.script.run.withSuccessHandler((id) => {
+        google.script.host.close();
+      }).uploadFile(obj);
+    }
+    fr.readAsDataURL(file);
+  }
+</script>
+
+<body>
+  <input type="file" name="upload" id="file" />
+  <input type='button' id="uploadButton" value='Lagre' onclick='getFile()' class="action">
+</body>
+
+</html>
