@@ -8,13 +8,13 @@ const About: React.FunctionComponent = () => (
     <Container>
       <Typography variant='body1'>
         TIHLDE-fondet er et organ underlagt generalforsamlingen og er dermed sidestilt Hovedstyret. Dette er for at Hovedstyret ikke skal kunne påvirke fondets
-        beslutninger.
+        beslutninger. Fondet skal komplementere økonomien til TIHLDE ved å gi muligheten til å gjøre investeringer som ikke er en del av TIHLDEs budsjett.
       </Typography>
       <Typography variant='h2'>Formål</Typography>
       <Typography variant='body1'>
         Formålet til TIHLDE-fondet er å forvalte oppsparte midler på en hensiktsmessig måte og i TIHLDEs beste interesse gjennom å investere i ulike aksjefond.
         Fondet vil også ta innspill fra TIHLDEs medlemmer om forslag til innkjøp som ikke blir budsjettert. Dette kan være alt fra små investeringer som en ny
-        kaffetrakter til større investeringer som en egen TIHLDE kjeller.
+        kaffetrakter til større investeringer som en egen TIHLDE-kjeller.
       </Typography>
       <Typography variant='h2'>Sammensetning</Typography>
       <Typography variant='body1' component='div'>

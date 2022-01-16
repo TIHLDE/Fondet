@@ -4,9 +4,10 @@ import React from 'react';
 const Home: React.FunctionComponent = () => (
   <>
     <Container>
+      <Box height={64} />
+      <Typography variant='h2'>Fondets avkastning</Typography>
       <Box
         sx={{
-          mt: 16,
           width: '100%',
           aspectRatio: '16/9',
           border: '0.5px solid white',
@@ -16,12 +17,13 @@ const Home: React.FunctionComponent = () => (
           overflow: 'hidden',
         }}>
         <Typography variant='body1' textAlign='center' sx={{ p: 5 }}>
-          Her kommer oversikt over avkastningen når hs bestemmer seg for å gi oss pengene.
+          Når fondet får sin første overføring vises avkastningen her.
         </Typography>
       </Box>
+      <Box height={64} />
+      <Typography variant='h2'>Fondets sammensetning</Typography>
       <Box
         sx={{
-          mt: 8,
           width: '100%',
           aspectRatio: '16/9',
           border: '0.5px solid white',
@@ -31,10 +33,10 @@ const Home: React.FunctionComponent = () => (
           overflow: 'hidden',
         }}>
         <Typography variant='body1' textAlign='center' sx={{ p: 5 }}>
-          Her kommer oversikt over fondets sammensetning når hs bestemmer seg for å gi oss pengene.
+          Når fondet får sin første overføring vises sammensetningen her.
         </Typography>
       </Box>
-      <Box height={150} />
+      <Box height={128} />
     </Container>
   </>
 );

@@ -22,14 +22,13 @@ const Apply: React.FunctionComponent = () => {
       <Container>
         <Typography variant='h2'>Før du søker</Typography>
         <Typography variant='body1'>
-          Det finnes et utall forskjellige støtteordninger for studentaktiviteter, og vi ønsker ikke at TIHLDE-fondet skal være første i rekken når du søker om
-          støtte. Vi ber deg derfor sette deg inn i hvilke andre støtteordninger som finnes, og søke der det kan være muligheter. Et sted å begynne kan være å
-          se igjennom{' '}
+          Det finnes et utall forskjellige støtteordninger som administreres av ulike organisasjoner. Vi ber deg derfor sette deg inn i hvilke andre
+          støtteordninger som finnes, og søke der det kan være muligheter før du søker støtte fra TIHLDE-fondet. Et sted å begynne kan være å se igjennom{' '}
           <Link href='https://old.online.ntnu.no/wiki/online/info/sosialt-og-okonomisk/linjeforeninger/#wiki-toc-ressurser' target='_blank'>
             Online-wikien
           </Link>{' '}
           sin oversikt over ulike støtteordninger. Dersom du ikke får støtte andre steder, eller ditt initiativ ikke rimelig kan dekkes av noen andre
-          støtteordninger er det bare å søke hos oss.
+          støtteordninger er du velkommen til å søke støtte fra oss.
         </Typography>
         <Typography variant='h2'>Hvordan søke om støtte</Typography>
         <Typography variant='body1' component='div'>
