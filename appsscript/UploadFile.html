@@ -1,29 +1,42 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <base target="_top" />
+    <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css" />
+  </head>
+  <script>
+    // Test if google.script.run works
+    google.script.run
+      .withFailureHandler(() => {
+        document.getElementById('account_error').style.display = '';
+      })
+      .testError();
 
-<head>
-  <base target="_top">
-  <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">
-</head>
-<script>
-  function getFile() {
-    document.getElementById("uploadButton").disabled = true;
-    const file = document.getElementById('file').files[0];
-    const fr = new FileReader();
-    fr.onload = (e) => {
-      const data = e.target.result.split(",");
-      const obj = { name: file.name, type: data[0].match(/:(\w.+);/)[1], data: data[1] };
-      google.script.run.withSuccessHandler((id) => {
-        google.script.host.close();
-      }).uploadFile(obj);
+    function getFile() {
+      document.getElementById('uploadButton').disabled = true;
+      const file = document.getElementById('file').files[0];
+      const fr = new FileReader();
+      fr.onload = (e) => {
+        const data = e.target.result.split(',');
+        const obj = { name: file.name, type: data[0].match(/:(\w.+);/)[1], data: data[1] };
+        google.script.run
+          .withSuccessHandler(() => {
+            google.script.host.close();
+          })
+          .uploadFile(obj);
+      };
+      fr.readAsDataURL(file);
     }
-    fr.readAsDataURL(file);
-  }
-</script>
+  </script>
 
-<body>
-  <input type="file" name="upload" id="file" />
-  <input type='button' id="uploadButton" value='Lagre' onclick='getFile()' class="action">
-</body>
-
+  <body>
+    <input type="file" name="upload" id="file" />
+    <input type="button" id="uploadButton" value="Lagre" onclick="getFile()" class="action" />
+    <p id="account_error" style="color: red; display: none">
+      Du er logget inn med flere Google brukere, noe som Apps Script ikke støtter. Prøv å logge ut av alle andre Google brukere eller åpne dokumentet i et
+      inkognito-vindu.
+      <a href="https://developers.google.com/apps-script/guides/projects#fix_issues_with_multiple_google_accounts">Dette er et kjent problem</a>. Sjekk status
+      for feilen <a href="https://issuetracker.google.com/issues/69270374">her</a>.
+    </p>
+  </body>
 </html>
