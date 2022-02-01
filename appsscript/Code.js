@@ -1,7 +1,11 @@
 var api_key = PropertiesService.getScriptProperties().getProperty('APPS_SCRIPT_KEY');
 
 function onOpen(e) {
-  SpreadsheetApp.getUi().createAddonMenu().addItem('Publiser', 'saveChanges').addItem('Last opp fil', 'uploadFileDialog').addToUi();
+  SpreadsheetApp.getUi()
+  .createMenu()
+  .addItem('Publiser', 'saveChanges')
+  .addItem('Last opp fil', 'uploadFileDialog')
+  .addToUi();
 }
 
 function saveChanges() {
