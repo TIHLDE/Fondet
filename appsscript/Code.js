@@ -2,7 +2,7 @@ var api_key = PropertiesService.getScriptProperties().getProperty('APPS_SCRIPT_K
 
 function onOpen(e) {
   SpreadsheetApp.getUi()
-  .createMenu()
+  .createMenu("TIHLDE-Fondet")
   .addItem('Publiser', 'saveChanges')
   .addItem('Last opp fil', 'uploadFileDialog')
   .addToUi();
