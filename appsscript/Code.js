@@ -1,3 +1,7 @@
+/**
+ * @OnlyCurrentDoc
+ */
+
 var api_key = PropertiesService.getScriptProperties().getProperty('APPS_SCRIPT_KEY');
 
 function onOpen(e) {

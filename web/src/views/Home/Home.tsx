@@ -17,7 +17,7 @@ const Home: React.FunctionComponent = () => (
           overflow: 'hidden',
         }}>
         <Typography variant='body1' textAlign='center' sx={{ p: 5 }}>
-          Når fondet får sin første overføring vises avkastningen her.
+          Snart vil fondets avkastning vises her.
         </Typography>
       </Box>
       <Box height={64} />
@@ -33,7 +33,7 @@ const Home: React.FunctionComponent = () => (
           overflow: 'hidden',
         }}>
         <Typography variant='body1' textAlign='center' sx={{ p: 5 }}>
-          Når fondet får sin første overføring vises sammensetningen her.
+          Snart vil fondets sammensetning vises her.
         </Typography>
       </Box>
       <Box height={128} />
