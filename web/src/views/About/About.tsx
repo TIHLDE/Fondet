@@ -57,6 +57,16 @@ const About: React.FunctionComponent = () => (
           </li>
         </ul>
       </Typography>
+      <Typography variant='h2'>Årsrapporter</Typography>
+      <Typography variant='body1' component='div'>
+        <ul>
+          <li>
+            <Link href='https://drive.google.com/file/d/1RGZYar1v81BYpluXlf0N1iicuZ-UKpf1/view?usp=sharing' target='_blank'>
+              Årsrapport 2021
+            </Link>
+          </li>
+        </ul>
+      </Typography>
       <Box height={150} />
     </Container>
   </>
