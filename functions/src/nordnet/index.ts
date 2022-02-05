@@ -70,7 +70,7 @@ async function getIndexPerformance(session_id: string): Promise<Price[]> {
 
   const firstPrice = index.prices[0].last;
   const prices: Price[] = index.prices.map(({ time, last }: { time: number; last: number }) => ({
-    timestamp: time / 1000,
+    timestamp: time,
     price: last / firstPrice,
   }));
 
@@ -109,7 +109,7 @@ async function getFundPerformance(): Promise<Price[]> {
 
   const firstPrice = y5[0].value;
   const prices: Price[] = y5.map(({ date, value }: { date: string; value: number }) => ({
-    timestamp: new Date(date).getTime() / 1000,
+    timestamp: new Date(date).getTime(),
     price: value / firstPrice,
   }));
 

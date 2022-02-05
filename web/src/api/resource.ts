@@ -1,13 +1,13 @@
 export default abstract class Resource<T> {
   protected data: T | undefined;
-
-  constructor() {
-    this.data = undefined;
-  }
+  protected promise: Promise<T> | undefined;
 
   public async get(): Promise<T> {
+    if (this.promise === undefined) {
+      this.promise = this.fetch();
+    }
     if (this.data === undefined) {
-      this.data = await this.fetch();
+      this.data = await this.promise;
     }
     return this.data;
   }
