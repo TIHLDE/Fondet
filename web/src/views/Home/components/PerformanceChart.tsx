@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -19,9 +19,13 @@ import {
   LineControllerChartOptions,
 } from 'chart.js';
 import 'chartjs-adapter-moment';
+import moment from 'moment';
 import { Line } from 'react-chartjs-2';
 import { NordnetData, Price } from 'api';
 import { _DeepPartialObject } from 'chart.js/types/utils';
+import { Box, Button, ButtonGroup } from '@mui/material';
+
+moment.locale('nb');
 
 ChartJS.register(CategoryScale, LinearScale, TimeScale, TimeSeriesScale, PointElement, LineElement, Title, Tooltip, Legend);
 
@@ -81,7 +85,20 @@ function formatData(nordnetData: NordnetData, timescale: timescales): [number[],
 }
 
 const PerformanceChart: React.FC<PerformanceChartProps> = ({ nordnetData }) => {
-  const [labels, fundData, indexData] = useMemo(() => formatData(nordnetData, timescales.ytd), []);
+  const dataTime = 86400000 * nordnetData.fundPerformance.length;
+
+  const timescaleSelections = [
+    { scale: timescales.m1, name: '1 måned' },
+    ...(dataTime >= timescales.m1 ? [{ scale: timescales.m3, name: '3 måneder' }] : []),
+    ...(dataTime >= timescales.m3 ? [{ scale: timescales.m6, name: '6 måneder' }] : []),
+    { scale: timescales.ytd, name: 'I år' },
+    ...(dataTime >= timescales.m6 ? [{ scale: timescales.y1, name: '1 år' }] : []),
+    ...(dataTime >= timescales.y1 ? [{ scale: timescales.y3, name: '3 år' }] : []),
+    ...(dataTime >= timescales.y3 ? [{ scale: timescales.y5, name: '5 år' }] : []),
+  ];
+  const [timescale, setTimescale] = useState<timescales>(timescales.ytd);
+
+  const [labels, fundData, indexData] = useMemo(() => formatData(nordnetData, timescale), [timescale]);
 
   const data: ChartData<'line'> = {
     labels: labels,
@@ -89,17 +106,21 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({ nordnetData }) => {
       {
         label: 'TIHLDE-Fondet',
         data: fundData,
-        borderColor: 'lightgreen',
+        borderColor: 'rgb(144, 238, 144)',
+        backgroundColor: 'rgba(144, 238, 144, 0.5)',
         normalized: true,
       },
       {
         label: 'Hovedindeksen (OSEBX)',
         data: indexData,
-        borderColor: 'lightblue',
+        borderColor: 'rgb(173, 216, 230)',
+        backgroundColor: 'rgba(173, 216, 230, 0.5)',
         normalized: true,
       },
     ],
   };
+
+  const delay = 500.0 / labels.length;
 
   const options: _DeepPartialObject<
     CoreChartOptions<'line'> &
@@ -113,12 +134,18 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({ nordnetData }) => {
     plugins: {
       legend: {
         position: 'top' as const,
+        onClick: () => {},
       },
       tooltip: {
         callbacks: {
           title: (items) => {
             const date = new Date(items[0].parsed.x);
             return `${date.getDate()}. ${months[date.getMonth()]} ${date.getFullYear()}`;
+          },
+          label: (context) => {
+            const label = context.dataset.label;
+            const value = context.parsed.y;
+            return `${label}: ${(value * 100).toFixed(1)}%`;
           },
         },
       },
@@ -127,14 +154,28 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({ nordnetData }) => {
       line: {
         borderCapStyle: 'round',
         borderJoinStyle: 'round',
+        borderWidth: 2,
       },
       point: {
         radius: 0,
+        hoverRadius: 5,
+        hoverBorderWidth: 2,
+        hitRadius: 0,
       },
     },
     interaction: {
       intersect: false,
       mode: 'index',
+    },
+    animations: {
+      x: {
+        delay: (context) => context.dataIndex * delay,
+        from: (ctx) => ctx.chart.scales.x.getPixelForValue((ctx.chart.data.labels as number[])[ctx.dataIndex]),
+      },
+      y: {
+        delay: (context) => context.dataIndex * delay,
+        from: (ctx) => ctx.chart.canvas.height,
+      },
     },
     color: 'white',
     borderColor: 'white',
@@ -164,7 +205,20 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({ nordnetData }) => {
     },
   };
 
-  return <Line options={options} data={data} />;
+  return (
+    <div>
+      <Line options={options} data={data} />
+      <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+        <ButtonGroup color='info' sx={{ mt: 2 }}>
+          {timescaleSelections.map(({ scale, name }) => (
+            <Button key={name} variant={scale === timescale ? 'contained' : 'outlined'} onClick={() => setTimescale(scale)}>
+              {name}
+            </Button>
+          ))}
+        </ButtonGroup>
+      </Box>
+    </div>
+  );
 };
 
 export default PerformanceChart;
