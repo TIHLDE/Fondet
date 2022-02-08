@@ -1,7 +1,7 @@
 export interface NordnetData {
-  indexInfo: Info;
+  //indexInfo: Info;
   indexPerformance: Price[];
-  fundInfo: Info;
+  //fundInfo: Info;
   fundPerformance: Price[];
   fundPositions: Position[];
 }

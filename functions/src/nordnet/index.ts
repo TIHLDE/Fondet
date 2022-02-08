@@ -15,12 +15,12 @@ export const updateNordnetData = functions.pubsub
   .onRun((context) =>
     nordnetLogin()
       .then((session_id) =>
-        Promise.all([getIndexInfo(session_id), getIndexPerformance(session_id), getFundInfo(), getFundPerformance(), getFundPositions()]).then(
-          ([indexInfo, indexPerformance, fundInfo, fundPerformance, fundPositions]) => {
+        Promise.all([/*getIndexInfo(session_id),*/ getIndexPerformance(session_id), /*getFundInfo(),*/ getFundPerformance(), getFundPositions()]).then(
+          ([/*indexInfo,*/ indexPerformance, /*fundInfo,*/ fundPerformance, fundPositions]) => {
             const nordnetData: NordnetData = {
-              indexInfo,
+              //indexInfo,
               indexPerformance,
-              fundInfo,
+              //fundInfo,
               fundPerformance,
               fundPositions,
             };
@@ -77,6 +77,7 @@ async function getIndexPerformance(session_id: string): Promise<Price[]> {
   return prices;
 }
 
+// Not used for now
 async function getIndexInfo(session_id: string) {
   const {
     data: { 0: r },
@@ -116,19 +117,19 @@ async function getFundPerformance(): Promise<Price[]> {
   return prices;
 }
 
+// Not used for now
 async function getFundInfo(): Promise<Info> {
   const { data: r } = await axios.get(`https://www.shareville.no/api/v1/portfolios/${shareville_id}`);
 
   const info: Info = {
     name: 'TIHLDE-Fondet',
-    td: r.st ?? 0,
-    w1: r.w1 ?? 0,
-    m1: r.m1,
-    m3: r.m3,
-    m6: r.m6,
-    ty: r.ty,
-    y1: r.y1,
-    y3: r.y3,
+    w1: r.w1 ? parseFloat(r.w1) : undefined,
+    m1: r.m1 ? parseFloat(r.m1) : undefined,
+    m3: r.m3 ? parseFloat(r.m3) : undefined,
+    m6: r.m6 ? parseFloat(r.m6) : undefined,
+    ty: r.ty ? parseFloat(r.ty) : undefined,
+    y1: r.y1 ? parseFloat(r.y1) : undefined,
+    y3: r.y3 ? parseFloat(r.y3) : undefined,
   };
 
   return info;

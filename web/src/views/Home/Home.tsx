@@ -20,7 +20,9 @@ const Home: React.FunctionComponent = () => {
     <>
       <Container>
         <Box height={64} />
-        <Typography variant='h2'>Fondets avkastning</Typography>
+        <Typography variant='h2' sx={{ mr: 15 }}>
+          Fondets avkastning
+        </Typography>
         {process.env.NODE_ENV === 'production' ? (
           <Box
             sx={{

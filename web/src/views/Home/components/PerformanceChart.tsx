@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -17,16 +17,14 @@ import {
   ScaleChartOptions,
   ElementChartOptions,
   LineControllerChartOptions,
+  Chart,
 } from 'chart.js';
-import 'chartjs-adapter-moment';
-import moment from 'moment';
+import 'chartjs-adapter-date-fns';
+import { nb } from 'date-fns/locale';
 import { Line } from 'react-chartjs-2';
 import { NordnetData, Price } from 'api';
 import { _DeepPartialObject } from 'chart.js/types/utils';
-import { Box, Button, ButtonGroup } from '@mui/material';
-
-moment.locale('nb');
-
+import { Box, Button, ButtonGroup, Typography } from '@mui/material';
 ChartJS.register(CategoryScale, LinearScale, TimeScale, TimeSeriesScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 interface PerformanceChartProps {
@@ -88,130 +86,56 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({ nordnetData }) => {
   const dataTime = 86400000 * nordnetData.fundPerformance.length;
 
   const timescaleSelections = [
-    { scale: timescales.m1, name: '1 måned' },
-    ...(dataTime >= timescales.m1 ? [{ scale: timescales.m3, name: '3 måneder' }] : []),
-    ...(dataTime >= timescales.m3 ? [{ scale: timescales.m6, name: '6 måneder' }] : []),
+    { scale: timescales.m1, name: '1 md.' },
+    ...(dataTime >= timescales.m1 ? [{ scale: timescales.m3, name: '3 md.' }] : []),
+    ...(dataTime >= timescales.m3 ? [{ scale: timescales.m6, name: '6 md.' }] : []),
     { scale: timescales.ytd, name: 'I år' },
     ...(dataTime >= timescales.m6 ? [{ scale: timescales.y1, name: '1 år' }] : []),
     ...(dataTime >= timescales.y1 ? [{ scale: timescales.y3, name: '3 år' }] : []),
     ...(dataTime >= timescales.y3 ? [{ scale: timescales.y5, name: '5 år' }] : []),
   ];
+
   const [timescale, setTimescale] = useState<timescales>(timescales.ytd);
+  const [fundReturn, setFundReturn] = useState<number>();
 
-  const [labels, fundData, indexData] = useMemo(() => formatData(nordnetData, timescale), [timescale]);
+  const chartRef = useRef<Chart<'line'>>(null);
 
-  const data: ChartData<'line'> = {
-    labels: labels,
-    datasets: [
-      {
-        label: 'TIHLDE-Fondet',
-        data: fundData,
-        borderColor: 'rgb(144, 238, 144)',
-        backgroundColor: 'rgba(144, 238, 144, 0.5)',
-        normalized: true,
-      },
-      {
-        label: 'Hovedindeksen (OSEBX)',
-        data: indexData,
-        borderColor: 'rgb(173, 216, 230)',
-        backgroundColor: 'rgba(173, 216, 230, 0.5)',
-        normalized: true,
-      },
-    ],
-  };
+  function setData(timescale: timescales) {
+    const [labels, fundData, indexData] = formatData(nordnetData, timescale);
+    const chart = chartRef.current;
+    if (chart) {
+      chart.data.labels = labels;
+      chart.data.datasets[0].data = fundData;
+      chart.data.datasets[1].data = indexData;
 
-  const delay = 500.0 / labels.length;
+      chart.stop();
+      //@ts-expect-error incorrect restriction
+      chart.update('in');
+    }
+    setFundReturn(fundData[fundData.length - 1]);
+  }
 
-  const options: _DeepPartialObject<
-    CoreChartOptions<'line'> &
-      ElementChartOptions<'line'> &
-      PluginChartOptions<'line'> &
-      DatasetChartOptions<'line'> &
-      ScaleChartOptions<'line'> &
-      LineControllerChartOptions
-  > = {
-    responsive: true,
-    plugins: {
-      legend: {
-        position: 'top' as const,
-        onClick: () => {},
-      },
-      tooltip: {
-        callbacks: {
-          title: (items) => {
-            const date = new Date(items[0].parsed.x);
-            return `${date.getDate()}. ${months[date.getMonth()]} ${date.getFullYear()}`;
-          },
-          label: (context) => {
-            const label = context.dataset.label;
-            const value = context.parsed.y;
-            return `${label}: ${(value * 100).toFixed(1)}%`;
-          },
-        },
-      },
-    },
-    elements: {
-      line: {
-        borderCapStyle: 'round',
-        borderJoinStyle: 'round',
-        borderWidth: 2,
-      },
-      point: {
-        radius: 0,
-        hoverRadius: 5,
-        hoverBorderWidth: 2,
-        hitRadius: 0,
-      },
-    },
-    interaction: {
-      intersect: false,
-      mode: 'index',
-    },
-    animations: {
-      x: {
-        delay: (context) => context.dataIndex * delay,
-        from: (ctx) => ctx.chart.scales.x.getPixelForValue((ctx.chart.data.labels as number[])[ctx.dataIndex]),
-      },
-      y: {
-        delay: (context) => context.dataIndex * delay,
-        from: (ctx) => ctx.chart.canvas.height,
-      },
-    },
-    color: 'white',
-    borderColor: 'white',
-    scales: {
-      x: {
-        type: 'time',
-        grid: {
-          display: false,
-          color: '#aaa',
-          borderColor: '#aaa',
-        },
-        ticks: {
-          color: '#aaa',
-        },
-      },
-      y: {
-        beginAtZero: true,
-        ticks: {
-          callback: (value) => `${((value as number) * 100).toFixed(1)}%`,
-          color: '#aaa',
-        },
-        grid: {
-          color: '#aaa',
-          borderColor: '#aaa',
-        },
-      },
-    },
-  };
+  useEffect(() => setData(timescale), [timescale]);
 
   return (
     <div>
-      <Line options={options} data={data} />
+      <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'end', color: '#ddd', mt: -6.8 }}>
+        <Typography variant='h2' sx={{ mt: 0, color: fundReturn ? (fundReturn > 0 ? 'lightgreen' : 'lightcoral') : '#ddd' }}>
+          {fundReturn && fundReturn > 0 ? '+' : ''}
+          {fundReturn ? `${(fundReturn * 100).toFixed(1)}%` : ''}
+        </Typography>
+      </Box>
+      <Box sx={{ width: '100%', aspectRatio: '16/9' }}>
+        <Line options={options} data={data} ref={chartRef} />
+      </Box>
       <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
         <ButtonGroup color='info' sx={{ mt: 2 }}>
           {timescaleSelections.map(({ scale, name }) => (
-            <Button key={name} variant={scale === timescale ? 'contained' : 'outlined'} onClick={() => setTimescale(scale)}>
+            <Button
+              key={name}
+              sx={{ fontSize: { xs: 12, sm: 13, md: 14 }, px: { xs: 1, sm: 1.3, md: 2 } }}
+              variant={scale === timescale ? 'contained' : 'outlined'}
+              onClick={() => setTimescale(scale)}>
               {name}
             </Button>
           ))}
@@ -219,6 +143,128 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({ nordnetData }) => {
       </Box>
     </div>
   );
+};
+
+const data: ChartData<'line'> = {
+  labels: [],
+  datasets: [
+    {
+      label: 'TIHLDE-Fondet',
+      data: [],
+      borderColor: 'rgb(144, 238, 144)',
+      backgroundColor: 'rgba(144, 238, 144, 0.5)',
+      normalized: true,
+    },
+    {
+      label: 'Hovedindeksen (OSEBX)',
+      data: [],
+      borderColor: 'rgb(173, 216, 230)',
+      backgroundColor: 'rgba(173, 216, 230, 0.5)',
+      normalized: true,
+    },
+  ],
+};
+
+const duration = 300;
+const delay = 1000;
+
+const options: _DeepPartialObject<
+  CoreChartOptions<'line'> &
+    ElementChartOptions<'line'> &
+    PluginChartOptions<'line'> &
+    DatasetChartOptions<'line'> &
+    ScaleChartOptions<'line'> &
+    LineControllerChartOptions
+> = {
+  responsive: true,
+  plugins: {
+    legend: {
+      position: 'bottom' as const,
+    },
+    tooltip: {
+      callbacks: {
+        title: (items) => {
+          const date = new Date(items[0].parsed.x);
+          return `${date.getDate()}. ${months[date.getMonth()]} ${date.getFullYear()}`;
+        },
+        label: (ctx) => {
+          const label = ctx.dataset.label;
+          const value = ctx.parsed.y;
+          return `${label}: ${(value * 100).toFixed(1)}%`;
+        },
+      },
+    },
+  },
+  elements: {
+    line: {
+      borderCapStyle: 'round',
+      borderJoinStyle: 'round',
+      borderWidth: (ctx) => (ctx.chart.canvas.width > 1000 ? 2 : 1),
+    },
+    point: {
+      radius: 0,
+      hoverRadius: 5,
+      hoverBorderWidth: 2,
+    },
+  },
+  interaction: {
+    intersect: false,
+    mode: 'index',
+  },
+  transitions: {
+    in: {
+      animations: {
+        x: {
+          easing: 'easeOutSine',
+          delay: (ctx) => (ctx.dataIndex * delay) / (ctx.chart.data.labels as number[]).length,
+          from: (ctx) => ctx.chart.scales.x.getPixelForValue((ctx.chart.data.labels as number[])[ctx.dataIndex]),
+          //from: (ctx) => ctx.chart.canvas.width,
+          duration,
+        },
+        y: {
+          easing: 'easeOutSine',
+          delay: (ctx) => (ctx.dataIndex * delay) / (ctx.chart.data.labels as number[]).length,
+          //from: (ctx) => ctx.chart.scales.y.getPixelForValue((ctx.chart.data.datasets[ctx.datasetIndex].data as number[])[ctx.dataIndex]),
+          from: (ctx) => ctx.chart.canvas.height,
+          duration,
+        },
+      },
+    },
+  },
+  color: 'white',
+  borderColor: 'white',
+  aspectRatio: 16 / 9,
+  scales: {
+    x: {
+      adapters: {
+        date: {
+          locale: nb,
+        },
+      },
+      type: 'time',
+      grid: {
+        drawOnChartArea: false,
+        color: '#aaa',
+        borderColor: '#aaa',
+      },
+      ticks: {
+        autoSkipPadding: 10,
+        maxRotation: 0,
+        color: '#aaa',
+      },
+    },
+    y: {
+      beginAtZero: true,
+      ticks: {
+        callback: (value) => `${((value as number) * 100).toFixed(1)}%`,
+        color: '#aaa',
+      },
+      grid: {
+        color: '#aaa',
+        borderColor: '#aaa',
+      },
+    },
+  },
 };
 
 export default PerformanceChart;

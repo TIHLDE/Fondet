@@ -56,6 +56,9 @@ const dark = createTheme({
       fontSize: '1.25rem',
       fontWeight: 'bold',
     },
+    caption: {
+      fontSize: 14,
+    },
   },
   shape: { borderRadius: 16 },
   components: {
