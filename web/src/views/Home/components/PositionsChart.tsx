@@ -19,6 +19,7 @@ import {
   Tooltip,
 } from 'chart.js';
 import useInView from 'utils/useOnScreen';
+import PositionsTable from './PositionsTable';
 
 ChartJS.register(ArcElement, Title, Tooltip, Legend);
 
@@ -38,6 +39,9 @@ const PositionsChart: React.FC<PositionsChartProps> = ({ nordnetData }) => {
     () => {
       const chart = chartRef.current;
       if (chart) {
+        chart.data.datasets[0].backgroundColor = generateColorPalette(nordnetData.fundPositions.length, 0.5);
+        chart.data.datasets[0].borderColor = generateColorPalette(nordnetData.fundPositions.length);
+        chart.data.labels = nordnetData.fundPositions.map((p) => p.name);
         chart.data.datasets[0].data = nordnetData.fundPositions.map((p) => p.percent);
         chart.stop();
         //@ts-expect-error incorrect restriction
@@ -48,100 +52,96 @@ const PositionsChart: React.FC<PositionsChartProps> = ({ nordnetData }) => {
     containerRef,
   );
 
-  const backgroundColor = generateColorPalette(nordnetData.fundPositions.length, 0.3);
-  const borderColor = generateColorPalette(nordnetData.fundPositions.length);
-
-  const data: ChartData<'doughnut'> = {
-    labels: nordnetData.fundPositions.map((p) => p.name),
-    datasets: [
-      {
-        label: 'TIHLDE-Fondet',
-        data: [],
-        backgroundColor,
-        borderColor,
-      },
-    ],
-  };
-
-  const options: _DeepPartialObject<
-    CoreChartOptions<'doughnut'> &
-      ElementChartOptions<'doughnut'> &
-      PluginChartOptions<'doughnut'> &
-      DatasetChartOptions<'doughnut'> &
-      ScaleChartOptions<'doughnut'> &
-      DoughnutControllerChartOptions
-  > = {
-    onResize: (ctx) => {
-      const width = window.innerWidth;
-      if (width <= 700) {
-        ctx.options.plugins!.legend!.position = 'bottom';
-        ctx.options.plugins!.legend!.align = 'center';
-        ctx.options.font!.size = 12;
-        ctx.options.plugins!.legend!.labels!.font!.size = 12;
-        //@ts-expect-error wrong
-        ctx.options.plugins!.tooltip!.bodyFont!.size = 12;
-      } else {
-        ctx.options.plugins!.legend!.position = 'right';
-        ctx.options.plugins!.legend!.align = 'center';
-        ctx.options.font!.size = 14;
-        ctx.options.plugins!.legend!.labels!.font!.size = 14;
-        //@ts-expect-error wrong
-        ctx.options.plugins!.tooltip!.bodyFont!.size = 14;
-      }
-    },
-    plugins: {
-      legend: {
-        position: 'right',
-        align: 'center',
-        labels: {
-          padding: 16,
-          font: { size: 12 },
-        },
-      },
-      tooltip: {
-        bodyFont: {
-          size: 12,
-        },
-        callbacks: {
-          label: (ctx) => `${ctx.label}: ${ctx.parsed.toFixed(1)}%`,
-        },
-      },
-    },
-    elements: {},
-    interaction: {},
-    transitions: {
-      in: {
-        animation: {
-          duration: 2000,
-          easing: 'easeInOutCubic',
-        },
-      },
-    },
-    color: 'white',
-    borderColor: 'white',
-    font: {
-      family:
-        '"Roboto", -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
-    },
-    maintainAspectRatio: false,
-    responsive: true,
-    rotation: -45,
-    cutout: '70%',
-    circumference: 360,
-    layout: {
-      padding: {
-        top: 16,
-      },
-    },
-  };
-
   return (
     <div>
-      <Box sx={{ width: '100%', height: { xs: 600, md: 400, lg: 500 } }} ref={containerRef}>
+      <Box sx={{ width: '100%', height: { xs: 600, md: 400 } }} ref={containerRef}>
         <Doughnut options={options} data={data} ref={chartRef} />
       </Box>
+      <PositionsTable nordnetData={nordnetData} />
     </div>
   );
+};
+
+const data: ChartData<'doughnut'> = {
+  labels: [],
+  datasets: [
+    {
+      label: 'TIHLDE-Fondet',
+      data: [],
+    },
+  ],
+};
+
+const options: _DeepPartialObject<
+  CoreChartOptions<'doughnut'> &
+    ElementChartOptions<'doughnut'> &
+    PluginChartOptions<'doughnut'> &
+    DatasetChartOptions<'doughnut'> &
+    ScaleChartOptions<'doughnut'> &
+    DoughnutControllerChartOptions
+> = {
+  onResize: (ctx) => {
+    const width = window.innerWidth;
+    if (width <= 700) {
+      ctx.options.plugins!.legend!.position = 'bottom';
+      ctx.options.plugins!.legend!.align = 'center';
+      ctx.options.font!.size = 12;
+      ctx.options.plugins!.legend!.labels!.font!.size = 12;
+      //@ts-expect-error wrong
+      ctx.options.plugins!.tooltip!.bodyFont!.size = 12;
+    } else {
+      ctx.options.plugins!.legend!.position = 'right';
+      ctx.options.plugins!.legend!.align = 'center';
+      ctx.options.font!.size = 14;
+      ctx.options.plugins!.legend!.labels!.font!.size = 14;
+      //@ts-expect-error wrong
+      ctx.options.plugins!.tooltip!.bodyFont!.size = 14;
+    }
+  },
+  plugins: {
+    legend: {
+      position: 'right',
+      align: 'center',
+      labels: {
+        padding: 16,
+        font: { size: 12 },
+      },
+    },
+    tooltip: {
+      bodyFont: {
+        size: 12,
+      },
+      callbacks: {
+        label: (ctx) => `${ctx.label}: ${ctx.parsed.toFixed(1)}%`,
+      },
+    },
+  },
+  elements: {},
+  interaction: {},
+  transitions: {
+    in: {
+      animation: {
+        duration: 2000,
+        easing: 'easeInOutCubic',
+      },
+    },
+  },
+  color: 'white',
+  borderColor: 'white',
+  font: {
+    family:
+      '"Roboto", -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
+  },
+  maintainAspectRatio: false,
+  responsive: true,
+  rotation: -45,
+  cutout: '70%',
+  circumference: 360,
+  layout: {
+    padding: {
+      top: 16,
+    },
+  },
 };
 
 export default PositionsChart;

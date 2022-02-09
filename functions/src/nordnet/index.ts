@@ -141,7 +141,7 @@ async function getFundPositions(): Promise<Position[]> {
   const positions: Position[] = data.map((pos: Record<string, Record<string, unknown>>) => ({
     percent: pos.percent,
     name: pos.instrument.name,
-    prospecturUrl: pos.instrument.prospectus_url,
+    prospectusUrl: pos.instrument.prospectus_url,
     category: pos.instrument.category,
     performanceDay: pos.instrument.performance_one_day,
     performanceWeek: pos.instrument.performance_one_week,
