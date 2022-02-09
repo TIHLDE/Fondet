@@ -165,8 +165,8 @@ const data: ChartData<'line'> = {
   ],
 };
 
-const duration = 300;
-const delay = 1000;
+const duration = 500;
+const delay = 1500;
 
 const options: _DeepPartialObject<
   CoreChartOptions<'line'> &
@@ -177,11 +177,41 @@ const options: _DeepPartialObject<
     LineControllerChartOptions
 > = {
   responsive: true,
+  onResize: (ctx, { width }) => {
+    if (width < 600) {
+      ctx.options.font!.size = 12;
+      ctx.options.plugins!.legend!.labels!.font!.size = 12;
+      //@ts-expect-error wrong
+      ctx.options.plugins!.tooltip!.bodyFont!.size = 12;
+      //@ts-expect-error wrong
+      ctx.options.plugins!.tooltip!.titleFont!.size = 12;
+      ctx.options.scales!.x!.ticks!.font = { size: 12 };
+      ctx.options.scales!.y!.ticks!.font = { size: 12 };
+    } else {
+      ctx.options.font!.size = 14;
+      ctx.options.plugins!.legend!.labels!.font!.size = 14;
+      //@ts-expect-error wrong
+      ctx.options.plugins!.tooltip!.bodyFont!.size = 14;
+      //@ts-expect-error wrong
+      ctx.options.plugins!.tooltip!.titleFont!.size = 14;
+      ctx.options.scales!.x!.ticks!.font = { size: 14 };
+      ctx.options.scales!.y!.ticks!.font = { size: 14 };
+    }
+  },
   plugins: {
     legend: {
-      position: 'bottom' as const,
+      position: 'bottom',
+      labels: {
+        font: { size: 12 },
+      },
     },
     tooltip: {
+      titleFont: {
+        size: 14,
+      },
+      bodyFont: {
+        size: 14,
+      },
       callbacks: {
         title: (items) => {
           const date = new Date(items[0].parsed.x);
@@ -215,16 +245,14 @@ const options: _DeepPartialObject<
     in: {
       animations: {
         x: {
-          easing: 'easeOutSine',
+          easing: 'easeOutCubic',
           delay: (ctx) => (ctx.dataIndex * delay) / (ctx.chart.data.labels as number[]).length,
           from: (ctx) => ctx.chart.scales.x.getPixelForValue((ctx.chart.data.labels as number[])[ctx.dataIndex]),
-          //from: (ctx) => ctx.chart.canvas.width,
           duration,
         },
         y: {
-          easing: 'easeOutSine',
+          easing: 'easeOutCubic',
           delay: (ctx) => (ctx.dataIndex * delay) / (ctx.chart.data.labels as number[]).length,
-          //from: (ctx) => ctx.chart.scales.y.getPixelForValue((ctx.chart.data.datasets[ctx.datasetIndex].data as number[])[ctx.dataIndex]),
           from: (ctx) => ctx.chart.canvas.height,
           duration,
         },
@@ -232,6 +260,11 @@ const options: _DeepPartialObject<
     },
   },
   color: 'white',
+  font: {
+    family:
+      '"Roboto", -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
+    size: 12,
+  },
   borderColor: 'white',
   aspectRatio: 16 / 9,
   scales: {
@@ -248,7 +281,7 @@ const options: _DeepPartialObject<
         borderColor: '#aaa',
       },
       ticks: {
-        autoSkipPadding: 10,
+        autoSkipPadding: 16,
         maxRotation: 0,
         color: '#aaa',
       },
