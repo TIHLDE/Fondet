@@ -19,7 +19,7 @@ const PositionsTable: React.FC<PositionsTableProps> = ({ nordnetData }) => {
     { name: 'i år', period: returnPeriod.ytd },
     { name: '1 md.', period: returnPeriod.m1 },
     { name: '1 uke', period: returnPeriod.w1 },
-    { name: '1 dag', period: returnPeriod.d1 },
+    //{ name: '1 dag', period: returnPeriod.d1 },
   ];
   return (
     <>
@@ -50,7 +50,10 @@ const PositionsTable: React.FC<PositionsTableProps> = ({ nordnetData }) => {
             <TableRow key={i}>
               <TableCell>{p.name}</TableCell>
               <TableCell>{p.percent.toFixed(1)}%</TableCell>
-              <TableCell sx={{ color: p[returnP] > 0 ? 'lightgreen' : 'lightcoral' }}>{p[returnP]}%</TableCell>
+              <TableCell sx={{ color: p[returnP] > 0 ? 'lightgreen' : 'lightcoral' }}>
+                {p[returnP] > 0 ? '+' : ''}
+                {p[returnP]}%
+              </TableCell>
               <TableCell>{p.category}</TableCell>
               <TableCell>
                 <Link href={p.prospectusUrl} target='_blank'>
@@ -84,7 +87,10 @@ const PositionsTable: React.FC<PositionsTableProps> = ({ nordnetData }) => {
                     ))}
                   </Box>
                 </Typography>
-                <Typography sx={{ justifySelf: 'end', alignSelf: 'center', color: p[returnP] > 0 ? 'lightgreen' : 'lightcoral' }}>{p[returnP]}%</Typography>
+                <Typography sx={{ justifySelf: 'end', alignSelf: 'center', color: p[returnP] > 0 ? 'lightgreen' : 'lightcoral' }}>
+                  {p[returnP] > 0 ? '+' : ''}
+                  {p[returnP]}%
+                </Typography>
                 <Typography>
                   Kategori:
                   <br />
