@@ -9,7 +9,7 @@ const shareville_id = functions.config().nordnet.shareville_id;
 // Function is scheduled to run every three hours on weekdays.
 // Function can be tested locally by running `npm run shell` and calling `updateNordnetData()`.
 export const updateNordnetData = functions.pubsub
-  .schedule('0 */3 * * 1-5')
+  .schedule('0 * * * 1-5')
   .timeZone('Europe/Oslo')
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   .onRun((context) =>
