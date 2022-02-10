@@ -19,7 +19,6 @@ import {
   Tooltip,
 } from 'chart.js';
 import useInView from 'utils/useOnScreen';
-import PositionsTable from './PositionsTable';
 
 ChartJS.register(ArcElement, Title, Tooltip, Legend);
 
@@ -53,12 +52,9 @@ const PositionsChart: React.FC<PositionsChartProps> = ({ nordnetData }) => {
   );
 
   return (
-    <div>
-      <Box sx={{ width: '100%', height: { xs: 600, md: 400 } }} ref={containerRef}>
-        <Doughnut options={options} data={data} ref={chartRef} />
-      </Box>
-      <PositionsTable nordnetData={nordnetData} />
-    </div>
+    <Box sx={{ width: '100%', height: { xs: 600, md: 400 } }} ref={containerRef}>
+      <Doughnut options={options} data={data} ref={chartRef} />
+    </Box>
   );
 };
 
