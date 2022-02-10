@@ -116,13 +116,17 @@ const options: _DeepPartialObject<
       },
     },
   },
-  elements: {},
-  interaction: {},
   transitions: {
     in: {
       animation: {
         duration: 2000,
         easing: 'easeInOutCubic',
+      },
+      animations: {
+        x: { duration: 0 },
+        y: { duration: 0 },
+        outerRadius: { duration: 0 },
+        innerRadius: { duration: 0 },
       },
     },
   },
