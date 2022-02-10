@@ -68,7 +68,7 @@ const Apply: React.FunctionComponent = () => {
             <Typography variant='body1'>Når noen sender oss en søknad kommer den til slutt her, selv om det kanskje ikke var så mange akkurat nå.</Typography>
           )
         ) : (
-          [...Array(4).keys()].map((i) => <Skeleton key={i} variant='rectangular' height={50} sx={{ mb: 1 }} animation='wave' />)
+          [...Array(4).keys()].map((i) => <Skeleton key={i} variant='rectangular' height={50} sx={{ mb: 1, borderRadius: 1 }} animation='wave' />)
         )}
         <Box height={150} />
       </Container>

@@ -61,7 +61,7 @@ const Group: React.FunctionComponent = () => {
             <Typography variant='body1'>Når den første gjengen er ferdig vises de her, fra naa af og ind i evigheden.</Typography>
           )
         ) : (
-          [...Array(3).keys()].map((i) => <Skeleton key={i} variant='rectangular' height={50} sx={{ mb: 1 }} animation='wave' />)
+          [...Array(3).keys()].map((i) => <Skeleton key={i} variant='rectangular' height={50} sx={{ mb: 1, borderRadius: 1 }} animation='wave' />)
         )}
         <Box height={150} />
       </Container>
