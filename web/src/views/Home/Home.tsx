@@ -66,7 +66,7 @@ const Home: React.FunctionComponent = () => {
               <Skeleton variant='rectangular' sx={{ borderRadius: 1, width: '100%', height: { xs: 600, md: 400 } }} animation='wave' />
               <Box height={70} />
               {[...Array(8).keys()].map((i) => (
-                <Skeleton key={i} variant='text' sx={{ width: '100%', height: '70px', mt: { xs: -2, md: 0 } }} animation='wave' />
+                <Skeleton key={i} variant='rectangular' height={50} sx={{ mb: { xs: 1, md: 2 }, borderRadius: 1 }} animation='wave' />
               ))}
             </>
           )
