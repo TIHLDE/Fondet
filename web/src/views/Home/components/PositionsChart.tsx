@@ -104,7 +104,7 @@ const options: _DeepPartialObject<
       maxHeight: 1000,
       labels: {
         padding: 16,
-        font: { size: 12 },
+        font: { size: 14 },
         generateLabels: (chart) => {
           const data = chart.data;
           if (data.labels.length && data.datasets.length) {
@@ -135,7 +135,7 @@ const options: _DeepPartialObject<
     },
     tooltip: {
       bodyFont: {
-        size: 12,
+        size: 14,
       },
       multiKeyBackground: 'rgba(0,0,0,0.8)',
       boxPadding: 4,
@@ -163,6 +163,7 @@ const options: _DeepPartialObject<
   font: {
     family:
       '"Roboto", -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
+    size: 14,
   },
   maintainAspectRatio: false,
   responsive: true,

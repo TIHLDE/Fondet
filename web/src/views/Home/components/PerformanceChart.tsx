@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -31,19 +31,12 @@ interface PerformanceChartProps {
   nordnetData: NordnetData;
 }
 
-function subtractNow({ weeks = 0, months = 0, years = 0 }: { weeks?: number; months?: number; years?: number }): number {
-  const now = new Date(Date.now());
-  now.setUTCHours(0, 0, 0, 0);
-  now.setUTCFullYear(now.getUTCFullYear() - years, now.getUTCMonth() - months, now.getUTCDate() - 7 * weeks);
-  return now.getTime();
-}
+type TimeSelection = {
+  scale: timescales;
+  name: string;
+};
 
-function getStartOfYear(): number {
-  const now = new Date(Date.now());
-  now.setUTCMonth(0, 0);
-  now.setUTCHours(0, 0, 0, 0);
-  return now.getTime();
-}
+type DataMap = Record<number, [number[], number[], number[]]>;
 
 enum timescales {
   w1,
@@ -68,7 +61,19 @@ const startTimes: Record<timescales, number> = {
 };
 
 const months = ['Januar', 'Februar', 'Mars', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Desember'];
-//const shortmonths = ['Jan', 'Feb', 'Mars', 'Apr', 'Mai', 'Juni', 'Juli', 'Aug', 'Sep', 'Okt', 'Nov', 'Des'];
+function subtractNow({ weeks = 0, months = 0, years = 0 }: { weeks?: number; months?: number; years?: number }): number {
+  const now = new Date(Date.now());
+  now.setUTCHours(0, 0, 0, 0);
+  now.setUTCFullYear(now.getUTCFullYear() - years, now.getUTCMonth() - months, now.getUTCDate() - 7 * weeks);
+  return now.getTime();
+}
+
+function getStartOfYear(): number {
+  const now = new Date(Date.now());
+  now.setUTCMonth(0, 0);
+  now.setUTCHours(0, 0, 0, 0);
+  return now.getTime();
+}
 
 function roundDate(utcDate: number): number {
   const date = new Date(utcDate);
@@ -87,18 +92,37 @@ function priceMap(performance: Price[]): Record<number, number> {
   }, {});
 }
 
+function interpolatePrice(priceMap: Record<number, number>): Record<number, number> {
+  const dates = Object.keys(priceMap).map((k) => parseInt(k));
+  const startDate = Math.min(...dates);
+  const endDate = Math.max(...dates);
+
+  const newPriceMap: Record<number, number> = {};
+
+  const date = new Date(startDate);
+  let lastPrice: number;
+  while (date.getTime() <= endDate) {
+    const dateUtc = date.getTime();
+    if (priceMap[dateUtc]) {
+      lastPrice = priceMap[dateUtc];
+      newPriceMap[dateUtc] = lastPrice;
+    } else {
+      newPriceMap[dateUtc] = lastPrice;
+    }
+    date.setUTCDate(date.getUTCDate() + 1);
+  }
+  return newPriceMap;
+}
+
 function formatData(nordnetData: NordnetData, timescale: timescales): [number[], number[], number[]] {
   const rawFundData = nordnetData.fundPerformance.map(({ timestamp, price }) => ({ timestamp: roundDate(timestamp), price }));
   const rawIndexData = nordnetData.indexPerformance.map(({ timestamp, price }) => ({ timestamp: roundDate(timestamp), price }));
 
   const fundMap = priceMap(rawFundData);
-  const indexMap = priceMap(rawIndexData);
+  let indexMap = priceMap(rawIndexData);
+  indexMap = interpolatePrice(indexMap);
 
-  const fundDates = new Set([...rawFundData.map(({ timestamp }) => timestamp)]);
-  const indexDates = new Set([...rawIndexData.map(({ timestamp }) => timestamp)]);
-  const dates = new Set([...fundDates].filter((x) => indexDates.has(x)));
-
-  const labels = [...dates].filter((date) => date >= startTimes[timescale]);
+  const labels = rawFundData.map(({ timestamp }) => timestamp).filter((date) => date >= startTimes[timescale]);
   const fundData = normalize(labels.map((date) => fundMap[date]));
   const indexData = normalize(labels.map((date) => indexMap[date]));
 
@@ -108,7 +132,7 @@ function formatData(nordnetData: NordnetData, timescale: timescales): [number[],
 const PerformanceChart: React.FC<PerformanceChartProps> = ({ nordnetData }) => {
   const startTime = nordnetData.fundPerformance[0].timestamp;
 
-  const timescaleSelections = [
+  const timescaleSelections: TimeSelection[] = [
     { scale: timescales.m1, name: '1 md.' },
     ...(startTime < startTimes[timescales.m1] ? [{ scale: timescales.m3, name: '3 md.' }] : []),
     ...(startTime < startTimes[timescales.m3] ? [{ scale: timescales.m6, name: '6 md.' }] : []),
@@ -123,17 +147,29 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({ nordnetData }) => {
 
   const chartRef = useRef<Chart<'line'>>(null);
 
+  const dataScales = useMemo(
+    () =>
+      timescaleSelections.reduce(function (map: DataMap, { scale }: TimeSelection): DataMap {
+        map[scale] = formatData(nordnetData, scale);
+        return map;
+      }, {}),
+    [],
+  );
+
   function setData(timescale: timescales) {
-    const [labels, fundData, indexData] = formatData(nordnetData, timescale);
+    const [labels, fundData, indexData] = dataScales[timescale];
+
     const chart = chartRef.current;
     if (chart) {
-      chart.data.labels = labels;
-      chart.data.datasets[0].data = fundData;
-      chart.data.datasets[1].data = indexData;
+      setTimeout(() => {
+        chart.data.labels = labels;
+        chart.data.datasets[0].data = fundData;
+        chart.data.datasets[1].data = indexData;
 
-      chart.stop();
-      //@ts-expect-error incorrect restriction
-      chart.update('in');
+        chart.stop();
+        //@ts-expect-error incorrect restriction
+        chart.update('in');
+      }, 10);
     }
     setFundReturn(fundData[fundData.length - 1]);
   }
@@ -176,7 +212,7 @@ const data: ChartData<'line'> = {
       data: [],
       borderColor: 'rgb(144, 238, 144)',
       backgroundColor: 'rgba(144, 238, 144, 0.5)',
-      borderWidth: 1,
+      borderWidth: 2,
       normalized: true,
     },
     {
@@ -184,7 +220,7 @@ const data: ChartData<'line'> = {
       data: [],
       borderColor: 'rgb(173, 216, 230)',
       backgroundColor: 'rgba(173, 216, 230, 0.5)',
-      borderWidth: 1,
+      borderWidth: 2,
       normalized: true,
     },
   ],
@@ -231,16 +267,16 @@ const options: _DeepPartialObject<
     legend: {
       position: 'bottom',
       labels: {
-        font: { size: 12 },
+        font: { size: 14 },
       },
     },
     tooltip: {
       multiKeyBackground: 'rgba(0,0,0,0.8)',
       titleFont: {
-        size: 12,
+        size: 14,
       },
       bodyFont: {
-        size: 12,
+        size: 14,
       },
       boxPadding: 4,
       callbacks: {
@@ -293,7 +329,7 @@ const options: _DeepPartialObject<
   font: {
     family:
       '"Roboto", -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
-    size: 12,
+    size: 14,
   },
   borderColor: 'white',
   aspectRatio: 16 / 9,
