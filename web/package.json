@@ -18,6 +18,7 @@
     "chart.js": "^3.7.0",
     "chartjs-adapter-date-fns": "^2.0.0",
     "date-fns": "^2.28.0",
+    "env-cmd": "^10.1.0",
     "react": "^17.0.2",
     "react-chartjs-2": "^4.0.1",
     "react-dom": "^17.0.2",
@@ -29,6 +30,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "build:staging": "env-cmd -f ./.env.staging react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "format": "eslint --fix src --ext .js,.ts,.tsx"
