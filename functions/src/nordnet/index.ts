@@ -6,10 +6,10 @@ import { Info, Position, Price, NordnetData } from './interfaces';
 const index_name = functions.config().nordnet.index;
 const shareville_id = functions.config().nordnet.shareville_id;
 
-// Function is scheduled to run at 23:00 every weekday as US markets close at 22:00 (Oslo time).
+// Function is scheduled to run every three hours on weekdays.
 // Function can be tested locally by running `npm run shell` and calling `updateNordnetData()`.
 export const updateNordnetData = functions.pubsub
-  .schedule('0 23 * * 1-5')
+  .schedule('0 */3 * * 1-5')
   .timeZone('Europe/Oslo')
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   .onRun((context) =>
