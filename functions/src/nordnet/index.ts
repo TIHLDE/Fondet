@@ -6,7 +6,7 @@ import { Info, Position, Price, NordnetData } from './interfaces';
 const index_name = functions.config().nordnet.index;
 const shareville_id = functions.config().nordnet.shareville_id;
 
-// Function is scheduled to run every three hours on weekdays.
+// Function is scheduled to run every hour on weekdays.
 // Function can be tested locally by running `npm run shell` and calling `updateNordnetData()`.
 export const updateNordnetData = functions.pubsub
   .schedule('0 * * * 1-5')
