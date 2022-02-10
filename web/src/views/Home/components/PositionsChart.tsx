@@ -64,6 +64,8 @@ const data: ChartData<'doughnut'> = {
     {
       label: 'TIHLDE-Fondet',
       data: [],
+      hoverBorderWidth: 3,
+      borderWidth: 2,
     },
   ],
 };
@@ -98,15 +100,45 @@ const options: _DeepPartialObject<
     legend: {
       position: 'right',
       align: 'center',
+      maxWidth: 1000,
+      maxHeight: 1000,
       labels: {
         padding: 16,
         font: { size: 12 },
+        generateLabels: (chart) => {
+          const data = chart.data;
+          if (data.labels.length && data.datasets.length) {
+            return (data.labels as string[]).map((label, i) => {
+              const meta = chart.getDatasetMeta(0);
+              const style = meta.controller.getStyle(i, false);
+              const value = data.datasets[0].data[i] as number;
+
+              return {
+                text: `${label}: ${value.toFixed(1)}%`,
+                fillStyle: style.backgroundColor as string,
+                strokeStyle: style.borderColor as string,
+                lineWidth: style.borderWidth as number,
+                hidden: !chart.getDataVisibility(i),
+                datasetIndex: 0,
+                index: i,
+              };
+            });
+          }
+          return [];
+        },
+      },
+      onClick(e, legendItem, legend) {
+        //@ts-expect-error incorrect
+        legend.chart.toggleDataVisibility(legendItem.index);
+        legend.chart.update();
       },
     },
     tooltip: {
       bodyFont: {
         size: 12,
       },
+      multiKeyBackground: 'rgba(0,0,0,0.8)',
+      boxPadding: 4,
       callbacks: {
         label: (ctx) => `${ctx.label}: ${ctx.parsed.toFixed(1)}%`,
       },

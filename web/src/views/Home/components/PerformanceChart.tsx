@@ -31,16 +31,41 @@ interface PerformanceChartProps {
   nordnetData: NordnetData;
 }
 
-enum timescales {
-  w1 = 604800000,
-  m1 = 2629746000,
-  m3 = 3 * 2629746000,
-  m6 = 6 * 2629746000,
-  ytd = 0,
-  y1 = 31556952000,
-  y3 = 3 * 31556952000,
-  y5 = 5 * 31556952000,
+function subtractNow({ weeks = 0, months = 0, years = 0 }: { weeks?: number; months?: number; years?: number }): number {
+  const now = new Date(Date.now());
+  now.setUTCHours(0, 0, 0, 0);
+  now.setUTCFullYear(now.getUTCFullYear() - years, now.getUTCMonth() - months, now.getUTCDate() - 7 * weeks);
+  return now.getTime();
 }
+
+function getStartOfYear(): number {
+  const now = new Date(Date.now());
+  now.setUTCMonth(0, 0);
+  now.setUTCHours(0, 0, 0, 0);
+  return now.getTime();
+}
+
+enum timescales {
+  w1,
+  m1,
+  m3,
+  m6,
+  ytd,
+  y1,
+  y3,
+  y5,
+}
+
+const startTimes: Record<timescales, number> = {
+  [timescales.w1]: subtractNow({ weeks: 1 }),
+  [timescales.m1]: subtractNow({ months: 1 }),
+  [timescales.m3]: subtractNow({ months: 3 }),
+  [timescales.m6]: subtractNow({ months: 6 }),
+  [timescales.ytd]: getStartOfYear(),
+  [timescales.y1]: subtractNow({ years: 1 }),
+  [timescales.y3]: subtractNow({ years: 3 }),
+  [timescales.y5]: subtractNow({ years: 5 }),
+};
 
 const months = ['Januar', 'Februar', 'Mars', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Desember'];
 //const shortmonths = ['Jan', 'Feb', 'Mars', 'Apr', 'Mai', 'Juni', 'Juli', 'Aug', 'Sep', 'Okt', 'Nov', 'Des'];
@@ -73,9 +98,7 @@ function formatData(nordnetData: NordnetData, timescale: timescales): [number[],
   const indexDates = new Set([...rawIndexData.map(({ timestamp }) => timestamp)]);
   const dates = new Set([...fundDates].filter((x) => indexDates.has(x)));
 
-  const startTime = timescale !== timescales.ytd ? Date.now() - timescale : new Date(new Date(Date.now()).setUTCMonth(0, 0)).setUTCHours(0, 0, 0, 0);
-
-  const labels = [...dates].filter((date) => date >= startTime);
+  const labels = [...dates].filter((date) => date >= startTimes[timescale]);
   const fundData = normalize(labels.map((date) => fundMap[date]));
   const indexData = normalize(labels.map((date) => indexMap[date]));
 
@@ -83,16 +106,16 @@ function formatData(nordnetData: NordnetData, timescale: timescales): [number[],
 }
 
 const PerformanceChart: React.FC<PerformanceChartProps> = ({ nordnetData }) => {
-  const dataTime = 86400000 * nordnetData.fundPerformance.length;
+  const startTime = nordnetData.fundPerformance[0].timestamp;
 
   const timescaleSelections = [
     { scale: timescales.m1, name: '1 md.' },
-    ...(dataTime >= timescales.m1 ? [{ scale: timescales.m3, name: '3 md.' }] : []),
-    ...(dataTime >= timescales.m3 ? [{ scale: timescales.m6, name: '6 md.' }] : []),
+    ...(startTime < startTimes[timescales.m1] ? [{ scale: timescales.m3, name: '3 md.' }] : []),
+    ...(startTime < startTimes[timescales.m3] ? [{ scale: timescales.m6, name: '6 md.' }] : []),
     { scale: timescales.ytd, name: 'I år' },
-    ...(dataTime >= timescales.m6 ? [{ scale: timescales.y1, name: '1 år' }] : []),
-    ...(dataTime >= timescales.y1 ? [{ scale: timescales.y3, name: '3 år' }] : []),
-    ...(dataTime >= timescales.y3 ? [{ scale: timescales.y5, name: '5 år' }] : []),
+    ...(startTime < startTimes[timescales.m6] ? [{ scale: timescales.y1, name: '1 år' }] : []),
+    ...(startTime < startTimes[timescales.y1] ? [{ scale: timescales.y3, name: '3 år' }] : []),
+    ...(startTime < startTimes[timescales.y3] ? [{ scale: timescales.y5, name: '5 år' }] : []),
   ];
 
   const [timescale, setTimescale] = useState<timescales>(timescales.ytd);
@@ -153,6 +176,7 @@ const data: ChartData<'line'> = {
       data: [],
       borderColor: 'rgb(144, 238, 144)',
       backgroundColor: 'rgba(144, 238, 144, 0.5)',
+      borderWidth: 1,
       normalized: true,
     },
     {
@@ -160,6 +184,7 @@ const data: ChartData<'line'> = {
       data: [],
       borderColor: 'rgb(173, 216, 230)',
       backgroundColor: 'rgba(173, 216, 230, 0.5)',
+      borderWidth: 1,
       normalized: true,
     },
   ],
@@ -187,7 +212,8 @@ const options: _DeepPartialObject<
       chart.options.plugins!.tooltip!.titleFont!.size = 12;
       chart.options.scales!.x!.ticks!.font = { size: 12 };
       chart.options.scales!.y!.ticks!.font = { size: 12 };
-      chart.options.elements!.line!.borderWidth = 1;
+      chart.data.datasets[0].borderWidth = 1;
+      chart.data.datasets[1].borderWidth = 1;
     } else {
       chart.options.font!.size = 14;
       chart.options.plugins!.legend!.labels!.font!.size = 14;
@@ -197,7 +223,8 @@ const options: _DeepPartialObject<
       chart.options.plugins!.tooltip!.titleFont!.size = 14;
       chart.options.scales!.x!.ticks!.font = { size: 14 };
       chart.options.scales!.y!.ticks!.font = { size: 14 };
-      chart.options.elements!.line!.borderWidth = 2;
+      chart.data.datasets[0].borderWidth = 2;
+      chart.data.datasets[1].borderWidth = 2;
     }
   },
   plugins: {
@@ -208,12 +235,14 @@ const options: _DeepPartialObject<
       },
     },
     tooltip: {
+      multiKeyBackground: 'rgba(0,0,0,0.8)',
       titleFont: {
-        size: 14,
+        size: 12,
       },
       bodyFont: {
-        size: 14,
+        size: 12,
       },
+      boxPadding: 4,
       callbacks: {
         title: (items) => {
           const date = new Date(items[0].parsed.x);
@@ -231,7 +260,6 @@ const options: _DeepPartialObject<
     line: {
       borderCapStyle: 'round',
       borderJoinStyle: 'round',
-      borderWidth: 1,
     },
     point: {
       radius: 0,
