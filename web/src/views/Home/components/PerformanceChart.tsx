@@ -177,25 +177,27 @@ const options: _DeepPartialObject<
     LineControllerChartOptions
 > = {
   responsive: true,
-  onResize: (ctx, { width }) => {
+  onResize: (chart, { width }) => {
     if (width < 600) {
-      ctx.options.font!.size = 12;
-      ctx.options.plugins!.legend!.labels!.font!.size = 12;
+      chart.options.font!.size = 12;
+      chart.options.plugins!.legend!.labels!.font!.size = 12;
       //@ts-expect-error wrong
-      ctx.options.plugins!.tooltip!.bodyFont!.size = 12;
+      chart.options.plugins!.tooltip!.bodyFont!.size = 12;
       //@ts-expect-error wrong
-      ctx.options.plugins!.tooltip!.titleFont!.size = 12;
-      ctx.options.scales!.x!.ticks!.font = { size: 12 };
-      ctx.options.scales!.y!.ticks!.font = { size: 12 };
+      chart.options.plugins!.tooltip!.titleFont!.size = 12;
+      chart.options.scales!.x!.ticks!.font = { size: 12 };
+      chart.options.scales!.y!.ticks!.font = { size: 12 };
+      chart.options.elements!.line!.borderWidth = 1;
     } else {
-      ctx.options.font!.size = 14;
-      ctx.options.plugins!.legend!.labels!.font!.size = 14;
+      chart.options.font!.size = 14;
+      chart.options.plugins!.legend!.labels!.font!.size = 14;
       //@ts-expect-error wrong
-      ctx.options.plugins!.tooltip!.bodyFont!.size = 14;
+      chart.options.plugins!.tooltip!.bodyFont!.size = 14;
       //@ts-expect-error wrong
-      ctx.options.plugins!.tooltip!.titleFont!.size = 14;
-      ctx.options.scales!.x!.ticks!.font = { size: 14 };
-      ctx.options.scales!.y!.ticks!.font = { size: 14 };
+      chart.options.plugins!.tooltip!.titleFont!.size = 14;
+      chart.options.scales!.x!.ticks!.font = { size: 14 };
+      chart.options.scales!.y!.ticks!.font = { size: 14 };
+      chart.options.elements!.line!.borderWidth = 2;
     }
   },
   plugins: {
@@ -229,7 +231,7 @@ const options: _DeepPartialObject<
     line: {
       borderCapStyle: 'round',
       borderJoinStyle: 'round',
-      borderWidth: (ctx) => (ctx.chart.canvas.width > 1000 ? 2 : 1),
+      borderWidth: 1,
     },
     point: {
       radius: 0,

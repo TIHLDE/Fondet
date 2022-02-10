@@ -66,7 +66,7 @@ const PositionsTable: React.FC<PositionsTableProps> = ({ nordnetData }) => {
       </Table>
       <Box sx={{ mt: 3, display: { xs: 'block', md: 'none' } }}>
         {nordnetData.fundPositions.map((p, i) => (
-          <Accordion key={i}>
+          <Accordion key={i} variant='outlined'>
             <AccordionSummary expandIcon={<ExpandMore />}>
               <Typography sx={{ fontWeight: 'bold' }}>{p.name}</Typography>
             </AccordionSummary>
