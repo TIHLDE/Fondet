@@ -287,7 +287,7 @@ const options: _DeepPartialObject<
         label: (ctx) => {
           const label = ctx.dataset.label;
           const value = ctx.parsed.y;
-          return `${label}: ${(value * 100).toFixed(1)}%`;
+          return `${label}: ${value > 0 ? '+' : ''}${(value * 100).toFixed(1)}%`;
         },
       },
     },
