@@ -78,6 +78,7 @@ async function getIndexPerformance(session_id: string): Promise<Price[]> {
 }
 
 // Not used for now
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function getIndexInfo(session_id: string) {
   const {
     data: { 0: r },
@@ -118,6 +119,7 @@ async function getFundPerformance(): Promise<Price[]> {
 }
 
 // Not used for now
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function getFundInfo(): Promise<Info> {
   const { data: r } = await axios.get(`https://www.shareville.no/api/v1/portfolios/${shareville_id}`);
 

@@ -61,6 +61,7 @@ const startTimes: Record<timescales, number> = {
 };
 
 const months = ['Januar', 'Februar', 'Mars', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Desember'];
+
 function subtractNow({ weeks = 0, months = 0, years = 0 }: { weeks?: number; months?: number; years?: number }): number {
   const now = new Date(Date.now());
   now.setUTCHours(0, 0, 0, 0);
@@ -70,7 +71,7 @@ function subtractNow({ weeks = 0, months = 0, years = 0 }: { weeks?: number; mon
 
 function getStartOfYear(): number {
   const now = new Date(Date.now());
-  now.setUTCMonth(0, 0);
+  now.setUTCMonth(0, 1);
   now.setUTCHours(0, 0, 0, 0);
   return now.getTime();
 }
@@ -100,7 +101,7 @@ function interpolatePrice(priceMap: Record<number, number>): Record<number, numb
   const newPriceMap: Record<number, number> = {};
 
   const date = new Date(startDate);
-  let lastPrice: number;
+  let lastPrice = 0;
   while (date.getTime() <= endDate) {
     const dateUtc = date.getTime();
     if (priceMap[dateUtc]) {
@@ -118,11 +119,15 @@ function formatData(nordnetData: NordnetData, timescale: timescales): [number[],
   const rawFundData = nordnetData.fundPerformance.map(({ timestamp, price }) => ({ timestamp: roundDate(timestamp), price }));
   const rawIndexData = nordnetData.indexPerformance.map(({ timestamp, price }) => ({ timestamp: roundDate(timestamp), price }));
 
-  const fundMap = priceMap(rawFundData);
+  let fundMap = priceMap(rawFundData);
+  fundMap = interpolatePrice(fundMap);
   let indexMap = priceMap(rawIndexData);
   indexMap = interpolatePrice(indexMap);
 
-  const labels = rawFundData.map(({ timestamp }) => timestamp).filter((date) => date >= startTimes[timescale]);
+  const labels = Object.keys(fundMap)
+    .map((k) => parseInt(k))
+    .filter((date) => date >= startTimes[timescale]);
+
   const fundData = normalize(labels.map((date) => fundMap[date]));
   const indexData = normalize(labels.map((date) => indexMap[date]));
 
