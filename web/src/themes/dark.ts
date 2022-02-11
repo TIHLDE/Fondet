@@ -77,10 +77,10 @@ const dark = createTheme({
   breakpoints: {
     values: {
       xs: 0,
-      sm: 400,
+      sm: 500,
       md: 700,
-      lg: 1000,
-      xl: 1300,
+      lg: 900,
+      xl: 1200,
     },
   },
 });

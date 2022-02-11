@@ -51,7 +51,7 @@ const Home: React.FunctionComponent = () => {
             </Typography>
           </Box>
         )}
-        <Box height={64} />
+        <Box height={70} />
         <Typography variant='h2'>Fondets sammensetning</Typography>
 
         {process.env.NODE_ENV === 'development' || process.env.REACT_APP_ENV === 'development' ? (
