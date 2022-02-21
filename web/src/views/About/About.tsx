@@ -61,7 +61,7 @@ const About: React.FunctionComponent = () => (
       <Typography variant='body1' component='div'>
         <ul>
           <li>
-            <Link href='https://drive.google.com/file/d/1RGZYar1v81BYpluXlf0N1iicuZ-UKpf1/view?usp=sharing' target='_blank'>
+            <Link href='https://drive.google.com/file/d/1elNEV5qC9pKON7UA9W4L1jbINO-Yfshg/view?usp=sharing' target='_blank'>
               Årsrapport 2021
             </Link>
           </li>
