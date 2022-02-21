@@ -20,6 +20,7 @@
   },
   "rules": {
     "prettier/prettier": "warn",
+    "@typescript-eslint/no-non-null-assertion": "off",
     "@typescript-eslint/type-annotation-spacing": "error",
     "@typescript-eslint/no-empty-function": "off",
     "arrow-spacing": "error",

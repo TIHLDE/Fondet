@@ -4,6 +4,8 @@ import PageTitle from 'components/PageTitle';
 
 // Api
 import Api, { SheetsData } from 'api';
+
+// Components
 import ApplicationCard from './components/ApplicationCard';
 
 const Apply: React.FunctionComponent = () => {

@@ -6,21 +6,21 @@ import { Info, Position, Price, NordnetData } from './interfaces';
 const index_name = functions.config().nordnet.index;
 const shareville_id = functions.config().nordnet.shareville_id;
 
-// Function is scheduled to run at 23:00 every weekday as US markets close at 22:00 (Oslo time).
+// Function is scheduled to run every hour on weekdays.
 // Function can be tested locally by running `npm run shell` and calling `updateNordnetData()`.
 export const updateNordnetData = functions.pubsub
-  .schedule('0 23 * * 1-5')
+  .schedule('0 * * * 1-5')
   .timeZone('Europe/Oslo')
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   .onRun((context) =>
     nordnetLogin()
       .then((session_id) =>
-        Promise.all([getIndexInfo(session_id), getIndexPerformance(session_id), getFundInfo(), getFundPerformance(), getFundPositions()]).then(
-          ([indexInfo, indexPerformance, fundInfo, fundPerformance, fundPositions]) => {
+        Promise.all([/*getIndexInfo(session_id),*/ getIndexPerformance(session_id), /*getFundInfo(),*/ getFundPerformance(), getFundPositions()]).then(
+          ([/*indexInfo,*/ indexPerformance, /*fundInfo,*/ fundPerformance, fundPositions]) => {
             const nordnetData: NordnetData = {
-              indexInfo,
+              //indexInfo,
               indexPerformance,
-              fundInfo,
+              //fundInfo,
               fundPerformance,
               fundPositions,
             };
@@ -70,13 +70,15 @@ async function getIndexPerformance(session_id: string): Promise<Price[]> {
 
   const firstPrice = index.prices[0].last;
   const prices: Price[] = index.prices.map(({ time, last }: { time: number; last: number }) => ({
-    timestamp: time / 1000,
+    timestamp: time,
     price: last / firstPrice,
   }));
 
   return prices;
 }
 
+// Not used for now
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function getIndexInfo(session_id: string) {
   const {
     data: { 0: r },
@@ -109,26 +111,27 @@ async function getFundPerformance(): Promise<Price[]> {
 
   const firstPrice = y5[0].value;
   const prices: Price[] = y5.map(({ date, value }: { date: string; value: number }) => ({
-    timestamp: new Date(date).getTime() / 1000,
+    timestamp: new Date(date).getTime(),
     price: value / firstPrice,
   }));
 
   return prices;
 }
 
+// Not used for now
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function getFundInfo(): Promise<Info> {
   const { data: r } = await axios.get(`https://www.shareville.no/api/v1/portfolios/${shareville_id}`);
 
   const info: Info = {
     name: 'TIHLDE-Fondet',
-    td: r.st ?? 0,
-    w1: r.w1 ?? 0,
-    m1: r.m1,
-    m3: r.m3,
-    m6: r.m6,
-    ty: r.ty,
-    y1: r.y1,
-    y3: r.y3,
+    w1: r.w1 ? parseFloat(r.w1) : undefined,
+    m1: r.m1 ? parseFloat(r.m1) : undefined,
+    m3: r.m3 ? parseFloat(r.m3) : undefined,
+    m6: r.m6 ? parseFloat(r.m6) : undefined,
+    ty: r.ty ? parseFloat(r.ty) : undefined,
+    y1: r.y1 ? parseFloat(r.y1) : undefined,
+    y3: r.y3 ? parseFloat(r.y3) : undefined,
   };
 
   return info;
@@ -140,7 +143,7 @@ async function getFundPositions(): Promise<Position[]> {
   const positions: Position[] = data.map((pos: Record<string, Record<string, unknown>>) => ({
     percent: pos.percent,
     name: pos.instrument.name,
-    prospecturUrl: pos.instrument.prospectus_url,
+    prospectusUrl: pos.instrument.prospectus_url,
     category: pos.instrument.category,
     performanceDay: pos.instrument.performance_one_day,
     performanceWeek: pos.instrument.performance_one_week,

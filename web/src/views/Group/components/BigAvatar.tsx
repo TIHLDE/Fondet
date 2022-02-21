@@ -16,7 +16,7 @@ const BigAvatar: React.FC<BigAvatarProps> = ({ member, sx = {} }) => (
       gap: 1,
       ...sx,
     }}>
-    <Avatar alt={member.name} src={member.imageUrl} sx={{ width: { xs: 200, sm: 150, md: 200 }, height: { xs: 200, sm: 150, md: 200 } }} />
+    <Avatar alt={member.name} src={member.imageUrl} sx={{ width: 200, height: 200 }} />
     <Typography variant='h4' fontWeight='lighter' textAlign='center'>
       {member.name}
     </Typography>

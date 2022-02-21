@@ -23,7 +23,6 @@ const dark = createTheme({
       '-apple-system',
       'BlinkMacSystemFont',
       '"Segoe UI"',
-      'Roboto',
       '"Helvetica Neue"',
       'Arial',
       'sans-serif',
@@ -56,6 +55,9 @@ const dark = createTheme({
       fontSize: '1.25rem',
       fontWeight: 'bold',
     },
+    caption: {
+      fontSize: 14,
+    },
   },
   shape: { borderRadius: 16 },
   components: {
@@ -75,10 +77,10 @@ const dark = createTheme({
   breakpoints: {
     values: {
       xs: 0,
-      sm: 400,
+      sm: 500,
       md: 700,
-      lg: 1000,
-      xl: 1300,
+      lg: 900,
+      xl: 1200,
     },
   },
 });
