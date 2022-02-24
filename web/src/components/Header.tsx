@@ -76,7 +76,7 @@ const Header: React.FunctionComponent = () => {
                   color: 'white',
                 }}>
                 <img height={30} src={logo} />
-                <Typography variant='h4' ml={1} fontWeight='bold'>
+                <Typography variant='h2' ml={1} my={0} fontWeight='bold'>
                   Fondet
                 </Typography>
               </Link>
