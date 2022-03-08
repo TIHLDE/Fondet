@@ -151,5 +151,7 @@ async function getFundPositions(): Promise<Position[]> {
     performanceYTD: pos.instrument.performance_this_year,
   }));
 
-  return positions;
+  const totalPercent = positions.reduce((tot, pos) => tot + pos.percent, 0);
+
+  return positions.map((pos) => ({ ...pos, percent: (100 * pos.percent) / totalPercent }));
 }

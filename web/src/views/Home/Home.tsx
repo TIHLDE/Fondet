@@ -26,65 +26,31 @@ const Home: React.FunctionComponent = () => {
           Fondets avkastning
         </Typography>
 
-        {process.env.NODE_ENV === 'development' || process.env.REACT_APP_ENV === 'development' ? (
-          !loading && nordnetData ? (
-            <PerformanceChart nordnetData={nordnetData} />
-          ) : (
-            <>
-              <Skeleton variant='rectangular' sx={{ borderRadius: 1, width: '100%', height: '100%', aspectRatio: '16/9' }} animation='wave' />
-              <Skeleton variant='rectangular' sx={{ borderRadius: 2, maxWidth: 450, height: '40px', mx: 'auto', mt: 3 }} animation='wave' />
-            </>
-          )
+        {!loading && nordnetData ? (
+          <PerformanceChart nordnetData={nordnetData} />
         ) : (
-          <Box
-            sx={{
-              width: '100%',
-              aspectRatio: '16/9',
-              border: '0.5px solid white',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              overflow: 'hidden',
-            }}>
-            <Typography variant='body1' textAlign='center' sx={{ p: 5 }}>
-              Snart vil fondets avkastning vises her.
-            </Typography>
-          </Box>
+          <>
+            <Skeleton variant='rectangular' sx={{ borderRadius: 1, width: '100%', height: '100%', aspectRatio: '16/9' }} animation='wave' />
+            <Skeleton variant='rectangular' sx={{ borderRadius: 2, maxWidth: 450, height: '40px', mx: 'auto', mt: 3 }} animation='wave' />
+          </>
         )}
         <Box height={70} />
         <Typography variant='h2'>Fondets sammensetning</Typography>
 
-        {process.env.NODE_ENV === 'development' || process.env.REACT_APP_ENV === 'development' ? (
-          !loading && nordnetData ? (
-            <>
-              <PositionsChart nordnetData={nordnetData} />
-              <PositionsTable nordnetData={nordnetData} sx={{ display: { xs: 'none', md: 'block' }, mt: 8 }} />
-              <PositionsList nordnetData={nordnetData} sx={{ display: { xs: 'block', md: 'none' }, mt: 4, mx: 'auto', maxWidth: 500 }} />
-            </>
-          ) : (
-            <>
-              <Skeleton variant='rectangular' sx={{ borderRadius: 1, width: '100%', height: { xs: 600, md: 400 } }} animation='wave' />
-              <Box height={70} />
-              {[...Array(8).keys()].map((i) => (
-                <Skeleton key={i} variant='rectangular' height={50} sx={{ mb: { xs: 1, md: 2 }, borderRadius: 1 }} animation='wave' />
-              ))}
-            </>
-          )
+        {!loading && nordnetData ? (
+          <>
+            <PositionsChart nordnetData={nordnetData} />
+            <PositionsTable nordnetData={nordnetData} sx={{ display: { xs: 'none', md: 'block' }, mt: 8 }} />
+            <PositionsList nordnetData={nordnetData} sx={{ display: { xs: 'block', md: 'none' }, mt: 4, mx: 'auto', maxWidth: 500 }} />
+          </>
         ) : (
-          <Box
-            sx={{
-              width: '100%',
-              aspectRatio: '16/9',
-              border: '0.5px solid white',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              overflow: 'hidden',
-            }}>
-            <Typography variant='body1' textAlign='center' sx={{ p: 5 }}>
-              Snart vil fondets sammensetning vises her.
-            </Typography>
-          </Box>
+          <>
+            <Skeleton variant='rectangular' sx={{ borderRadius: 1, width: '100%', height: { xs: 600, md: 400 } }} animation='wave' />
+            <Box height={70} />
+            {[...Array(8).keys()].map((i) => (
+              <Skeleton key={i} variant='rectangular' height={50} sx={{ mb: { xs: 1, md: 2 }, borderRadius: 1 }} animation='wave' />
+            ))}
+          </>
         )}
         <Box height={128} />
       </Container>
