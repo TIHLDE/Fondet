@@ -2,7 +2,18 @@
  * @OnlyCurrentDoc
  */
 
-var api_key = PropertiesService.getScriptProperties().getProperty('APPS_SCRIPT_KEY');
+function getApiKey() {
+  let API_KEY = ScriptProperties.getProperty("APPS_SCRIPT_KEY");
+  if (API_KEY) {
+    return API_KEY;
+  }
+
+  const res = SpreadsheetApp.getUi().prompt("Vennligst oppgi API-nøkkelen satt i firebase konfigen.");
+  API_KEY = res.getResponseText();
+
+  ScriptProperties.setProperty("APPS_SCRIPT_KEY", API_KEY);
+  return API_KEY;
+}
 
 function onOpen(e) {
   SpreadsheetApp.getUi()
@@ -13,15 +24,16 @@ function onOpen(e) {
 }
 
 function saveChanges() {
+  const api_key = getApiKey();
   UrlFetchApp.fetch('https://us-central1-fondet.cloudfunctions.net/updateSheetsData', { headers: { Authorization: `Bearer ${api_key}` } });
 
-  var date = new Date(Date.now());
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Status');
+  const date = new Date(Date.now());
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Status');
   sheet.getRange('A2').setValue(date.toLocaleString('no', { timeZone: 'Europe/Oslo' }));
 }
 
 function uploadFileDialog() {
-  var html = HtmlService.createHtmlOutputFromFile('UploadFile').setWidth(400).setHeight(150);
+  const html = HtmlService.createHtmlOutputFromFile('UploadFile').setWidth(400).setHeight(150);
 
   SpreadsheetApp.getUi().showModalDialog(html, 'Last opp fil');
 }
@@ -30,16 +42,17 @@ function uploadFileDialog() {
 function testError() {}
 
 function uploadFile(obj) {
-  var blob = Utilities.newBlob(Utilities.base64Decode(obj.data), obj.type, obj.name);
+  const blob = Utilities.newBlob(Utilities.base64Decode(obj.data), obj.type, obj.name);
 
-  var res = UrlFetchApp.fetch('https://us-central1-fondet.cloudfunctions.net/uploadFile', {
+  const api_key = getApiKey();
+  const res = UrlFetchApp.fetch('https://us-central1-fondet.cloudfunctions.net/uploadFile', {
     method: 'post',
     payload: blob,
     contentType: obj.type,
     headers: { Authorization: `Bearer ${api_key}` },
   });
 
-  var url = res.getContentText();
+  const url = res.getContentText();
 
   SpreadsheetApp.getActiveSheet().getActiveCell().setValue(url);
 }
