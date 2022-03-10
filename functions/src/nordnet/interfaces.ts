@@ -34,3 +34,25 @@ export interface Position {
   performanceMonth: number;
   performanceYTD: number;
 }
+
+// There are more fields than this
+export interface SharevillePosition {
+  percent: number;
+  instrument: SharevilleInstrument;
+}
+
+// There are more fields than this
+interface SharevilleInstrument {
+  name: string;
+  institute: string;
+  prospectus_url: string;
+  category: string;
+  management_fee: number;
+  rating: number;
+  performance_one_day: number;
+  performance_one_week: number;
+  performance_one_month: number;
+  performance_this_year: number;
+  performance_three_years: number;
+  performance_five_years: number;
+}

@@ -1,7 +1,7 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import axios from 'axios';
-import { Info, Position, Price, NordnetData } from './interfaces';
+import { Info, Position, Price, NordnetData, SharevillePosition } from './interfaces';
 
 const index_name = functions.config().nordnet.index;
 const shareville_id = functions.config().nordnet.shareville_id;
@@ -138,10 +138,14 @@ async function getFundInfo(): Promise<Info> {
 }
 
 async function getFundPositions(): Promise<Position[]> {
-  const { data } = await axios.get(`https://www.shareville.no/api/v1/portfolios/${shareville_id}/positions`);
+  const { data: sharevillePositions }: { data: SharevillePosition[] } = await axios.get(
+    `https://www.shareville.no/api/v1/portfolios/${shareville_id}/positions`,
+  );
 
-  const positions: Position[] = data.map((pos: Record<string, Record<string, unknown>>) => ({
-    percent: pos.percent,
+  const totalPercent = sharevillePositions.reduce((tot, pos) => tot + pos.percent, 0); // Total percentage excluding cash position
+
+  const positions: Position[] = sharevillePositions.map((pos) => ({
+    percent: (100 * pos.percent) / totalPercent,
     name: pos.instrument.name,
     prospectusUrl: pos.instrument.prospectus_url,
     category: pos.instrument.category,
@@ -151,7 +155,5 @@ async function getFundPositions(): Promise<Position[]> {
     performanceYTD: pos.instrument.performance_this_year,
   }));
 
-  const totalPercent = positions.reduce((tot, pos) => tot + pos.percent, 0);
-
-  return positions.map((pos) => ({ ...pos, percent: (100 * pos.percent) / totalPercent }));
+  return positions;
 }
