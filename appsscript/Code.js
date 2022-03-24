@@ -3,24 +3,20 @@
  */
 
 function getApiKey() {
-  let API_KEY = ScriptProperties.getProperty("APPS_SCRIPT_KEY");
+  let API_KEY = PropertiesService.getScriptProperties().getProperty('APPS_SCRIPT_KEY');
   if (API_KEY) {
     return API_KEY;
   }
 
-  const res = SpreadsheetApp.getUi().prompt("Vennligst oppgi API-nøkkelen satt i firebase konfigen.");
+  const res = SpreadsheetApp.getUi().prompt('Vennligst oppgi API-nøkkelen satt i firebase konfigen.');
   API_KEY = res.getResponseText();
 
-  ScriptProperties.setProperty("APPS_SCRIPT_KEY", API_KEY);
+  PropertiesService.getScriptProperties().setProperty('APPS_SCRIPT_KEY', API_KEY);
   return API_KEY;
 }
 
-function onOpen(e) {
-  SpreadsheetApp.getUi()
-  .createMenu("TIHLDE-Fondet")
-  .addItem('Publiser', 'saveChanges')
-  .addItem('Last opp fil', 'uploadFileDialog')
-  .addToUi();
+function onOpen() {
+  SpreadsheetApp.getUi().createMenu('TIHLDE-Fondet').addItem('Publiser', 'saveChanges').addItem('Last opp fil', 'uploadFileDialog').addToUi();
 }
 
 function saveChanges() {

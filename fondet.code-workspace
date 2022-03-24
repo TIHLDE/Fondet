@@ -25,6 +25,7 @@
     "eslint.workingDirectories": [
       "./functions",
       "./web",
+      "./appsscript",
     ],
     "editor.codeActionsOnSave": { "source.fixAll.eslint": true },
     "files.eol": "\n",
