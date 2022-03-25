@@ -41,7 +41,9 @@ function ElevationScroll({ children, override }: { children: React.ReactElement;
   return React.cloneElement(children, {
     style: {
       transition: 'background-color 0.25s',
-      ...(trigger || override ? { background: `${theme.palette.primary.dark}bf`, backdropFilter: 'blur(5px)' } : { backgroundColor: 'transparent' }),
+      ...(trigger || override
+        ? { background: `${theme.palette.primary.dark}bf`, backdropFilter: 'blur(5px)', WebkitBackdropFilter: 'blur(5px)' }
+        : { backgroundColor: 'transparent' }),
     },
   });
 }
