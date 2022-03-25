@@ -4,6 +4,7 @@ import { Link as RouterLink, useLocation } from 'react-router-dom';
 // Material
 import { AppBar, Box, Button, Container, IconButton, Link, Toolbar, Typography, useScrollTrigger, useTheme } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 
 // Constants
 import ROUTES from 'constants/routes';
@@ -40,7 +41,7 @@ function ElevationScroll({ children, override }: { children: React.ReactElement;
   return React.cloneElement(children, {
     style: {
       transition: 'background-color 0.25s',
-      ...(trigger || override ? { background: `${theme.palette.primary.dark}bf` } : { backgroundColor: 'transparent' }),
+      ...(trigger || override ? { background: `${theme.palette.primary.dark}bf`, backdropFilter: 'blur(5px)' } : { backgroundColor: 'transparent' }),
     },
   });
 }
@@ -61,7 +62,7 @@ const Header: React.FunctionComponent = () => {
       <ElevationScroll override={drawerOpen}>
         <AppBar elevation={0}>
           <Toolbar disableGutters>
-            <Container style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+            <Container style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }} maxWidth='xl'>
               <Link
                 component={RouterLink}
                 to={ROUTES.HOME}
@@ -98,8 +99,9 @@ const Header: React.FunctionComponent = () => {
                 ))}
               </Box>
               <Box sx={{ display: { xs: 'none', md: 'flex' } }} flexDirection='row' justifyContent='end' alignItems='center'>
-                <Button variant='outlined' href='https://tihlde.org/' color='info'>
+                <Button variant='outlined' href='https://tihlde.org/' target='_blank' color='info'>
                   tihlde.org
+                  <OpenInNewIcon sx={{ ml: 1 }} fontSize='small' />
                 </Button>
               </Box>
               <Box sx={{ display: { xs: 'flex', md: 'none' } }} flexDirection='row' justifyContent='end'>
@@ -130,8 +132,9 @@ const Header: React.FunctionComponent = () => {
                   {item.label}
                 </Button>
               ))}
-              <Button href='https://tihlde.org/' color='info' onClick={() => setDrawerOpen(false)}>
+              <Button href='https://tihlde.org/' target='_blank' color='info' onClick={() => setDrawerOpen(false)}>
                 tihlde.org
+                <OpenInNewIcon sx={{ ml: 1 }} fontSize='small' />
               </Button>
             </Box>
           </Container>
