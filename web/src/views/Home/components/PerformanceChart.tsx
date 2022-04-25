@@ -185,8 +185,8 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({ nordnetData }) => {
     <div>
       <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', color: '#ddd', mt: -6.8 }}>
         <Typography variant='h2' sx={{ mt: 0, color: fundReturn ? (fundReturn > 0 ? 'lightgreen' : 'lightcoral') : '#ddd' }}>
-          {fundReturn && fundReturn > 0 ? '+' : ''}
-          {fundReturn ? `${(fundReturn * 100).toFixed(1)}%` : ''}
+          {fundReturn !== null && fundReturn > 0 ? '+' : ''}
+          {fundReturn !== null ? `${(fundReturn * 100).toFixed(1)}%` : ''}
         </Typography>
       </Box>
       <Box sx={{ width: '100%', aspectRatio: '16/9' }}>
