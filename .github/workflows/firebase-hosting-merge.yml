@@ -10,7 +10,10 @@ jobs:
   deploy_functions:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
       - run: cd functions && npm ci
       - name:  Deploy to Firebase
         uses: w9jds/firebase-action@master
@@ -21,7 +24,10 @@ jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
       - run: cd web && npm ci && npm run build
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
