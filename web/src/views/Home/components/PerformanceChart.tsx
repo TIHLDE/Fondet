@@ -246,6 +246,7 @@ const options: _DeepPartialObject<
   onResize: (chart, { width }) => {
     if (width < 600) {
       chart.options.font!.size = 12;
+      //@ts-expect-error wrong
       chart.options.plugins!.legend!.labels!.font!.size = 12;
       //@ts-expect-error wrong
       chart.options.plugins!.tooltip!.bodyFont!.size = 12;
@@ -257,6 +258,7 @@ const options: _DeepPartialObject<
       chart.data.datasets[1].borderWidth = 1;
     } else {
       chart.options.font!.size = 14;
+      //@ts-expect-error wrong
       chart.options.plugins!.legend!.labels!.font!.size = 14;
       //@ts-expect-error wrong
       chart.options.plugins!.tooltip!.bodyFont!.size = 14;

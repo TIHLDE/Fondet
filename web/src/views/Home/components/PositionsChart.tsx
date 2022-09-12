@@ -84,6 +84,7 @@ const options: _DeepPartialObject<
       ctx.options.plugins!.legend!.position = 'bottom';
       ctx.options.plugins!.legend!.align = 'center';
       ctx.options.font!.size = 12;
+      //@ts-expect-error wrong
       ctx.options.plugins!.legend!.labels!.font!.size = 12;
       //@ts-expect-error wrong
       ctx.options.plugins!.tooltip!.bodyFont!.size = 12;
@@ -91,6 +92,7 @@ const options: _DeepPartialObject<
       ctx.options.plugins!.legend!.position = 'right';
       ctx.options.plugins!.legend!.align = 'center';
       ctx.options.font!.size = 14;
+      //@ts-expect-error wrong
       ctx.options.plugins!.legend!.labels!.font!.size = 14;
       //@ts-expect-error wrong
       ctx.options.plugins!.tooltip!.bodyFont!.size = 14;
@@ -128,7 +130,6 @@ const options: _DeepPartialObject<
         },
       },
       onClick(e, legendItem, legend) {
-        //@ts-expect-error incorrect
         legend.chart.toggleDataVisibility(legendItem.index);
         legend.chart.update();
       },
