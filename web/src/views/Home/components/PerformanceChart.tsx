@@ -25,6 +25,7 @@ import { Line } from 'react-chartjs-2';
 import { NordnetData, Price } from 'api';
 import { _DeepPartialObject } from 'chart.js/types/utils';
 import { Box, Button, ButtonGroup, Typography } from '@mui/material';
+import { isIOS } from 'utils/ios';
 ChartJS.register(CategoryScale, LinearScale, TimeScale, TimeSeriesScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 interface PerformanceChartProps {
@@ -174,7 +175,7 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({ nordnetData }) => {
         chart.stop();
         //@ts-expect-error incorrect restriction
         chart.update('in');
-      }, 10);
+      }, 100);
     }
     setFundReturn(fundData[fundData.length - 1]);
   }
@@ -194,10 +195,14 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({ nordnetData }) => {
       </Box>
       <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
         <ButtonGroup color='info' sx={{ mt: 2 }}>
-          {timescaleSelections.map(({ scale, name }) => (
+          {timescaleSelections.map(({ scale, name }, i) => (
             <Button
               key={name}
-              sx={{ fontSize: { xs: 12, sm: 13, md: 14 }, px: { xs: 1, sm: 1.3, md: 2 } }}
+              sx={{
+                fontSize: { xs: 12, sm: 13, md: 14 },
+                px: { xs: 1, sm: 1.3, md: 2 },
+                borderRightWidth: isIOS() && i < timescaleSelections.length - 1 ? 0 : undefined,
+              }}
               variant={scale === timescale ? 'contained' : 'outlined'}
               onClick={() => setTimescale(scale)}>
               {name}
