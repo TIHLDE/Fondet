@@ -18,7 +18,9 @@ import {
   ElementChartOptions,
   LineControllerChartOptions,
   Chart,
+  ScriptableContext,
 } from 'chart.js';
+import { easingEffects } from 'chart.js/helpers';
 import 'chartjs-adapter-date-fns';
 import { nb } from 'date-fns/locale';
 import { Line } from 'react-chartjs-2';
@@ -236,8 +238,14 @@ const data: ChartData<'line'> = {
   ],
 };
 
-const duration = 500;
-const delay = 1500;
+const duration = 4000;
+const easing = easingEffects.easeInQuint;
+const len = (ctx: ScriptableContext<'line'>) => ctx.chart.data.labels.length;
+const del = (i: number, length: number) => duration * (i / length) * (0.33 + easing(i / length) / 1.5);
+const dur = (i: number, length: number) => del(i + 1, length) - del(i, length);
+const prevY = (ctx: ScriptableContext<'line'>) =>
+  ctx.chart.scales.y.getPixelForValue((ctx.chart.data.datasets[ctx.datasetIndex].data as number[])[ctx.dataIndex - 1]);
+const prevX = (ctx: ScriptableContext<'line'>) => ctx.chart.scales.x.getPixelForValue((ctx.chart.data.labels as number[])[ctx.dataIndex - 1]);
 
 const options: _DeepPartialObject<
   CoreChartOptions<'line'> &
@@ -323,16 +331,25 @@ const options: _DeepPartialObject<
     in: {
       animations: {
         x: {
-          easing: 'easeOutCubic',
-          delay: (ctx) => (ctx.dataIndex * delay) / (ctx.chart.data.labels as number[]).length,
-          from: (ctx) => ctx.chart.scales.x.getPixelForValue((ctx.chart.data.labels as number[])[ctx.dataIndex]),
-          duration,
+          easing: 'linear',
+          delay: (ctx) => del(ctx.dataIndex, len(ctx)),
+          // @ts-expect-error hack
+          from: (ctx) => [ctx.dataIndex > 0 ? prevX(ctx) : NaN, null],
+          duration: (ctx) => dur(ctx.dataIndex, len(ctx)),
+          // @ts-expect-error hack
+          fn: (start: [number], to: number, factor) => {
+            if (!start || !to || !factor) {
+              return NaN;
+            }
+            const [from] = start;
+            return to * factor + from * (1 - factor);
+          },
         },
         y: {
-          easing: 'easeOutCubic',
-          delay: (ctx) => (ctx.dataIndex * delay) / (ctx.chart.data.labels as number[]).length,
-          from: (ctx) => ctx.chart.canvas.height,
-          duration,
+          easing: 'linear',
+          delay: (ctx) => del(ctx.dataIndex, len(ctx)),
+          from: (ctx) => (ctx.dataIndex > 0 ? prevY(ctx) : NaN),
+          duration: (ctx) => dur(ctx.dataIndex, len(ctx)),
         },
       },
     },
