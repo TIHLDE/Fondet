@@ -78,8 +78,8 @@ const Header: React.FunctionComponent = () => {
                   alignItems: 'center',
                   color: 'white',
                 }}>
-                <Box component='img' sx={{ height: { xs: 25, sm: 30 } }} src={logo} />
-                <Typography variant='h2' ml={1} my={0} fontWeight='bold'>
+                <Box component='img' height={30} src={logo} />
+                <Typography variant='h2' ml={1} my={0} fontSize='2rem' fontWeight='bold'>
                   Fondet
                 </Typography>
               </Link>
