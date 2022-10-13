@@ -22,7 +22,7 @@ const Home: React.FunctionComponent = () => {
     <>
       <Container>
         <Box height={64} />
-        <Typography variant='h2' sx={{ mr: 15 }}>
+        <Typography variant='h2' sx={{ mr: { xs: 13, sm: 15 } }}>
           Fondets avkastning
         </Typography>
 

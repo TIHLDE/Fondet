@@ -36,10 +36,13 @@ const dark = createTheme({
       fontSize: '3rem',
     },
     h2: {
-      fontSize: '2rem',
-      fontWeight: 'normal',
+      fontSize: '1.7rem',
       marginTop: '2rem',
+      fontWeight: 'normal',
       marginBottom: '1rem',
+      '@media (min-width:500px)': {
+        fontSize: '2rem',
+      },
     },
     h3: {
       fontSize: '1.5rem',
@@ -78,7 +81,7 @@ const dark = createTheme({
     values: {
       xs: 0,
       sm: 500,
-      md: 700,
+      md: 730,
       lg: 900,
       xl: 1200,
     },
