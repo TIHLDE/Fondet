@@ -24,11 +24,12 @@ import { easingEffects } from 'chart.js/helpers';
 import 'chartjs-adapter-date-fns';
 import { nb } from 'date-fns/locale';
 import { Line } from 'react-chartjs-2';
+import annotationPlugin, { LineAnnotationOptions } from 'chartjs-plugin-annotation';
 import { NordnetData, Price } from 'api';
 import { _DeepPartialObject } from 'chart.js/types/utils';
 import { Box, Button, ButtonGroup, Typography } from '@mui/material';
 import { isIOS } from 'utils/ios';
-ChartJS.register(CategoryScale, LinearScale, TimeScale, TimeSeriesScale, PointElement, LineElement, Title, Tooltip, Legend);
+ChartJS.register(CategoryScale, LinearScale, TimeScale, TimeSeriesScale, PointElement, LineElement, Title, Tooltip, Legend, annotationPlugin);
 
 interface PerformanceChartProps {
   nordnetData: NordnetData;
@@ -253,7 +254,8 @@ const options: _DeepPartialObject<
     PluginChartOptions<'line'> &
     DatasetChartOptions<'line'> &
     ScaleChartOptions<'line'> &
-    LineControllerChartOptions
+    LineControllerChartOptions &
+    LineAnnotationOptions
 > = {
   responsive: true,
   onResize: (chart, { width }) => {
@@ -269,6 +271,12 @@ const options: _DeepPartialObject<
       chart.options.scales!.y!.ticks!.font = { size: 12 };
       chart.data.datasets[0].borderWidth = 1;
       chart.data.datasets[1].borderWidth = 1;
+      //@ts-expect-error wrong
+      chart.options.plugins.annotation.annotations.zeroLine!.borderDash = [5, 5];
+      //@ts-expect-error wrong
+      chart.options.plugins.annotation.annotations!.zeroLineInvert!.borderDash = [5, 5];
+      //@ts-expect-error wrong
+      chart.options.plugins.annotation.annotations!.zeroLineInvert!.borderDashOffset = 5;
     } else {
       chart.options.font!.size = 14;
       //@ts-expect-error wrong
@@ -281,6 +289,12 @@ const options: _DeepPartialObject<
       chart.options.scales!.y!.ticks!.font = { size: 14 };
       chart.data.datasets[0].borderWidth = 2;
       chart.data.datasets[1].borderWidth = 2;
+      //@ts-expect-error wrong
+      chart.options.plugins.annotation.annotations!.zeroLine!.borderDash = [8, 8];
+      //@ts-expect-error wrong
+      chart.options.plugins.annotation.annotations!.zeroLineInvert!.borderDash = [8, 8];
+      //@ts-expect-error wrong
+      chart.options.plugins.annotation.annotations!.zeroLineInvert!.borderDashOffset = 8;
     }
   },
   plugins: {
@@ -288,6 +302,37 @@ const options: _DeepPartialObject<
       position: 'bottom',
       labels: {
         font: { size: 14 },
+      },
+    },
+    annotation: {
+      animations: {
+        numbers: {
+          properties: ['x', 'y', 'x2', 'y2', 'width', 'height', 'radius'],
+          type: 'number',
+          duration: 0,
+          delay: 0,
+        },
+      },
+      annotations: {
+        zeroLine: {
+          type: 'line',
+          borderColor: '#aaa',
+          borderDash: [5, 5],
+          borderWidth: 1,
+          scaleID: 'y',
+          value: 0,
+          drawTime: 'beforeDatasetsDraw',
+        },
+        zeroLineInvert: {
+          type: 'line',
+          borderColor: '#001328',
+          borderDash: [5, 5],
+          borderDashOffset: 5,
+          borderWidth: 5,
+          scaleID: 'y',
+          value: 0,
+          drawTime: 'beforeDatasetsDraw',
+        },
       },
     },
     tooltip: {
