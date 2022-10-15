@@ -1,3 +1,5 @@
+import { Timestamp } from 'firebase/firestore';
+
 export interface Application {
   applicant: string;
   purpose: string;
@@ -57,4 +59,27 @@ export interface Position {
   performanceWeek: number;
   performanceMonth: number;
   performanceYTD: number;
+}
+
+export interface FantasyfundData {
+  id: string;
+  name: string;
+  start: Timestamp;
+  end: Timestamp;
+  lastUpdated: Timestamp;
+  funds: Record<number, Fund>; // { id: fund }
+}
+
+export interface Fund {
+  name: string;
+  values: FundValue[];
+}
+
+export interface FundValue {
+  timestamp: Timestamp;
+  value: number;
+}
+
+export enum CollectionNames {
+  FantasyfundData = 'fantasy_fund_data',
 }

@@ -1,19 +1,23 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Container, Skeleton, Typography } from '@mui/material';
+import { Box, Container, Link, Skeleton, Typography } from '@mui/material';
 import PerformanceChart from './components/PerformanceChart';
 import PositionsChart from './components/PositionsChart';
+import FantasyfundLogo from '../../assets/fantasyfond.svg';
 
 // Api
-import Api, { NordnetData } from 'api';
+import Api, { FantasyfundData, NordnetData } from 'api';
 import PositionsTable from './components/PositionsTable';
 import PositionsList from './components/PositionsList';
+import FantasyChart from './components/FantasyChart';
 
 const Home: React.FunctionComponent = () => {
   const [nordnetData, setNordnetData] = useState<NordnetData>();
+  const [fantasyfundData, setFantasyfundData] = useState<FantasyfundData | null>();
   const [loading, setLoading] = useState(true);
   useEffect(() => {
-    Api.Nordnet.get().then((data) => {
-      setNordnetData(data);
+    Promise.all([Api.Nordnet.get(), Api.Fantasyfund.get()]).then(([nordnet, fantasyfund]) => {
+      setNordnetData(nordnet);
+      setFantasyfundData(fantasyfund);
       setLoading(false);
     });
   }, []);
@@ -21,6 +25,28 @@ const Home: React.FunctionComponent = () => {
   return (
     <>
       <Container>
+        {!loading && fantasyfundData && (
+          <>
+            <Box height={64} />
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                marginTop: '2rem',
+                marginBottom: '1rem',
+              }}>
+              <Link href={`https://investor.dn.no/#!/Fantasyfond/Liga/${fantasyfundData.id}`} target='_blank'>
+                <Box component={'img'} src={FantasyfundLogo} sx={{ width: { xs: 170, sm: 200 } }} />
+              </Link>
+              <Typography variant='h2' sx={{ margin: 0 }}>
+                Topp 5
+              </Typography>
+            </Box>
+            <FantasyChart fantasyfundData={fantasyfundData} />
+          </>
+        )}
         <Box height={64} />
         <Typography variant='h2' sx={{ mr: { xs: 13, sm: 15 } }}>
           Fondets avkastning
@@ -34,7 +60,7 @@ const Home: React.FunctionComponent = () => {
             <Skeleton variant='rectangular' sx={{ borderRadius: 2, maxWidth: 450, height: '40px', mx: 'auto', mt: 3 }} animation='wave' />
           </>
         )}
-        <Box height={70} />
+        <Box height={64} />
         <Typography variant='h2'>Fondets sammensetning</Typography>
 
         {!loading && nordnetData ? (
