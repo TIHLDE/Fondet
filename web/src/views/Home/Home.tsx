@@ -9,6 +9,7 @@ import Api, { FantasyfundData, NordnetData } from 'api';
 import PositionsTable from './components/PositionsTable';
 import PositionsList from './components/PositionsList';
 import FantasyChart from './components/FantasyChart';
+import FantasyList from './components/FantasyList';
 
 const Home: React.FunctionComponent = () => {
   const [nordnetData, setNordnetData] = useState<NordnetData>();
@@ -45,6 +46,8 @@ const Home: React.FunctionComponent = () => {
               </Typography>
             </Box>
             <FantasyChart fantasyfundData={fantasyfundData} />
+            <Typography variant='h3'>Alle deltakere</Typography>
+            <FantasyList fantasyfundData={fantasyfundData} />
           </>
         )}
         <Box height={64} />

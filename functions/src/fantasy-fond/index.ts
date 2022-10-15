@@ -39,10 +39,11 @@ export const updateFantasyfund = authenticatedRequest(async (req, res) => {
     fantasyFundData.funds = fantasyFundData.funds || {};
 
     leagueData.funds.forEach((fund) => {
-      const { 0: fundId, 4: fundName } = fund;
+      const { 0: fundId, 3: profileId, 4: fundName } = fund;
 
       const fundData = fantasyFundData.funds[fundId] || { name: fundName, values: [] };
       fundData.name = fundName;
+      fundData.profileId = profileId;
       fundData.values.push({
         timestamp,
         value: leagueData.ress[fundId],

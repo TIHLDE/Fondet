@@ -68,10 +68,12 @@ const FantasyChart: React.FC<FantasyChartProps> = ({ fantasyfundData }) => {
 
   return (
     <Box sx={{ width: '100%', aspectRatio: '16/9', minHeight: 350 }}>
-      <Line options={options} data={{ labels: [], datasets: [] }} ref={chartRef} />
+      <Line options={options} data={_data} ref={chartRef} />
     </Box>
   );
 };
+
+const _data: ChartData<'line'> = { labels: [], datasets: [] };
 
 const colors = [
   '141, 211, 199',

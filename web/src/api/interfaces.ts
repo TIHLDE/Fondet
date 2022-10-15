@@ -72,6 +72,7 @@ export interface FantasyfundData {
 
 export interface Fund {
   name: string;
+  profileId: number;
   values: FundValue[];
 }
 
