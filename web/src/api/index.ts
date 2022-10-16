@@ -27,7 +27,7 @@ class NordnetResource extends Resource<NordnetData> {
 class FantasyfundResource extends Resource<FantasyfundData | null> {
   protected async fetch(): Promise<FantasyfundData | null> {
     const start = Timestamp.fromMillis(Timestamp.now().toMillis() + 86400000);
-    const end = Timestamp.fromMillis(Timestamp.now().toMillis() - 86400000 * 7);
+    const end = Timestamp.fromMillis(Timestamp.now().toMillis() - 86400000 * 2);
 
     const q = query(collection(firestore, CollectionNames.FantasyfundData), orderBy('start', 'desc'), limit(1));
     const snapshot = await getDocs(q);
