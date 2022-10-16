@@ -281,7 +281,7 @@ const options: _DeepPartialObject<
           hour: 'HH:00',
         },
       },
-      type: 'time',
+      type: 'timeseries',
       grid: {
         drawOnChartArea: false,
         color: '#aaa',
