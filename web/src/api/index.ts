@@ -5,7 +5,7 @@ import Resource from './resource';
 import { NordnetData, SheetsData, FantasyfundData, CollectionNames } from './interfaces';
 import { firebaseApp } from './firebase';
 const firestore = getFirestore(firebaseApp);
-connectFirestoreEmulator(firestore, 'localhost', 5003);
+connectFirestoreEmulator(firestore, 'localhost', 5003); // TODO: remove
 
 class SheetsResource extends Resource<SheetsData> {
   protected async fetch(): Promise<SheetsData> {
@@ -35,11 +35,15 @@ class FantasyfundResource extends Resource<FantasyfundData | null> {
     if (snapshot.docs.length > 0) {
       const doc = snapshot.docs[0];
       const fantasyfundData = { id: doc.id, ...doc.data() } as FantasyfundData;
+
+      // Filter out funds without sufficient data
+      fantasyfundData.funds = Object.fromEntries(Object.entries(fantasyfundData.funds).filter(([, fund]) => fund.values.length > 1));
+
       if (
         fantasyfundData.start < start &&
         fantasyfundData.end > end &&
         fantasyfundData.funds &&
-        Math.max(...Object.values(fantasyfundData.funds).map((fund) => fund.values.length)) > 1 // Needs to  have data
+        Object.keys(fantasyfundData.funds).length > 1 // Needs to  have data
       ) {
         return fantasyfundData;
       }

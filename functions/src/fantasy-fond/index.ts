@@ -40,16 +40,19 @@ export const updateFantasyfund = authenticatedRequest(async (req, res) => {
 
     leagueData.funds.forEach((fund) => {
       const { 0: fundId, 3: profileId, 4: fundName } = fund;
+      const value = leagueData.ress[fundId];
 
-      const fundData = fantasyFundData.funds[fundId] || { name: fundName, values: [] };
-      fundData.name = fundName;
-      fundData.profileId = profileId;
-      fundData.values.push({
-        timestamp,
-        value: leagueData.ress[fundId],
-      });
+      if (value !== undefined) {
+        const fundData = fantasyFundData.funds[fundId] || { values: [] };
+        fundData.name = fundName;
+        fundData.profileId = profileId;
+        fundData.values.push({
+          timestamp,
+          value: (Math.random() - 0.5) * 1000 + (fundData.values.length > 0 ? (fundData.values.at(-1)?.value as number) : value), // TODO: Remove
+        });
 
-      fantasyFundData.funds[fundId] = fundData;
+        fantasyFundData.funds[fundId] = fundData;
+      }
     });
 
     await fundDataRef.set(fantasyFundData);

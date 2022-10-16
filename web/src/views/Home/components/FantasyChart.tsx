@@ -156,6 +156,7 @@ const options: _DeepPartialObject<
       labels: {
         font: { size: 14 },
       },
+      onClick: (e) => e.native.stopPropagation(),
     },
     annotation: {
       animations: {

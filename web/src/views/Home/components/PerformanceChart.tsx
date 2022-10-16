@@ -319,6 +319,12 @@ const options: _DeepPartialObject<
       labels: {
         font: { size: 14 },
       },
+      onClick: (e, i, legend) => {
+        legend.chart.stop();
+        legend.chart.update('resize');
+        // @ts-expect-error wrong
+        Chart.defaults.plugins.legend.onClick(e, i, legend);
+      },
     },
     annotation: {
       animations: {
