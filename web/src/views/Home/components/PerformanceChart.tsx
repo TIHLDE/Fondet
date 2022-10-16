@@ -29,6 +29,7 @@ import { NordnetData, Price } from 'api';
 import { _DeepPartialObject } from 'chart.js/types/utils';
 import { Box, Button, ButtonGroup, Typography } from '@mui/material';
 import { isIOS } from 'utils/ios';
+import useInView from 'utils/useOnScreen';
 ChartJS.register(CategoryScale, LinearScale, TimeScale, TimeSeriesScale, PointElement, LineElement, Title, Tooltip, Legend, annotationPlugin);
 
 interface PerformanceChartProps {
@@ -153,7 +154,9 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({ nordnetData }) => {
 
   const [timescale, setTimescale] = useState<timescales>(timescales.ytd);
   const [fundReturn, setFundReturn] = useState<number>();
+  const inView = useRef(false);
 
+  const containerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<Chart<'line'>>(null);
 
   const dataScales = useMemo(
@@ -165,35 +168,47 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({ nordnetData }) => {
     [],
   );
 
-  function setData(timescale: timescales) {
+  function setData(timescale: timescales, skipWait = false) {
     const [labels, fundData, indexData] = dataScales[timescale];
 
     const chart = chartRef.current;
-    if (chart) {
-      setTimeout(() => {
-        chart.data.labels = labels;
-        chart.data.datasets[0].data = fundData;
-        chart.data.datasets[1].data = indexData;
+    if (chart && inView.current) {
+      setTimeout(
+        () => {
+          chart.data.labels = labels;
+          chart.data.datasets[0].data = fundData;
+          chart.data.datasets[1].data = indexData;
 
-        chart.stop();
-        //@ts-expect-error incorrect restriction
-        chart.update('in');
-      }, 100);
+          chart.stop();
+          //@ts-expect-error incorrect restriction
+          chart.update('in');
+        },
+        skipWait ? 0 : 100,
+      );
     }
     setFundReturn(fundData[fundData.length - 1]);
   }
 
+  useInView(
+    () => {
+      inView.current = true;
+      setData(timescale, true);
+    },
+    0.5,
+    containerRef,
+  );
+
   useEffect(() => setData(timescale), [timescale]);
 
   return (
-    <div>
+    <div ref={containerRef}>
       <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', color: '#ddd', mt: { xs: -6.05, sm: -6.8 } }}>
         <Typography variant='h2' sx={{ mt: 0, color: fundReturn ? (fundReturn > 0 ? 'lightgreen' : 'lightcoral') : '#ddd' }}>
           {fundReturn !== null && fundReturn > 0 ? '+' : ''}
           {fundReturn !== null ? `${(fundReturn * 100).toFixed(1)}%` : ''}
         </Typography>
       </Box>
-      <Box sx={{ width: '100%', aspectRatio: '16/9' }}>
+      <Box sx={{ width: '100%', aspectRatio: '16/9', minHeight: '300px' }}>
         <Line options={options} data={data} ref={chartRef} />
       </Box>
       <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
@@ -259,6 +274,7 @@ const options: _DeepPartialObject<
 > = {
   responsive: true,
   onResize: (chart, { width }) => {
+    chart.stop();
     if (width < 600) {
       chart.options.font!.size = 12;
       //@ts-expect-error wrong
@@ -302,6 +318,12 @@ const options: _DeepPartialObject<
       position: 'bottom',
       labels: {
         font: { size: 14 },
+      },
+      onClick: (e, i, legend) => {
+        legend.chart.stop();
+        legend.chart.update('resize');
+        // @ts-expect-error wrong
+        Chart.defaults.plugins.legend.onClick(e, i, legend);
       },
     },
     annotation: {
@@ -407,6 +429,7 @@ const options: _DeepPartialObject<
   },
   borderColor: 'white',
   aspectRatio: 16 / 9,
+  maintainAspectRatio: false,
   scales: {
     x: {
       adapters: {

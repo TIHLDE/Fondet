@@ -79,6 +79,7 @@ const options: _DeepPartialObject<
     DoughnutControllerChartOptions
 > = {
   onResize: (ctx) => {
+    ctx.stop();
     const width = window.innerWidth;
     if (width <= 700) {
       ctx.options.plugins!.legend!.position = 'bottom';

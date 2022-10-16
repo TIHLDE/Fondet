@@ -5,15 +5,18 @@ import PositionsChart from './components/PositionsChart';
 
 // Api
 import Api, { NordnetData } from 'api';
+
+// Components
 import PositionsTable from './components/PositionsTable';
 import PositionsList from './components/PositionsList';
+import FantasyWidget from './components/FantasyWidget';
 
 const Home: React.FunctionComponent = () => {
   const [nordnetData, setNordnetData] = useState<NordnetData>();
   const [loading, setLoading] = useState(true);
   useEffect(() => {
-    Api.Nordnet.get().then((data) => {
-      setNordnetData(data);
+    Api.Nordnet.get().then((nordnet) => {
+      setNordnetData(nordnet);
       setLoading(false);
     });
   }, []);
@@ -21,6 +24,7 @@ const Home: React.FunctionComponent = () => {
   return (
     <>
       <Container>
+        {process.env.REACT_APP_ENV === 'development' && <FantasyWidget />}
         <Box height={64} />
         <Typography variant='h2' sx={{ mr: { xs: 13, sm: 15 } }}>
           Fondets avkastning
@@ -34,7 +38,7 @@ const Home: React.FunctionComponent = () => {
             <Skeleton variant='rectangular' sx={{ borderRadius: 2, maxWidth: 450, height: '40px', mx: 'auto', mt: 3 }} animation='wave' />
           </>
         )}
-        <Box height={70} />
+        <Box height={64} />
         <Typography variant='h2'>Fondets sammensetning</Typography>
 
         {!loading && nordnetData ? (

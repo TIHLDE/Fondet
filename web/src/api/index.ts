@@ -1,6 +1,10 @@
 import axios from 'axios';
+import { collection, getFirestore, query, getDocs, orderBy, limit } from 'firebase/firestore';
+import { Timestamp } from 'firebase/firestore';
 import Resource from './resource';
-import { NordnetData, SheetsData } from './interfaces';
+import { NordnetData, SheetsData, FantasyfundData, CollectionNames } from './interfaces';
+import { firebaseApp } from './firebase';
+const firestore = getFirestore(firebaseApp);
 
 class SheetsResource extends Resource<SheetsData> {
   protected async fetch(): Promise<SheetsData> {
@@ -20,9 +24,36 @@ class NordnetResource extends Resource<NordnetData> {
   }
 }
 
-export * from './interfaces';
+class FantasyfundResource extends Resource<FantasyfundData | null> {
+  protected async fetch(): Promise<FantasyfundData | null> {
+    const start = Timestamp.fromMillis(Timestamp.now().toMillis() + 86400000);
+    const end = Timestamp.fromMillis(Timestamp.now().toMillis() - 86400000 * 7);
 
+    const q = query(collection(firestore, CollectionNames.FantasyfundData), orderBy('start', 'desc'), limit(1));
+    const snapshot = await getDocs(q);
+    if (snapshot.docs.length > 0) {
+      const doc = snapshot.docs[0];
+      const fantasyfundData = { id: doc.id, ...doc.data() } as FantasyfundData;
+
+      // Filter out funds without sufficient data
+      fantasyfundData.funds = Object.fromEntries(Object.entries(fantasyfundData.funds).filter(([, fund]) => fund.values.length > 1));
+
+      if (
+        fantasyfundData.start < start &&
+        fantasyfundData.end > end &&
+        fantasyfundData.funds &&
+        Object.keys(fantasyfundData.funds).length > 1 // Needs to  have data
+      ) {
+        return fantasyfundData;
+      }
+    }
+    return null;
+  }
+}
+
+export * from './interfaces';
 export default {
   Sheets: new SheetsResource(),
   Nordnet: new NordnetResource(),
+  Fantasyfund: new FantasyfundResource(),
 };

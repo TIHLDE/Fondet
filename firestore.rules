@@ -4,5 +4,10 @@ service cloud.firestore {
     match /{document=**} {
       allow read, write: if false;
     }
+
+    match /fantasy_fund_data/{document=**} {
+      allow read: if true;
+      allow write: if false;
+    }
   }
 }
