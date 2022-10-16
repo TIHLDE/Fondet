@@ -8,6 +8,7 @@ import * as moment from 'moment-timezone';
 import { FantasyfundUpdateRequest, FantasyfundLeagueResponse, CollectionNames, FantasyfundData, FantasyFundConfig, FirebaseConfig } from './interfaces';
 
 const cloudTasksClient = new cloudTasks.CloudTasksClient();
+// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 const firebaseConfig = JSON.parse(process.env.FIREBASE_CONFIG!) as FirebaseConfig;
 const cloud_tasks_key = functions.config().secrets.cloud_tasks_key;
 

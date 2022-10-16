@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { FantasyfundData } from 'api';
 import { Box } from '@mui/material';
 import { Line } from 'react-chartjs-2';
@@ -32,42 +32,45 @@ ChartJS.register(CategoryScale, LinearScale, TimeScale, TimeSeriesScale, PointEl
 
 interface FantasyChartProps {
   fantasyfundData: FantasyfundData;
+  selectedUsers: number[];
 }
 
-const FantasyChart: React.FC<FantasyChartProps> = ({ fantasyfundData }) => {
+const FantasyChart: React.FC<FantasyChartProps> = ({ fantasyfundData, selectedUsers }) => {
   const chartRef = useRef<Chart<'line'>>(null);
-
-  const data: ChartData<'line'> = useMemo(
-    () =>
-      ({
-        datasets: Object.values(fantasyfundData.funds)
-          .sort((a, b) => b.values.at(-1).value - a.values.at(-1).value)
-          .filter((_, i) => i < 5)
-          .map((fund, i) => ({
-            label: fund.name,
-            data: fund.values.map((value) => ({ x: value.timestamp.toMillis(), y: value.value })),
-            borderWidth: 2,
-            normalized: true,
-            borderColor: `rgb(${colors[i]})`,
-            backgroundColor: `rgba(${colors[i]}, 0.5)`,
-          })),
-      } as ChartData<'line'>),
-    [fantasyfundData],
-  );
 
   useEffect(() => {
     const chart = chartRef.current;
     if (chart) {
+      const funds =
+        selectedUsers.length > 0
+          ? Object.values(fantasyfundData.funds)
+              .filter((fund) => selectedUsers.includes(fund.profileId)) // Selected users for comparison
+              .filter((_, i) => i < 10) // Maximum 10
+          : Object.values(fantasyfundData.funds)
+              .sort((a, b) => b.values.at(-1).value - a.values.at(-1).value)
+              .filter((_, i) => i < 5); // Top 5
+
+      const data: ChartData<'line'> = {
+        datasets: funds.map((fund, i) => ({
+          label: fund.name,
+          data: fund.values.map((value) => ({ x: value.timestamp.toMillis(), y: value.value })),
+          borderWidth: 2,
+          normalized: true,
+          borderColor: `rgb(${colors[i]})`,
+          backgroundColor: `rgba(${colors[i]}, 0.5)`,
+        })),
+      };
+
       chart.data = data;
       chart.options.onResize(chart, { width: chart.width, height: chart.height });
       chart.stop();
       //@ts-expect-error incorrect restriction
       chart.update('in');
     }
-  }, []);
+  }, [selectedUsers]);
 
   return (
-    <Box sx={{ width: '100%', aspectRatio: '16/9', minHeight: 350 }}>
+    <Box sx={{ width: '100%', aspectRatio: '16/9', minHeight: { xs: 400, sm: 350 } }}>
       <Line options={options} data={_data} ref={chartRef} />
     </Box>
   );
@@ -156,6 +159,7 @@ const options: _DeepPartialObject<
       labels: {
         font: { size: 14 },
       },
+      maxHeight: 300,
       onClick: (e) => e.native.stopPropagation(),
     },
     annotation: {

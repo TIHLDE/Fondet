@@ -1,24 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Container, Link, Skeleton, Typography } from '@mui/material';
+import { Box, Container, Skeleton, Typography } from '@mui/material';
 import PerformanceChart from './components/PerformanceChart';
 import PositionsChart from './components/PositionsChart';
-import FantasyfundLogo from '../../assets/fantasyfond.svg';
 
 // Api
-import Api, { FantasyfundData, NordnetData } from 'api';
+import Api, { NordnetData } from 'api';
+
+// Components
 import PositionsTable from './components/PositionsTable';
 import PositionsList from './components/PositionsList';
-import FantasyChart from './components/FantasyChart';
-import FantasyList from './components/FantasyList';
+import FantasyWidget from './components/FantasyWidget';
 
 const Home: React.FunctionComponent = () => {
   const [nordnetData, setNordnetData] = useState<NordnetData>();
-  const [fantasyfundData, setFantasyfundData] = useState<FantasyfundData | null>();
   const [loading, setLoading] = useState(true);
   useEffect(() => {
-    Promise.all([Api.Nordnet.get(), Api.Fantasyfund.get()]).then(([nordnet, fantasyfund]) => {
+    Api.Nordnet.get().then((nordnet) => {
       setNordnetData(nordnet);
-      setFantasyfundData(fantasyfund);
       setLoading(false);
     });
   }, []);
@@ -26,30 +24,7 @@ const Home: React.FunctionComponent = () => {
   return (
     <>
       <Container>
-        {!loading && fantasyfundData && (
-          <>
-            <Box height={64} />
-            <Box
-              sx={{
-                display: 'flex',
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                marginTop: '2rem',
-                marginBottom: '1rem',
-              }}>
-              <Link href={`https://investor.dn.no/#!/Fantasyfond/Liga/${fantasyfundData.id}`} target='_blank'>
-                <Box component={'img'} src={FantasyfundLogo} sx={{ width: { xs: 170, sm: 200 } }} />
-              </Link>
-              <Typography variant='h2' sx={{ margin: 0 }}>
-                Topp 5
-              </Typography>
-            </Box>
-            <FantasyChart fantasyfundData={fantasyfundData} />
-            <Typography variant='h3'>Alle deltakere</Typography>
-            <FantasyList fantasyfundData={fantasyfundData} />
-          </>
-        )}
+        <FantasyWidget />
         <Box height={64} />
         <Typography variant='h2' sx={{ mr: { xs: 13, sm: 15 } }}>
           Fondets avkastning
