@@ -15,7 +15,7 @@ const Home: React.FunctionComponent = () => {
   const [nordnetData, setNordnetData] = useState<NordnetData>();
   const [loading, setLoading] = useState(true);
   useEffect(() => {
-    Api.Nordnet.get().then((nordnet) => {
+    Promise.all([Api.Nordnet.get(), Api.Fantasyfund.get()]).then(([nordnet]) => {
       setNordnetData(nordnet);
       setLoading(false);
     });
