@@ -1,11 +1,10 @@
 import axios from 'axios';
-import { collection, getFirestore, query, getDocs, orderBy, limit, connectFirestoreEmulator } from 'firebase/firestore';
+import { collection, getFirestore, query, getDocs, orderBy, limit } from 'firebase/firestore';
 import { Timestamp } from 'firebase/firestore';
 import Resource from './resource';
 import { NordnetData, SheetsData, FantasyfundData, CollectionNames } from './interfaces';
 import { firebaseApp } from './firebase';
 const firestore = getFirestore(firebaseApp);
-connectFirestoreEmulator(firestore, 'localhost', 5003); // TODO: remove
 
 class SheetsResource extends Resource<SheetsData> {
   protected async fetch(): Promise<SheetsData> {

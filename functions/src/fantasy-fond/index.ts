@@ -49,7 +49,7 @@ export const updateFantasyfund = authenticatedRequest(async (req, res) => {
         fundData.profileId = profileId;
         fundData.values.push({
           timestamp,
-          value: (Math.random() - 0.5) * 1000 + (fundData.values.length > 0 ? (fundData.values.at(-1)?.value as number) : value), // TODO: Remove
+          value,
         });
 
         fantasyFundData.funds[fundId] = fundData;

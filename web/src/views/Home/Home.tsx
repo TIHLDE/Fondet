@@ -24,7 +24,7 @@ const Home: React.FunctionComponent = () => {
   return (
     <>
       <Container>
-        <FantasyWidget />
+        {process.env.REACT_APP_ENV === 'development' && <FantasyWidget />}
         <Box height={64} />
         <Typography variant='h2' sx={{ mr: { xs: 13, sm: 15 } }}>
           Fondets avkastning
