@@ -41,11 +41,18 @@ const FantasyChart: React.FC<FantasyChartProps> = ({ fantasyfundData, selectedUs
   useEffect(() => {
     const chart = chartRef.current;
     if (chart) {
+      // @ts-expect-error hack
+      chart.allFunds = Object.values(fantasyfundData.funds).map((fund) => ({
+        label: fund.name,
+        data: fund.values.map((value) => ({ x: value.timestamp.toMillis(), y: value.value })),
+      }));
+
       const funds =
         selectedUsers.length > 0
           ? Object.values(fantasyfundData.funds)
               .filter((fund) => selectedUsers.includes(fund.profileId)) // Selected users for comparison
               .filter((_, i) => i < 10) // Maximum 10
+              .sort((a, b) => b.values.at(-1).value - a.values.at(-1).value)
           : Object.values(fantasyfundData.funds)
               .sort((a, b) => b.values.at(-1).value - a.values.at(-1).value)
               .filter((_, i) => i < 5); // Top 5
@@ -158,6 +165,32 @@ const options: _DeepPartialObject<
       position: 'bottom',
       labels: {
         font: { size: 14 },
+        generateLabels: (chart) => {
+          const data = chart.data;
+          if (data.datasets.length) {
+            return data.datasets.map((dataset) => {
+              const xMax = Math.max(
+                // @ts-expect-error hack
+                ...(chart.allFunds as { label: string; data: { x: number; y: number }[] }[]).map(({ data }) => data.at(-1).x),
+              );
+              const position =
+                // @ts-expect-error hack
+                (chart.allFunds as { label: string; data: { x: number; y: number }[] }[])
+                  .filter(({ data }) => data.find((p) => p.x === xMax) !== undefined) // Remove elements without current x value
+                  .sort(({ data: a }, { data: b }) => b.find((p) => p.x === xMax).y - a.find((p) => p.x === xMax).y) // Sort by y value on current x value
+                  .map(({ label }) => label) // Map to labels
+                  .indexOf(dataset.label) + 1; // Grab position
+
+              return {
+                text: `${position > 0 ? `${position}. ` : ''}${dataset.label}`,
+                fillStyle: dataset.backgroundColor as string,
+                strokeStyle: dataset.borderColor as string,
+                lineWidth: dataset.borderWidth as number,
+              };
+            });
+          }
+          return [];
+        },
       },
       maxHeight: 300,
       onClick: (e) => e.native.stopPropagation(),
@@ -205,14 +238,30 @@ const options: _DeepPartialObject<
       callbacks: {
         title: (items) => {
           const date = new Date(items[0].parsed.x);
-          return `${date.getDate()}. ${months[date.getMonth()]} ${date.getHours()}:00`;
+          const hh = String(date.getHours()).padStart(2, '0');
+          const mm = String(date.getMinutes()).padStart(2, '0');
+          return `${date.getDate()}. ${months[date.getMonth()]} ${hh}:${mm}`;
         },
         label: (ctx) => {
+          const xMin = Math.min(
+            // @ts-expect-error hack
+            ...(ctx.chart.allFunds as { label: string; data: { x: number; y: number }[] }[]).map(({ data }) => data[0].x),
+          );
+
+          const x = (ctx.raw as ScatterDataPoint).x;
           const label = ctx.dataset.label;
+          const position =
+            // @ts-expect-error hack
+            (ctx.chart.allFunds as { label: string; data: { x: number; y: number }[] }[])
+              .filter(({ data }) => data.find((p) => p.x === x) !== undefined) // Remove elements without current x value
+              .sort(({ data: a }, { data: b }) => b.find((p) => p.x === x).y - a.find((p) => p.x === x).y) // Sort by y value on current x value
+              .map(({ label }) => label) // Map to labels
+              .indexOf(label) + 1; // Grab position
           const value = ctx.parsed.y;
-          return `${label}: ${numberFormat.format(value as number)} kr`;
+          return `${x !== xMin ? `${position}. ` : ''}${label}: ${numberFormat.format(value)} kr`;
         },
       },
+      itemSort: (a, b) => b.parsed.y - a.parsed.y,
     },
   },
   elements: {
@@ -228,7 +277,8 @@ const options: _DeepPartialObject<
   },
   interaction: {
     intersect: false,
-    mode: 'index',
+    mode: 'nearest',
+    axis: 'x',
   },
   transitions: {
     in: {
@@ -275,11 +325,10 @@ const options: _DeepPartialObject<
       },
       time: {
         displayFormats: {
-          millisecond: 'HH:mm',
-          second: 'HH:mm',
-          minute: 'HH:mm',
-          hour: 'HH:00',
+          hour: 'HH:mm',
         },
+        round: 'minute',
+        minUnit: 'hour',
       },
       type: 'time',
       grid: {

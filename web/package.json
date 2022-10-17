@@ -30,7 +30,7 @@
     "web-vitals": "^1.1.2"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "env-cmd -f ./.env.staging react-scripts start",
     "build": "react-scripts build",
     "build:staging": "env-cmd -f ./.env.staging react-scripts build",
     "test": "react-scripts test",
