@@ -43,7 +43,7 @@ class FantasyfundResource extends Resource<FantasyfundData | null> {
         fantasyfundData.end > end &&
         fantasyfundData.funds &&
         Object.keys(fantasyfundData.funds).length > 1 && // Needs to  have data
-        Math.max(Object.values(fantasyfundData.funds).map((fund) => fund.values.length)) > 4 // Minimum half day of data
+        Math.max(...Object.values(fantasyfundData.funds).map((fund) => fund.values.length)) > 4 // Minimum half day of data
       ) {
         return fantasyfundData;
       }
