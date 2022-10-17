@@ -228,7 +228,7 @@ const options: _DeepPartialObject<
   },
   interaction: {
     intersect: false,
-    mode: 'index',
+    mode: 'x',
   },
   transitions: {
     in: {
