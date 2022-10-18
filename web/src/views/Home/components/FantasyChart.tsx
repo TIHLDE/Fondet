@@ -330,7 +330,7 @@ const options: _DeepPartialObject<
         round: 'minute',
         minUnit: 'hour',
       },
-      type: 'time',
+      type: 'timeseries',
       grid: {
         drawOnChartArea: false,
         color: '#aaa',
