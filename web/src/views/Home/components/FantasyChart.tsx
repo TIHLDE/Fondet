@@ -343,6 +343,9 @@ const options: _DeepPartialObject<
         color: '#aaa',
         source: 'data',
         autoSkip: true,
+        major: {
+          enabled: true
+        },
       },
     },
     y: {
