@@ -341,11 +341,7 @@ const options: _DeepPartialObject<
         autoSkipPadding: 16,
         maxRotation: 0,
         color: '#aaa',
-        source: 'auto',
-        autoSkip: true,
-        major: {
-          enabled: true,
-        },
+        source: 'data',
       },
     },
     y: {
