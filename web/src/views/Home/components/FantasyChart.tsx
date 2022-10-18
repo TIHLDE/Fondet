@@ -342,6 +342,7 @@ const options: _DeepPartialObject<
         maxRotation: 0,
         color: '#aaa',
         source: 'auto',
+        autoSkip: true,
       },
     },
     y: {
