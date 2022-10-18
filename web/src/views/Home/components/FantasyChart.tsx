@@ -326,6 +326,7 @@ const options: _DeepPartialObject<
       time: {
         displayFormats: {
           hour: 'HH:mm',
+          day: 'd. MMMM',
         },
         round: 'minute',
         minUnit: 'hour',
