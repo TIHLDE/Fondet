@@ -344,7 +344,7 @@ const options: _DeepPartialObject<
         source: 'data',
         autoSkip: true,
         major: {
-          enabled: true
+          enabled: true,
         },
       },
     },
