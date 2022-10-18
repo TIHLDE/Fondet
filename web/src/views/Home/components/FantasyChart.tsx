@@ -20,6 +20,7 @@ import {
   ScaleChartOptions,
   ScatterDataPoint,
   ScriptableContext,
+  Tick,
   TimeScale,
   TimeSeriesScale,
   Title,
@@ -34,6 +35,20 @@ interface FantasyChartProps {
   fantasyfundData: FantasyfundData;
   selectedUsers: number[];
 }
+
+// To test the chart at different amounts of data
+/*function moreData(values: FundValue[], n: number) {
+  let outValues = [...values];
+  const offset = 57600000;
+  for (let i = 0; i < n; i++) {
+    const newValues = values.map(({ timestamp, value }) => ({
+      value: value - 100000 + outValues.at(-1).value,
+      timestamp: Timestamp.fromMillis(outValues.at(-1).timestamp.toMillis() + offset + timestamp.toMillis() - values[0].timestamp.toMillis()),
+    }));
+    outValues = [...outValues, ...newValues];
+  }
+  return outValues;
+}*/
 
 const FantasyChart: React.FC<FantasyChartProps> = ({ fantasyfundData, selectedUsers }) => {
   const chartRef = useRef<Chart<'line'>>(null);
@@ -132,7 +147,7 @@ const options: _DeepPartialObject<
       chart.options.plugins!.tooltip!.bodyFont!.size = 12;
       //@ts-expect-error wrong
       chart.options.plugins!.tooltip!.titleFont!.size = 12;
-      chart.options.scales!.x!.ticks!.font = { size: 12 };
+      chart.options.scales!.x!.ticks!.font = (ctx) => ({ size: 12, weight: ctx.tick && ctx.tick.major ? 'bold' : '' });
       chart.options.scales!.y!.ticks!.font = { size: 12 };
       chart.data.datasets.forEach((dataset) => (dataset.borderWidth = 1));
       //@ts-expect-error wrong
@@ -149,7 +164,7 @@ const options: _DeepPartialObject<
       chart.options.plugins!.tooltip!.bodyFont!.size = 14;
       //@ts-expect-error wrong
       chart.options.plugins!.tooltip!.titleFont!.size = 14;
-      chart.options.scales!.x!.ticks!.font = { size: 14 };
+      chart.options.scales!.x!.ticks!.font = (ctx) => ({ size: 14, weight: ctx.tick && ctx.tick.major ? 'bold' : '' });
       chart.options.scales!.y!.ticks!.font = { size: 14 };
       chart.data.datasets.forEach((dataset) => (dataset.borderWidth = 2));
       //@ts-expect-error wrong
@@ -326,7 +341,7 @@ const options: _DeepPartialObject<
       time: {
         displayFormats: {
           hour: 'HH:mm',
-          day: 'd. MMMM',
+          day: 'd. MMM',
         },
         round: 'minute',
         minUnit: 'hour',
@@ -341,7 +356,17 @@ const options: _DeepPartialObject<
         autoSkipPadding: 16,
         maxRotation: 0,
         color: '#aaa',
-        source: 'data',
+        source: 'auto',
+        major: {
+          enabled: true,
+        },
+      },
+      afterTickToLabelConversion: (axis) => {
+        const notTime = (tick: Tick) => !(tick.label as string).includes(':');
+        axis.ticks = axis.getTicks().filter((tick) => {
+          const date = new Date(tick.value);
+          return notTime(tick) || (date.getHours() <= 17 && date.getHours() >= 9);
+        });
       },
     },
     y: {
