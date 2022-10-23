@@ -115,8 +115,20 @@ const colors = [
 
 const duration = 4000;
 const easing = easingEffects.easeInQuint;
-const getDates = (ctx: ScriptableContext<'line'>) =>
-  Array.from(new Set(ctx.chart.data.datasets.flatMap((d) => (d.data as ScatterDataPoint[]).map((p) => p.x)))).sort();
+const getDates = (ctx: ScriptableContext<'line'>) => {
+  const key = ctx.chart.data.datasets.map((d) => d.label).join('-');
+  // @ts-expect-error hack
+  ctx.chart.datesMap = ctx.chart.datesMap || new Map();
+  // @ts-expect-error hack
+  let datesMap = ctx.chart.datesMap.get(key);
+  if (!datesMap) {
+    // @ts-expect-error hack
+    ctx.chart.datesMap.set(key, Array.from(new Set(ctx.chart.data.datasets.flatMap((d) => (d.data as ScatterDataPoint[]).map((p) => p.x)))).sort());
+    // @ts-expect-error hack
+    datesMap = ctx.chart.datesMap.get(key);
+  }
+  return datesMap;
+};
 const idx = (ctx: ScriptableContext<'line'>, dates: number[]) => dates.indexOf(((ctx.dataset.data[ctx.dataIndex] as ScatterDataPoint) || { x: 0 }).x);
 const del = (i: number, length: number) => duration * (i / length) * (0.33 + easing(i / length) / 1.5);
 const dur = (i: number, length: number) => del(i + 1, length) - del(i, length);
