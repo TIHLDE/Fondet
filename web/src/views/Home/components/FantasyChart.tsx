@@ -115,13 +115,13 @@ const colors = [
 
 const duration = 4000;
 const easing = easingEffects.easeInQuint;
-const len = (ctx: ScriptableContext<'line'>) => ctx.chart.data.datasets[ctx.datasetIndex].data.length;
+const getDates = (ctx: ScriptableContext<'line'>) =>
+  Array.from(new Set(ctx.chart.data.datasets.flatMap((d) => (d.data as ScatterDataPoint[]).map((p) => p.x)))).sort();
+const idx = (ctx: ScriptableContext<'line'>, dates: number[]) => dates.indexOf(((ctx.dataset.data[ctx.dataIndex] as ScatterDataPoint) || { x: 0 }).x);
 const del = (i: number, length: number) => duration * (i / length) * (0.33 + easing(i / length) / 1.5);
 const dur = (i: number, length: number) => del(i + 1, length) - del(i, length);
-const prevY = (ctx: ScriptableContext<'line'>) =>
-  ctx.chart.scales.y.getPixelForValue((ctx.chart.data.datasets[ctx.datasetIndex].data as ScatterDataPoint[])[ctx.dataIndex - 1].y);
-const prevX = (ctx: ScriptableContext<'line'>) =>
-  ctx.chart.scales.x.getPixelForValue((ctx.chart.data.datasets[ctx.datasetIndex].data as ScatterDataPoint[])[ctx.dataIndex - 1].x);
+const prevY = (ctx: ScriptableContext<'line'>) => ctx.chart.scales.y.getPixelForValue((ctx.dataset.data as ScatterDataPoint[])[ctx.dataIndex - 1].y);
+const prevX = (ctx: ScriptableContext<'line'>) => ctx.chart.scales.x.getPixelForValue((ctx.dataset.data as ScatterDataPoint[])[ctx.dataIndex - 1].x);
 
 const months = ['Januar', 'Februar', 'Mars', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Desember'];
 
@@ -300,10 +300,18 @@ const options: _DeepPartialObject<
       animations: {
         x: {
           easing: 'linear',
-          delay: (ctx) => del(ctx.dataIndex, len(ctx)),
+          delay: (ctx) => {
+            const dates = getDates(ctx);
+            const index = idx(ctx, dates);
+            return del(index, dates.length);
+          },
           // @ts-expect-error hack
           from: (ctx) => [ctx.dataIndex > 0 ? prevX(ctx) : NaN, null],
-          duration: (ctx) => dur(ctx.dataIndex, len(ctx)),
+          duration: (ctx) => {
+            const dates = getDates(ctx);
+            const index = idx(ctx, dates);
+            return dur(index, dates.length);
+          },
           // @ts-expect-error hack
           fn: (start: [number], to: number, factor) => {
             if (!start || !to || !factor) {
@@ -315,9 +323,17 @@ const options: _DeepPartialObject<
         },
         y: {
           easing: 'linear',
-          delay: (ctx) => del(ctx.dataIndex, len(ctx)),
+          delay: (ctx) => {
+            const dates = getDates(ctx);
+            const index = idx(ctx, dates);
+            return del(index, dates.length);
+          },
           from: (ctx) => (ctx.dataIndex > 0 ? prevY(ctx) : NaN),
-          duration: (ctx) => dur(ctx.dataIndex, len(ctx)),
+          duration: (ctx) => {
+            const dates = getDates(ctx);
+            const index = idx(ctx, dates);
+            return dur(index, dates.length);
+          },
         },
       },
     },
