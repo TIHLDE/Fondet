@@ -393,7 +393,9 @@ const options: _DeepPartialObject<
         const notTime = (tick: Tick) => !(tick.label as string).includes(':');
         axis.ticks = axis.getTicks().filter((tick) => {
           const date = new Date(tick.value);
-          return notTime(tick) || (date.getHours() <= 17 && date.getHours() >= 9);
+          // TODO: Check if there is no data for a given day instead.
+          const weekend = [0, 6].includes(date.getDay());
+          return !weekend && (notTime(tick) || (date.getHours() <= 17 && date.getHours() >= 9));
         });
       },
     },
