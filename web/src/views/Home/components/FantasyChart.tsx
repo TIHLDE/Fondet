@@ -390,13 +390,31 @@ const options: _DeepPartialObject<
         },
       },
       afterTickToLabelConversion: (axis) => {
-        const notTime = (tick: Tick) => !(tick.label as string).includes(':');
-        axis.ticks = axis.getTicks().filter((tick) => {
-          const date = new Date(tick.value);
-          // TODO: Check if there is no data for a given day instead.
-          const weekend = [0, 6].includes(date.getDay());
-          return !weekend && (notTime(tick) || (date.getHours() <= 17 && date.getHours() >= 9));
-        });
+        const isTime = (tick: Tick) => /^\d{2}:\d{2}$/.test(tick.label as string);
+        const isDay = (tick: Tick) => /^\d{1,2}\. [a-z]{3}(\.|[a-z])$/.test(tick.label as string);
+        const isWeekend = (date: Date) => [0, 6].includes(date.getDay());
+        const isMarketClosed = (date: Date) => date.getHours() < 9 || date.getHours() > 17;
+        const pixelThreshold = 16;
+
+        axis.ticks = axis
+          .getTicks()
+          .filter((tick) => {
+            const date = new Date(tick.value);
+
+            if (isDay(tick) && isWeekend(date)) return false;
+            if (isTime(tick) && isMarketClosed(date)) return false;
+
+            return true;
+          })
+          .filter((_, i, allTicks) => {
+            const prev = i > 0 ? { tick: allTicks[i - 1], x: axis.getPixelForTick(i - 1) } : null;
+            const x = axis.getPixelForTick(i);
+            const next = i < allTicks.length - 1 ? { tick: allTicks[i + 1], x: axis.getPixelForTick(i + 1) } : null;
+            if (next?.tick.major && next.x - x < pixelThreshold) return false;
+            if (prev?.tick.major && x - prev.x < pixelThreshold) return false;
+
+            return true;
+          });
       },
     },
     y: {
