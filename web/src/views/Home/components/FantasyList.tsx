@@ -11,6 +11,8 @@ interface FantasyListProps {
 const FantasyList: React.FC<FantasyListProps> = ({ fantasyfundData, selectedUsers, setSelectedUsers }) => {
   const theme = useTheme();
   const greaterThanSm = useMediaQuery(theme.breakpoints.up('sm'));
+  const xMax = Math.max(...Object.values(fantasyfundData.funds).map((f) => f.values.at(-1).timestamp.seconds));
+
   return (
     <TableContainer
       component={Paper}
@@ -22,6 +24,7 @@ const FantasyList: React.FC<FantasyListProps> = ({ fantasyfundData, selectedUser
       <Table size='small'>
         <TableBody>
           {Object.values(fantasyfundData.funds)
+            .filter(({ values }) => values.find((v) => v.timestamp.seconds === xMax) !== undefined) // Remove elements without current x value
             .sort((a, b) => b.values.at(-1).value - a.values.at(-1).value)
             .map((fund, i, { length }) => {
               const value = fund.values.at(-1).value;
