@@ -1,7 +1,5 @@
 export interface NordnetData {
-  //indexInfo: Info;
   indexPerformance: Price[];
-  //fundInfo: Info;
   fundPerformance: Price[];
   fundPositions: Position[];
 }
@@ -9,19 +7,6 @@ export interface NordnetData {
 export interface Price {
   timestamp: number;
   price: number;
-}
-
-export interface Info {
-  name: string;
-  td?: number;
-  w1?: number;
-  m1?: number;
-  m3?: number;
-  m6?: number;
-  ty?: number;
-  y1?: number;
-  y3?: number;
-  y5?: number;
 }
 
 export interface Position {
@@ -35,13 +20,11 @@ export interface Position {
   performanceYTD: number;
 }
 
-// There are more fields than this
 export interface SharevillePosition {
   percent: number;
   instrument: SharevilleInstrument;
 }
 
-// There are more fields than this
 interface SharevilleInstrument {
   name: string;
   institute: string;
