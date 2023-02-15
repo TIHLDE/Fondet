@@ -41,7 +41,9 @@ export const updateNordnetData = functions.pubsub
 async function getIndexPerformance(): Promise<Price[]> {
   const {
     data: { pricePoints },
-  } = await axios.get(`https://api.prod.nntech.io/market-data/price-time-series/v2/period/YEAR_5/identifier/${index_name}?resolution=DAY`);
+  } = await axios.get(`https://api.prod.nntech.io/market-data/price-time-series/v2/period/YEAR_5/identifier/${index_name}?resolution=DAY`, {
+    headers: { Origin: 'https://www.shareville.no' },
+  });
 
   const firstPrice: number = pricePoints[0].last;
   const prices: Price[] = pricePoints.map(({ timeStamp, last }: Record<string, number>) => ({
