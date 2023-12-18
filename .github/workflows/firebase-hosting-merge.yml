@@ -11,6 +11,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
       - run: cd functions && npm ci
       - name: Deploy functions
         uses: w9jds/firebase-action@master
@@ -23,6 +26,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
       - run: cd web && npm ci && npm run build
       - name: Deploy hosting
         uses: FirebaseExtended/action-hosting-deploy@v0
