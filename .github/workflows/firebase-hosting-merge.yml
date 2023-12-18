@@ -31,7 +31,7 @@ jobs:
           node-version: 16
       - run: cd web && npm ci && npm run build
       - name: Deploy hosting
-        uses: FirebaseExtended/action-hosting-deploy@v0
+        uses: FirebaseExtended/action-hosting-deploy@v0.6-alpha
         with:
           repoToken: "${{ secrets.GITHUB_TOKEN }}"
           firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_FONDET }}"
