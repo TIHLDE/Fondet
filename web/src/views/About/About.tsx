@@ -46,7 +46,7 @@ const About: React.FunctionComponent = () => (
       <Typography variant='body1' component='div'>
         <ul>
           <li>
-            <Link href='https://drive.google.com/file/d/18FmI2qTCNl2wz19vrlEV3KP3Qrk_J6ri/view?usp=sharing' target='_blank'>
+            <Link href='https://drive.google.com/file/d/1Qkg6MFx0Qgxev2MyJ8YsfFHkg92E0E-p/view?usp=sharing' target='_blank'>
               Fondets vedtekter
             </Link>
           </li>
