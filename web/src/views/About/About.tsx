@@ -18,11 +18,11 @@ const About: React.FunctionComponent = () => (
       </Typography>
       <Typography variant='h2'>Sammensetning</Typography>
       <Typography variant='body1' component='div'>
-        Fondet har totalt 9 medlemmer og består av:
+        Fondet har totalt 10 medlemmer og består av:
         <ul>
           <li>1 Fondsforvalter</li>
           <li>1 fra De Eldstes Raad</li>
-          <li>7 Ordinære medlemmer</li>
+          <li>8 Ordinære medlemmer</li>
         </ul>
       </Typography>
       <Typography variant='h3'>Forvalter</Typography>
