@@ -75,6 +75,11 @@ const About: React.FunctionComponent = () => (
               Årsrapport 2023
             </Link>
           </li>
+          <li>
+            <Link href='https://drive.google.com/file/d/18B9gpWVnZFXWxGHKIgTT5qdWJp2ezhHE/view?usp=sharing' target='_blank'>
+              Årsrapport 2024
+            </Link>
+          </li>
         </ul>
       </Typography>
       <Box height={150} />
