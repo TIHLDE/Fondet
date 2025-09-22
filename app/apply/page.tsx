@@ -66,11 +66,17 @@ export default function Apply() {
                   Du kan enten bruke søknadsmalen eller fylle ut skjemaet nedenfor. Husk at du uansett må legge ved et budsjett som viser hvordan midlene skal brukes. Det er også helt i orden å legge ved flere dokumenter om det trengs.
                 </p>
                 
-                <div className="mt-6 p-4 bg-[hsl(217,62%,8%)] border border-[hsl(217,62%,20%)] rounded-md">
-                  <p className="text-gray-300 font-medium">
-                    <strong>Søknaden sendes til:</strong> fondet@tihlde.org
-                  </p>
-                </div>
+                    <div className="mt-6 p-4 bg-[hsl(217,62%,8%)] border border-[hsl(217,62%,20%)] rounded-md">
+                      <p className="text-gray-300 font-medium">
+                        <strong>Søknadsmalen kan lastes ned</strong> <a href="https://drive.google.com/uc?id=1PNbg_9fVoJzhjtxQ7G3nD__xZ1uOSoHw&export=download" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300">her</a>
+                      </p>
+                    </div>
+
+                    <div className="mt-6 p-4 bg-[hsl(217,62%,8%)] border border-[hsl(217,62%,20%)] rounded-md">
+                      <p className="text-gray-300 font-medium">
+                        <strong>Søknaden sendes til:</strong> fondet@tihlde.org
+                      </p>
+                    </div>
               </div>
             </div>
           </div>

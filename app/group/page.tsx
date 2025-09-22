@@ -9,14 +9,14 @@ export default function Group() {
       role: "Analytiker",
       image: "photo-1472099645785-5658abf4ff4e",
       startYear: 2025,
-      studie: "DATA"
+      studie: "DIGTRANS"
     },
     {
       name: "Kaja Sætherhaug Dalåmo",
       role: "Analytiker",
       image: "photo-1472099645785-5658abf4ff4e",
       startYear: 2025,
-      studie: "DATA"
+      studie: "DIGFOR"
     },
     {
       name: "Kristoffer Langva Qvenild",
@@ -30,14 +30,14 @@ export default function Group() {
       role: "Analytiker",
       image: "photo-1472099645785-5658abf4ff4e",
       startYear: 2025,
-      studie: "DATA"
+      studie: "DIGSEC"
     },
     {
       name: "Oskar Børnick Tveit",
       role: "Analytiker",
       image: "photo-1472099645785-5658abf4ff4e",
       startYear: 2025,
-      studie: "DATA"
+      studie: "DIGFOR"
     },
     {
       name: "Sigurd Evensen",
@@ -293,29 +293,29 @@ export default function Group() {
               Nåværende medlemmer
             </h2>
             
-            <div className="space-y-4">
-              {currentMembers.map((member, index) => (
-                <div key={index} className="bg-[hsl(217,62%,8%)] border border-[hsl(217,62%,20%)] rounded-lg p-4 flex items-center space-x-4">
-                  <div className="w-16 h-16 rounded-full flex-shrink-0 overflow-hidden">
-                    <Image
-                      src={getImageUrl(member.image)}
-                      alt={member.name}
-                      width={64}
-                      height={64}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="flex-grow">
-                    <h3 className="text-white font-semibold text-lg">{member.name}</h3>
-                    <p className="text-gray-300">{member.role}</p>
-                    <p className="text-blue-400 text-sm">{formatYearRange(member)}</p>
-                  </div>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                  {currentMembers.map((member, index) => (
+                    <div key={index} className="bg-[hsl(217,62%,8%)] border border-[hsl(217,62%,20%)] rounded-lg p-4 flex items-center space-x-4">
+                      <div className="w-16 h-16 rounded-full flex-shrink-0 overflow-hidden">
+                        <Image
+                          src={getImageUrl(member.image)}
+                          alt={member.name}
+                          width={64}
+                          height={64}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div className="flex-grow">
+                        <h3 className="text-white font-semibold text-lg">{member.name}</h3>
+                        <p className="text-gray-300">{member.role}</p>
+                        <p className="text-blue-400 text-sm">{formatYearRange(member)}</p>
+                      </div>
                       <div className="text-right">
                         <span className="text-gray-300 font-medium">{getStudyProgram(member)}</span>
                       </div>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
           </div>
         </div>
 
@@ -326,29 +326,29 @@ export default function Group() {
               Tidligere medlemmer
             </h2>
             
-            <div className="space-y-4">
-              {previousMembers.map((member, index) => (
-                <div key={index} className="bg-[hsl(217,62%,8%)] border border-[hsl(217,62%,20%)] rounded-lg p-4 flex items-center space-x-4">
-                  <div className="w-16 h-16 rounded-full flex-shrink-0 overflow-hidden">
-                    <Image
-                      src={getImageUrl(member.image)}
-                      alt={member.name}
-                      width={64}
-                      height={64}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="flex-grow">
-                    <h3 className="text-white font-semibold text-lg">{member.name}</h3>
-                    <p className="text-gray-300">{member.role}</p>
-                    <p className="text-blue-400 text-sm">{formatYearRange(member)}</p>
-                  </div>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                  {previousMembers.map((member, index) => (
+                    <div key={index} className="bg-[hsl(217,62%,8%)] border border-[hsl(217,62%,20%)] rounded-lg p-4 flex items-center space-x-4">
+                      <div className="w-16 h-16 rounded-full flex-shrink-0 overflow-hidden">
+                        <Image
+                          src={getImageUrl(member.image)}
+                          alt={member.name}
+                          width={64}
+                          height={64}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div className="flex-grow">
+                        <h3 className="text-white font-semibold text-lg">{member.name}</h3>
+                        <p className="text-gray-300">{member.role}</p>
+                        <p className="text-blue-400 text-sm">{formatYearRange(member)}</p>
+                      </div>
                       <div className="text-right">
                         <span className="text-gray-300 font-medium">{getStudyProgram(member)}</span>
                       </div>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
           </div>
         </div>
         
