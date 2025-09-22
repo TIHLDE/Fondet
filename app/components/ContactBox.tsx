@@ -6,14 +6,14 @@ export default function ContactBox() {
       </h2>
       
       <div className="space-y-4">
-        <p className="text-gray-300 text-lg leading-relaxed">
-          Har du spørsmål om TIHLDE-fondet eller trenger hjelp med søknaden?
-        </p>
-        
-        <div className="bg-[hsl(217,62%,8%)] border border-[hsl(217,62%,20%)] rounded-md p-4">
-          <p className="text-gray-300 mb-3 font-medium">
-            Ta kontakt med forvaltningsgruppen:
-          </p>
+            <p className="text-gray-300 text-lg leading-relaxed">
+              Har du spørsmål om TIHLDE-fondet eller trenger hjelp med søknaden?
+            </p>
+
+            <div className="bg-[hsl(217,62%,8%)] border border-[hsl(217,62%,20%)] rounded-md p-4">
+              <p className="text-gray-300 mb-3 font-medium">
+                Ta kontakt med fondsforvalter:
+              </p>
           <a 
             href="mailto:forvalter@tihlde.org" 
             className="text-blue-400 hover:text-blue-300 font-semibold text-lg transition-colors"
