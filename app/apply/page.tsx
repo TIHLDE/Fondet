@@ -98,23 +98,23 @@ export default function Apply() {
                   <tr className="border-b border-[hsl(217,62%,15%)]">
                     <td className="py-3 px-4 text-gray-300">Hovedstyret</td>
                     <td className="py-3 px-4 text-gray-300">Kjøkken</td>
-                    <td className="py-3 px-4 text-gray-300">19.05.2025</td>
-                    <td className="py-3 px-4 text-gray-300"><a href="" className="text-blue-400 hover:text-blue-300">80 150 kr</a></td>
-                    <td className="py-3 px-4 text-gray-300"><a href="" className="text-blue-400 hover:text-blue-300">64 120 kr</a></td>
+                    <td className="py-3 px-4 text-gray-300">15.05.2025</td>
+                    <td className="py-3 px-4 text-gray-300"><a href="https://drive.google.com/file/d/1ntj1CTeBvdQlS9A7wbqB82ztLht0b4BA/view?usp=drive_link" className="text-blue-400 hover:text-blue-300">80 150 kr</a></td>
+                    <td className="py-3 px-4 text-gray-300"><a href="https://drive.google.com/file/d/109RuXdTPxf80oh7Dx7YmkmKqKdnauT8I/view?usp=drive_link" className="text-blue-400 hover:text-blue-300">64 120 kr</a></td>
                   </tr>
                   <tr className="border-b border-[hsl(217,62%,15%)]">
                     <td className="py-3 px-4 text-gray-300">Sosialen</td>
                     <td className="py-3 px-4 text-gray-300">Utmatrikuleringsball</td>
                     <td className="py-3 px-4 text-gray-300">12.02.2025</td>
-                    <td className="py-3 px-4 text-gray-300"><a href="" className="text-blue-400 hover:text-blue-300">18 000 kr</a></td>
-                    <td className="py-3 px-4 text-gray-300"><a href="" className="text-blue-400 hover:text-blue-300">6 000 kr</a></td>
+                    <td className="py-3 px-4 text-gray-300"><a href="https://drive.google.com/file/d/1lTnpw6IlnvrYhGeY-y6k68E7Ql52ADxc/view?usp=drive_link" className="text-blue-400 hover:text-blue-300">18 000 kr</a></td>
+                    <td className="py-3 px-4 text-gray-300"><a href="https://drive.google.com/file/d/17114ru4Bah5wTGje-mXqDGCsm6ybYN1Z/view?usp=drive_link" className="text-blue-400 hover:text-blue-300">6 000 kr</a></td>
                   </tr>
                   <tr className="border-b border-[hsl(217,62%,15%)]">
                     <td className="py-3 px-4 text-gray-300">TIHLDE Pythons Herrer</td>
                     <td className="py-3 px-4 text-gray-300">Påmeldingsavgift</td>
-                    <td className="py-3 px-4 text-gray-300">27.08.2024</td>
-                    <td className="py-3 px-4 text-gray-300"><a href="" className="text-blue-400 hover:text-blue-300">19 800 kr</a></td>
-                    <td className="py-3 px-4 text-red-400"><a href="" className="text-red-400 hover:text-red-300">Avslått</a></td>
+                    <td className="py-3 px-4 text-gray-300">28.08.2024</td>
+                    <td className="py-3 px-4 text-gray-300"><a href="https://drive.google.com/file/d/1rZ9hJ4cmOveQfBAYiuY88phxIV0H0gsV/view?usp=drive_link" className="text-blue-400 hover:text-blue-300">19 800 kr</a></td>
+                    <td className="py-3 px-4 text-red-400"><a href="https://drive.google.com/file/d/1fq_PAHbBx4vM8PP_WdDcwzOF_lcFNV4k/view?usp=drive_link" className="text-red-400 hover:text-red-300">Avslått</a></td>
                   </tr>
                   <tr className="border-b border-[hsl(217,62%,15%)]">
                     <td className="py-3 px-4 text-gray-300">TIHLDE Klatring</td>
