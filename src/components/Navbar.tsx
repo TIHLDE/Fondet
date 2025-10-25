@@ -1,22 +1,25 @@
-'use client'
+"use client";
 
-import Link from 'next/link'
-import Image from 'next/image'
-import { useState } from 'react'
+import Link from "next/link";
+import Image from "next/image";
+import { useState } from "react";
 
 export default function Navbar() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen)
-  }
+    setIsMenuOpen(!isMenuOpen);
+  };
 
   return (
     <nav className="bg-sidebar-background shadow-lg border-b border-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo - always visible */}
-          <Link href="/" className="flex items-center space-x-3 text-sidebar-foreground hover:text-muted-foreground transition-colors">
+          <Link
+            href="/"
+            className="flex items-center space-x-3 text-sidebar-foreground hover:text-muted-foreground transition-colors"
+          >
             {/* Logo */}
             <div className="w-8 h-8 relative">
               <Image
@@ -36,22 +39,31 @@ export default function Navbar() {
 
           {/* Desktop Navigation - hidden on mobile */}
           <div className="hidden md:flex items-center space-x-8">
-            <Link href="/apply" className="text-sidebar-foreground font-medium hover:text-muted-foreground transition-colors">
+            <Link
+              href="/sok"
+              className="text-sidebar-foreground font-medium hover:text-muted-foreground transition-colors"
+            >
               Søk om støtte
             </Link>
-            <Link href="/about" className="text-sidebar-foreground font-medium hover:text-muted-foreground transition-colors">
+            <Link
+              href="/om"
+              className="text-sidebar-foreground font-medium hover:text-muted-foreground transition-colors"
+            >
               Om fondet
             </Link>
-            <Link href="/group" className="text-sidebar-foreground font-medium hover:text-muted-foreground transition-colors">
+            <Link
+              href="/gruppe"
+              className="text-sidebar-foreground font-medium hover:text-muted-foreground transition-colors"
+            >
               Forvaltningsgruppen
             </Link>
           </div>
 
           {/* Desktop TIHLDE.ORG - hidden on mobile */}
           <div className="hidden md:flex items-center">
-            <a 
-              href="https://tihlde.org" 
-              target="_blank" 
+            <a
+              href="https://tihlde.org"
+              target="_blank"
               rel="noopener noreferrer"
               className="text-sidebar-foreground font-bold text-lg hover:text-muted-foreground transition-colors"
             >
@@ -65,11 +77,26 @@ export default function Navbar() {
               onClick={toggleMenu}
               className="text-sidebar-foreground hover:text-muted-foreground focus:outline-none focus:text-muted-foreground"
             >
-              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
                 {isMenuOpen ? (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 ) : (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 6h16M4 12h16M4 18h16"
+                  />
                 )}
               </svg>
             </button>
@@ -80,30 +107,30 @@ export default function Navbar() {
         {isMenuOpen && (
           <div className="md:hidden">
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-sidebar-background border-t border-border">
-              <Link 
-                href="/apply" 
+              <Link
+                href="/sok"
                 className="block px-3 py-2 text-sidebar-foreground font-medium hover:text-muted-foreground hover:bg-sidebar-accent rounded-md transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Søk om støtte
               </Link>
-              <Link 
-                href="/about" 
+              <Link
+                href="/om"
                 className="block px-3 py-2 text-sidebar-foreground font-medium hover:text-muted-foreground hover:bg-sidebar-accent rounded-md transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Om fondet
               </Link>
-              <Link 
-                href="/group" 
+              <Link
+                href="/gruppe"
                 className="block px-3 py-2 text-sidebar-foreground font-medium hover:text-muted-foreground hover:bg-sidebar-accent rounded-md transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Forvaltningsgruppen
               </Link>
-              <a 
-                href="https://tihlde.org" 
-                target="_blank" 
+              <a
+                href="https://tihlde.org"
+                target="_blank"
                 rel="noopener noreferrer"
                 className="block px-3 py-2 text-sidebar-foreground font-bold text-lg hover:text-muted-foreground hover:bg-sidebar-accent rounded-md transition-colors"
                 onClick={() => setIsMenuOpen(false)}
@@ -115,5 +142,5 @@ export default function Navbar() {
         )}
       </div>
     </nav>
-  )
+  );
 }

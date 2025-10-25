@@ -1,5 +1,5 @@
-import Navbar from "../components/Navbar";
-import ContactBox from "../components/ContactBox";
+import Navbar from "../../components/Navbar";
+import ContactBox from "../../components/ContactBox";
 import Image from "next/image";
 import { UserRound } from "lucide-react";
 
@@ -302,15 +302,15 @@ export default function Group() {
       <Navbar />
       <main className="flex flex-col items-center justify-center p-0 sm:p-8">
         <div className="text-center mb-8 px-4 sm:px-0 pt-8 sm:pt-8">
-          <h1 className="text-4xl font-bold text-foreground mb-8">
+          <h1 className="text-4xl font-bold text-foreground-primary mb-8">
             Forvaltningsgruppen
           </h1>
         </div>
 
         {/* Current Members Section */}
         <div className="w-full max-w-6xl mx-auto px-0 sm:px-0 mb-6">
-          <div className="bg-[hsl(217,62%,12%)] border border-[hsl(217,62%,20%)] rounded-lg p-6 sm:p-8 shadow-lg">
-            <h2 className="text-2xl font-semibold text-white mb-6">
+          <div className="bg-cardBackground border border-cardBorder rounded-lg p-6 sm:p-8 shadow-lg">
+            <h2 className="text-2xl font-semibold text-foreground-primary mb-6">
               Nåværende medlemmer
             </h2>
 
@@ -318,9 +318,9 @@ export default function Group() {
               {currentMembers.map((member, index) => (
                 <div
                   key={index}
-                  className="bg-[hsl(217,62%,8%)] border border-[hsl(217,62%,20%)] rounded-lg p-4 flex items-center space-x-4"
+                  className="bg-[hsl(217,62%,8%)] border border-cardBorder rounded-lg p-4 flex items-center space-x-4"
                 >
-                  <div className="w-16 h-16 rounded-full flex-shrink-0 overflow-hidden bg-[hsl(217,62%,20%)] flex items-center justify-center">
+                  <div className="w-16 h-16 rounded-full flex-shrink-0 overflow-hidden bg-secondary border border-cardBorder flex items-center justify-center">
                     {hasValidImage(member.image) ? (
                       <Image
                         src={member.image}
@@ -330,20 +330,20 @@ export default function Group() {
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <UserRound className="w-8 h-8 text-gray-400" />
+                      <UserRound className="w-8 h-8 text-muted-foreground" />
                     )}
                   </div>
                   <div className="flex-grow">
-                    <h3 className="text-white font-semibold text-lg">
+                    <h3 className="text-foreground-primary font-semibold text-lg">
                       {member.name}
                     </h3>
-                    <p className="text-gray-300">{member.role}</p>
-                    <p className="text-blue-400 text-sm">
+                    <p className="text-foreground-secondary">{member.role}</p>
+                    <p className="text-accent text-sm">
                       {formatYearRange(member)}
                     </p>
                   </div>
                   <div className="text-right">
-                    <span className="text-gray-300 font-medium">
+                    <span className="text-foreground-secondary font-medium">
                       {getStudyProgram(member)}
                     </span>
                   </div>
@@ -355,8 +355,8 @@ export default function Group() {
 
         {/* Previous Members Section */}
         <div className="w-full max-w-6xl mx-auto px-0 sm:px-0 mb-6">
-          <div className="bg-[hsl(217,62%,12%)] border border-[hsl(217,62%,20%)] rounded-lg p-6 sm:p-8 shadow-lg">
-            <h2 className="text-2xl font-semibold text-white mb-6">
+          <div className="bg-cardBackground border border-cardBorder rounded-lg p-6 sm:p-8 shadow-lg">
+            <h2 className="text-2xl font-semibold text-foreground-primary mb-6">
               Tidligere medlemmer
             </h2>
 
@@ -364,9 +364,9 @@ export default function Group() {
               {previousMembers.map((member, index) => (
                 <div
                   key={index}
-                  className="bg-[hsl(217,62%,8%)] border border-[hsl(217,62%,20%)] rounded-lg p-4 flex items-center space-x-4"
+                  className="bg-[hsl(217,62%,8%)] border border-cardBorder rounded-lg p-4 flex items-center space-x-4"
                 >
-                  <div className="w-16 h-16 rounded-full flex-shrink-0 overflow-hidden bg-[hsl(217,62%,20%)] flex items-center justify-center">
+                  <div className="w-16 h-16 rounded-full flex-shrink-0 overflow-hidden bg-secondary border border-cardBorder flex items-center justify-center">
                     {hasValidImage(member.image) ? (
                       <Image
                         src={member.image}
@@ -376,20 +376,20 @@ export default function Group() {
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <UserRound className="w-8 h-8 text-gray-400" />
+                      <UserRound className="w-8 h-8 text-muted-foreground" />
                     )}
                   </div>
                   <div className="flex-grow">
-                    <h3 className="text-white font-semibold text-lg">
+                    <h3 className="text-foreground-primary font-semibold text-lg">
                       {member.name}
                     </h3>
-                    <p className="text-gray-300">{member.role}</p>
-                    <p className="text-blue-400 text-sm">
+                    <p className="text-foreground-secondary">{member.role}</p>
+                    <p className="text-accent text-sm">
                       {formatYearRange(member)}
                     </p>
                   </div>
                   <div className="text-right">
-                    <span className="text-gray-300 font-medium">
+                    <span className="text-foreground-secondary font-medium">
                       {getStudyProgram(member)}
                     </span>
                   </div>
