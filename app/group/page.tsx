@@ -1,6 +1,7 @@
-import Navbar from '../components/Navbar'
-import ContactBox from '../components/ContactBox'
-import Image from 'next/image'
+import Navbar from "../components/Navbar";
+import ContactBox from "../components/ContactBox";
+import Image from "next/image";
+import { UserRound } from "lucide-react";
 
 export default function Group() {
   const allMembers = [
@@ -9,79 +10,82 @@ export default function Group() {
       role: "Analytiker",
       image: "photo-1472099645785-5658abf4ff4e",
       startYear: 2025,
-      studie: "DIGTRANS"
+      studie: "DIGTRANS",
     },
     {
       name: "Kaja Sætherhaug Dalåmo",
       role: "Analytiker",
       image: "photo-1472099645785-5658abf4ff4e",
       startYear: 2025,
-      studie: "DIGFOR"
+      studie: "DIGFOR",
     },
     {
       name: "Kristoffer Langva Qvenild",
       role: "Analytiker",
       image: "photo-1472099645785-5658abf4ff4e",
       startYear: 2025,
-      studie: "DATA"
+      studie: "DATA",
     },
     {
       name: "Nina Elise Kåshagen",
       role: "Analytiker",
       image: "photo-1472099645785-5658abf4ff4e",
       startYear: 2025,
-      studie: "DIGSEC"
+      studie: "DIGSEC",
     },
     {
       name: "Oskar Børnick Tveit",
       role: "Analytiker",
       image: "photo-1472099645785-5658abf4ff4e",
       startYear: 2025,
-      studie: "DIGFOR"
+      studie: "DIGFOR",
     },
     {
       name: "Sigurd Evensen",
       role: "Analytiker",
       image: "photo-1472099645785-5658abf4ff4e",
       startYear: 2025,
-      studie: "DATA"
+      studie: "DATA",
     },
     {
       name: "Martine Løkstad",
       role: "Fondsforvalter",
-      image: "https://firebasestorage.googleapis.com/v0/b/fondet.appspot.com/o/files%2Fbbb38382-56bf-4b4a-8d59-554e3cefa3a4.jpeg?alt=media&token=280c4ce1-3bee-45a0-8227-6173e729eb8d",
+      image:
+        "https://firebasestorage.googleapis.com/v0/b/fondet.appspot.com/o/files%2Fbbb38382-56bf-4b4a-8d59-554e3cefa3a4.jpeg?alt=media&token=280c4ce1-3bee-45a0-8227-6173e729eb8d",
       startYear: 2024,
-      studie: "DIGSEC"
+      studie: "DIGSEC",
     },
     {
       name: "Tri Tac Le",
       role: "Analytiker",
       image: "photo-1472099645785-5658abf4ff4e",
       startYear: 2024,
-      studie: "DATA"
+      studie: "DATA",
     },
     {
       name: "Trygve Jørgensen",
       role: "Eldste",
       image: "photo-1472099645785-5658abf4ff4e",
       startYear: 2025,
-      studie: "DATA"
+      studie: "DATA",
     },
     {
       name: "Selma Eline Olsen",
       role: "Eldste",
-      image: "https://firebasestorage.googleapis.com/v0/b/fondet.appspot.com/o/files%2F58f22132-84ae-4fe6-8970-6fd983ba1ff9?alt=media&token=da1cd4d6-dedc-41a5-8d99-b253db98f728",
+      image:
+        "https://firebasestorage.googleapis.com/v0/b/fondet.appspot.com/o/files%2F58f22132-84ae-4fe6-8970-6fd983ba1ff9?alt=media&token=da1cd4d6-dedc-41a5-8d99-b253db98f728",
       startYear: 2024,
       endYear: 2025,
-      studie: "DIGFOR"
+      studie: "DIGFOR",
     },
     {
       name: "Imre Romstad",
       role: "Analytiker",
-      image: "https://firebasestorage.googleapis.com/v0/b/fondet.appspot.com/o/files%2F475346545_948445160730619_3015368770418321132_n.jpg?alt=media&token=fe751edd-73a5-4c93-b61a-0659447a3c89",
+      image:
+        "https://firebasestorage.googleapis.com/v0/b/fondet.appspot.com/o/files%2F475346545_948445160730619_3015368770418321132_n.jpg?alt=media&token=fe751edd-73a5-4c93-b61a-0659447a3c89",
       startYear: 2024,
       endYear: 2025,
-      studie: "DATA"
+      studie: "DATA",
     },
     {
       name: "Sigurd Schmidt-Hansen",
@@ -89,176 +93,196 @@ export default function Group() {
       image: "photo-1472099645785-5658abf4ff4e",
       startYear: 2024,
       endYear: 2025,
-      studie: "DIGSEC"
+      studie: "DIGSEC",
     },
     {
       name: "Kasper Johansen Sandø",
       role: "Analytiker",
-      image: "https://firebasestorage.googleapis.com/v0/b/fondet.appspot.com/o/files%2FKasper.jpg?alt=media&token=a51b0cb5-a8e6-4db0-8f23-2974e98adc61",
+      image:
+        "https://firebasestorage.googleapis.com/v0/b/fondet.appspot.com/o/files%2FKasper.jpg?alt=media&token=a51b0cb5-a8e6-4db0-8f23-2974e98adc61",
       startYear: 2024,
-      studie: "DIGFOR"
+      studie: "DIGFOR",
     },
     {
       name: "Erik Langvik",
       role: "Analytiker",
-      image: "https://firebasestorage.googleapis.com/v0/b/fondet.appspot.com/o/files%2F85f9195a-8480-4337-86b3-75251c0c1a40-min.jpeg?alt=media&token=d53c57e0-ac96-40c5-b4bb-02e43579babb",
+      image:
+        "https://firebasestorage.googleapis.com/v0/b/fondet.appspot.com/o/files%2F85f9195a-8480-4337-86b3-75251c0c1a40-min.jpeg?alt=media&token=d53c57e0-ac96-40c5-b4bb-02e43579babb",
       startYear: 2024,
       endYear: 2025,
-      studie: "DIGFOR"
+      studie: "DIGFOR",
     },
     {
       name: "Mari Hofsrud",
       role: "Analytiker",
-      image: "https://firebasestorage.googleapis.com/v0/b/fondet.appspot.com/o/files%2Fc6fbd803-67f5-4798-aeb1-689fa3aa2a66?alt=media&token=96de6534-83c9-4c19-99c6-7768db08cbfd",
+      image:
+        "https://firebasestorage.googleapis.com/v0/b/fondet.appspot.com/o/files%2Fc6fbd803-67f5-4798-aeb1-689fa3aa2a66?alt=media&token=96de6534-83c9-4c19-99c6-7768db08cbfd",
       startYear: 2024,
       endYear: 2025,
-      studie: "DIGFOR"
+      studie: "DIGFOR",
     },
     {
       name: "Vegard Johnsen",
       role: "Analytiker",
-      image: "https://firebasestorage.googleapis.com/v0/b/fondet.appspot.com/o/files%2F82200469-9ac9-4ffd-b4f8-9f2f81c79466?alt=media&token=015f168e-1b39-4a99-a330-75ee7ee60dcb",
+      image:
+        "https://firebasestorage.googleapis.com/v0/b/fondet.appspot.com/o/files%2F82200469-9ac9-4ffd-b4f8-9f2f81c79466?alt=media&token=015f168e-1b39-4a99-a330-75ee7ee60dcb",
       startYear: 2024,
       endYear: 2025,
-      studie: "DATA"
+      studie: "DATA",
     },
     {
       name: "Anton Tveito",
       role: "Fondsforvalter",
-      image: "https://firebasestorage.googleapis.com/v0/b/fondet.appspot.com/o/files%2Fa3f5f435-268b-4cbf-a301-25035c6af6da?alt=media&token=87af9a0c-701c-4e84-9092-2e36d7382db4",
+      image:
+        "https://firebasestorage.googleapis.com/v0/b/fondet.appspot.com/o/files%2Fa3f5f435-268b-4cbf-a301-25035c6af6da?alt=media&token=87af9a0c-701c-4e84-9092-2e36d7382db4",
       startYear: 2024,
       endYear: 2025,
-      studie: "DIGFOR"
+      studie: "DIGFOR",
     },
     {
       name: "Eirik Ryssdalsnes",
       role: "Analytiker",
-      image: "https://firebasestorage.googleapis.com/v0/b/fondet.appspot.com/o/files%2Fc5ff7647-97a4-4067-97a7-cff202d89e2c?alt=media&token=44f6cbdd-7688-43d2-9c2d-b576f4451daf",
+      image:
+        "https://firebasestorage.googleapis.com/v0/b/fondet.appspot.com/o/files%2Fc5ff7647-97a4-4067-97a7-cff202d89e2c?alt=media&token=44f6cbdd-7688-43d2-9c2d-b576f4451daf",
       startYear: 2024,
       endYear: 2024,
-      studie: "DIGFOR"
+      studie: "DIGFOR",
     },
     {
       name: "Andre Karsten",
       role: "Analytiker",
-      image: "https://firebasestorage.googleapis.com/v0/b/fondet.appspot.com/o/files%2Fc42e0f3f-1a61-45ad-87e6-fedc9d7fc0e4?alt=media&token=cfd7214c-cc70-4f71-8d3a-8e4fdd10ccc4",
+      image:
+        "https://firebasestorage.googleapis.com/v0/b/fondet.appspot.com/o/files%2Fc42e0f3f-1a61-45ad-87e6-fedc9d7fc0e4?alt=media&token=cfd7214c-cc70-4f71-8d3a-8e4fdd10ccc4",
       startYear: 2024,
       endYear: 2024,
-      studie: "DIGFOR"
+      studie: "DIGFOR",
     },
     {
       name: "Lars Magne Stangeland",
       role: "Fondsforvalter",
-      image: "https://firebasestorage.googleapis.com/v0/b/fondet.appspot.com/o/files%2Ffb1def4d-c2ff-4015-a884-b2ef65c4d2cd?alt=media&token=b1ab913e-14c2-4dff-8120-bd5b1c711b6d",
+      image:
+        "https://firebasestorage.googleapis.com/v0/b/fondet.appspot.com/o/files%2Ffb1def4d-c2ff-4015-a884-b2ef65c4d2cd?alt=media&token=b1ab913e-14c2-4dff-8120-bd5b1c711b6d",
       startYear: 2022,
       endYear: 2024,
-      studie: "DIGFOR"
+      studie: "DIGFOR",
     },
     {
       name: "Sandra Hoem",
       role: "Analytiker",
-      image: "https://firebasestorage.googleapis.com/v0/b/fondet.appspot.com/o/files%2Fcd21e45a-47e1-4132-8e2d-86735bb69c98?alt=media&token=6d40a571-d85c-4689-b3f8-2c4df652e392",
+      image:
+        "https://firebasestorage.googleapis.com/v0/b/fondet.appspot.com/o/files%2Fcd21e45a-47e1-4132-8e2d-86735bb69c98?alt=media&token=6d40a571-d85c-4689-b3f8-2c4df652e392",
       startYear: 2022,
       endYear: 2024,
-      studie: "DIGFOR"
+      studie: "DIGFOR",
     },
     {
       name: "Agnes Bastiansen",
       role: "Analytiker",
-      image: "https://firebasestorage.googleapis.com/v0/b/fondet.appspot.com/o/files%2F76111189-3ca2-4718-abae-b553ccacaf6a?alt=media&token=3ac3850d-f98c-4e0c-8555-c1c3586c2ca2",
+      image:
+        "https://firebasestorage.googleapis.com/v0/b/fondet.appspot.com/o/files%2F76111189-3ca2-4718-abae-b553ccacaf6a?alt=media&token=3ac3850d-f98c-4e0c-8555-c1c3586c2ca2",
       startYear: 2023,
       endYear: 2024,
-      studie: "DIGFOR"
+      studie: "DIGFOR",
     },
     {
       name: "Sebastian Sneve",
       role: "Eldste",
-      image: "https://firebasestorage.googleapis.com/v0/b/fondet.appspot.com/o/files%2F72521a7e-2094-46b9-9fba-b0bec18f071b?alt=media&token=f06d5c36-0430-4d29-b016-a99941b51a8a",
+      image:
+        "https://firebasestorage.googleapis.com/v0/b/fondet.appspot.com/o/files%2F72521a7e-2094-46b9-9fba-b0bec18f071b?alt=media&token=f06d5c36-0430-4d29-b016-a99941b51a8a",
       startYear: 2023,
       endYear: 2024,
-      studie: "DIGSEC"
+      studie: "DIGSEC",
     },
     {
       name: "Christian Stensøe",
       role: "Analytiker",
-      image: "https://firebasestorage.googleapis.com/v0/b/fondet.appspot.com/o/files%2F67c2fb23-d935-4168-9a5c-bbb1fd526a69?alt=media&token=365d074b-44e1-43df-accd-6c54539599db",
+      image:
+        "https://firebasestorage.googleapis.com/v0/b/fondet.appspot.com/o/files%2F67c2fb23-d935-4168-9a5c-bbb1fd526a69?alt=media&token=365d074b-44e1-43df-accd-6c54539599db",
       startYear: 2023,
       endYear: 2024,
-      studie: "DIGSEC"
+      studie: "DIGSEC",
     },
     {
       name: "Oskar Nygren",
       role: "Eldste",
-      image: "https://firebasestorage.googleapis.com/v0/b/fondet.appspot.com/o/files%2Fc24070b9-d70b-42b8-892a-1a00575cd04f?alt=media&token=58f287d0-cbbe-4459-b7d2-e23dbb919452",
+      image:
+        "https://firebasestorage.googleapis.com/v0/b/fondet.appspot.com/o/files%2Fc24070b9-d70b-42b8-892a-1a00575cd04f?alt=media&token=58f287d0-cbbe-4459-b7d2-e23dbb919452",
       startYear: 2022,
       endYear: 2023,
-      studie: "DIGFOR"
+      studie: "DIGFOR",
     },
     {
       name: "Herman Westgaard Lund",
       role: "Analytiker",
-      image: "https://firebasestorage.googleapis.com/v0/b/fondet.appspot.com/o/files%2Fd160a550-b7cd-4826-9c82-1981ac2c287a?alt=media&token=ca8a529d-8354-4227-ad4a-c1194d9c7c2d",
+      image:
+        "https://firebasestorage.googleapis.com/v0/b/fondet.appspot.com/o/files%2Fd160a550-b7cd-4826-9c82-1981ac2c287a?alt=media&token=ca8a529d-8354-4227-ad4a-c1194d9c7c2d",
       startYear: 2022,
       endYear: 2023,
-      studie: "DIGFOR"
+      studie: "DIGFOR",
     },
     {
       name: "Hallvard Horgen",
       role: "Fondsforvalter",
-      image: "https://firebasestorage.googleapis.com/v0/b/fondet.appspot.com/o/files%2F0bd70de6-b6b8-4683-affc-92fc6c6b0bb1?alt=media&token=2cb76638-5db2-49cb-abf0-5b9423685fc5",
+      image:
+        "https://firebasestorage.googleapis.com/v0/b/fondet.appspot.com/o/files%2F0bd70de6-b6b8-4683-affc-92fc6c6b0bb1?alt=media&token=2cb76638-5db2-49cb-abf0-5b9423685fc5",
       startYear: 2022,
       endYear: 2023,
-      studie: "DIGFOR"
+      studie: "DIGFOR",
     },
     {
       name: "Ulrik Aakre",
       role: "Analytiker",
-      image: "https://firebasestorage.googleapis.com/v0/b/fondet.appspot.com/o/files%2F3db05668-2dc7-4f35-ac96-0685ed33e439?alt=media&token=c113dcf4-433e-4164-8474-24739c52bdea",
+      image:
+        "https://firebasestorage.googleapis.com/v0/b/fondet.appspot.com/o/files%2F3db05668-2dc7-4f35-ac96-0685ed33e439?alt=media&token=c113dcf4-433e-4164-8474-24739c52bdea",
       startYear: 2021,
       endYear: 2022,
-      studie: "DIGFOR"
+      studie: "DIGFOR",
     },
     {
       name: "Mikkel Enghaug",
       role: "Analytiker",
-      image: "https://firebasestorage.googleapis.com/v0/b/fondet.appspot.com/o/files%2F0eb294c5-9b81-4efd-b5f0-e0cb6217d947?alt=media&token=de2c487a-af16-4522-b98c-eb8502f9d4a2",
+      image:
+        "https://firebasestorage.googleapis.com/v0/b/fondet.appspot.com/o/files%2F0eb294c5-9b81-4efd-b5f0-e0cb6217d947?alt=media&token=de2c487a-af16-4522-b98c-eb8502f9d4a2",
       startYear: 2021,
       endYear: 2022,
-      studie: "DIGFOR"
+      studie: "DIGFOR",
     },
     {
       name: "Helene Wiik",
       role: "Analytiker",
-      image: "https://firebasestorage.googleapis.com/v0/b/fondet.appspot.com/o/files%2F4e76d279-8b94-40c8-9f39-f73cae675257?alt=media&token=bacf28ae-0d29-41a7-9a4e-733aeced010a",
+      image:
+        "https://firebasestorage.googleapis.com/v0/b/fondet.appspot.com/o/files%2F4e76d279-8b94-40c8-9f39-f73cae675257?alt=media&token=bacf28ae-0d29-41a7-9a4e-733aeced010a",
       startYear: 2021,
       endYear: 2022,
-      studie: "DIGSEC"
+      studie: "DIGSEC",
     },
     {
       name: "Bjørnar Østtveit",
       role: "Eldste",
-      image: "https://firebasestorage.googleapis.com/v0/b/fondet.appspot.com/o/files%2Fd7152277-6a66-454f-a046-8369ff55f61b?alt=media&token=92d98a9f-d641-46a9-843e-2970aa13b8e1",
+      image:
+        "https://firebasestorage.googleapis.com/v0/b/fondet.appspot.com/o/files%2Fd7152277-6a66-454f-a046-8369ff55f61b?alt=media&token=92d98a9f-d641-46a9-843e-2970aa13b8e1",
       startYear: 2021,
       endYear: 2022,
-      studie: "DATA"
+      studie: "DATA",
     },
     {
       name: "Mads Lundegaard",
       role: "Fondsforvalter",
-      image: "https://firebasestorage.googleapis.com/v0/b/fondet.appspot.com/o/files%2Faf764641-a579-4869-ab45-db671f3ea806?alt=media&token=a8b285c4-9d60-442d-86a8-51d354f55cde",
+      image:
+        "https://firebasestorage.googleapis.com/v0/b/fondet.appspot.com/o/files%2Faf764641-a579-4869-ab45-db671f3ea806?alt=media&token=a8b285c4-9d60-442d-86a8-51d354f55cde",
       startYear: 2021,
       endYear: 2022,
-      studie: "DATA"
-    }
+      studie: "DATA",
+    },
   ];
 
   // Separate current and previous members
-  const currentMembers = allMembers.filter(member => !member.endYear);
-  const previousMembers = allMembers.filter(member => member.endYear);
+  const currentMembers = allMembers.filter((member) => !member.endYear);
+  const previousMembers = allMembers.filter((member) => member.endYear);
 
   // Helper function to get study program
   const getStudyProgram = (member: any) => {
-    return member.studie || 'DIGFOR';
+    return member.studie || "DIGFOR";
   };
 
   // Helper function to format year range
@@ -269,12 +293,9 @@ export default function Group() {
     return `${member.startYear}-${member.startYear + 1}`;
   };
 
-  // Helper function to get image URL
-  const getImageUrl = (image: string) => {
-    if (image.startsWith('photo-')) {
-      return `https://images.unsplash.com/${image}?w=64&h=64&fit=crop&crop=face`;
-    }
-    return image;
+  // Helper function to check if member has a valid profile image
+  const hasValidImage = (image: string) => {
+    return !image.startsWith("photo-");
   };
   return (
     <div className="min-h-screen bg-gradient-primary">
@@ -292,30 +313,43 @@ export default function Group() {
             <h2 className="text-2xl font-semibold text-white mb-6">
               Nåværende medlemmer
             </h2>
-            
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                  {currentMembers.map((member, index) => (
-                    <div key={index} className="bg-[hsl(217,62%,8%)] border border-[hsl(217,62%,20%)] rounded-lg p-4 flex items-center space-x-4">
-                      <div className="w-16 h-16 rounded-full flex-shrink-0 overflow-hidden">
-                        <Image
-                          src={getImageUrl(member.image)}
-                          alt={member.name}
-                          width={64}
-                          height={64}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                      <div className="flex-grow">
-                        <h3 className="text-white font-semibold text-lg">{member.name}</h3>
-                        <p className="text-gray-300">{member.role}</p>
-                        <p className="text-blue-400 text-sm">{formatYearRange(member)}</p>
-                      </div>
-                      <div className="text-right">
-                        <span className="text-gray-300 font-medium">{getStudyProgram(member)}</span>
-                      </div>
-                    </div>
-                  ))}
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              {currentMembers.map((member, index) => (
+                <div
+                  key={index}
+                  className="bg-[hsl(217,62%,8%)] border border-[hsl(217,62%,20%)] rounded-lg p-4 flex items-center space-x-4"
+                >
+                  <div className="w-16 h-16 rounded-full flex-shrink-0 overflow-hidden bg-[hsl(217,62%,20%)] flex items-center justify-center">
+                    {hasValidImage(member.image) ? (
+                      <Image
+                        src={member.image}
+                        alt={member.name}
+                        width={64}
+                        height={64}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <UserRound className="w-8 h-8 text-gray-400" />
+                    )}
+                  </div>
+                  <div className="flex-grow">
+                    <h3 className="text-white font-semibold text-lg">
+                      {member.name}
+                    </h3>
+                    <p className="text-gray-300">{member.role}</p>
+                    <p className="text-blue-400 text-sm">
+                      {formatYearRange(member)}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-gray-300 font-medium">
+                      {getStudyProgram(member)}
+                    </span>
+                  </div>
                 </div>
+              ))}
+            </div>
           </div>
         </div>
 
@@ -325,38 +359,51 @@ export default function Group() {
             <h2 className="text-2xl font-semibold text-white mb-6">
               Tidligere medlemmer
             </h2>
-            
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                  {previousMembers.map((member, index) => (
-                    <div key={index} className="bg-[hsl(217,62%,8%)] border border-[hsl(217,62%,20%)] rounded-lg p-4 flex items-center space-x-4">
-                      <div className="w-16 h-16 rounded-full flex-shrink-0 overflow-hidden">
-                        <Image
-                          src={getImageUrl(member.image)}
-                          alt={member.name}
-                          width={64}
-                          height={64}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                      <div className="flex-grow">
-                        <h3 className="text-white font-semibold text-lg">{member.name}</h3>
-                        <p className="text-gray-300">{member.role}</p>
-                        <p className="text-blue-400 text-sm">{formatYearRange(member)}</p>
-                      </div>
-                      <div className="text-right">
-                        <span className="text-gray-300 font-medium">{getStudyProgram(member)}</span>
-                      </div>
-                    </div>
-                  ))}
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              {previousMembers.map((member, index) => (
+                <div
+                  key={index}
+                  className="bg-[hsl(217,62%,8%)] border border-[hsl(217,62%,20%)] rounded-lg p-4 flex items-center space-x-4"
+                >
+                  <div className="w-16 h-16 rounded-full flex-shrink-0 overflow-hidden bg-[hsl(217,62%,20%)] flex items-center justify-center">
+                    {hasValidImage(member.image) ? (
+                      <Image
+                        src={member.image}
+                        alt={member.name}
+                        width={64}
+                        height={64}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <UserRound className="w-8 h-8 text-gray-400" />
+                    )}
+                  </div>
+                  <div className="flex-grow">
+                    <h3 className="text-white font-semibold text-lg">
+                      {member.name}
+                    </h3>
+                    <p className="text-gray-300">{member.role}</p>
+                    <p className="text-blue-400 text-sm">
+                      {formatYearRange(member)}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-gray-300 font-medium">
+                      {getStudyProgram(member)}
+                    </span>
+                  </div>
                 </div>
+              ))}
+            </div>
           </div>
         </div>
-        
+
         {/* Contact Box */}
         <div className="w-full max-w-6xl mx-auto px-0 sm:px-0">
           <ContactBox />
         </div>
       </main>
     </div>
-  )
+  );
 }

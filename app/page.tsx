@@ -29,10 +29,10 @@ export default function Home() {
                 </div>
                 <div>
                   <h3 className="text-yellow-400 font-semibold text-sm mb-1">
-                    ⚠️ Viktig merknad
+                    Viktig merknad
                   </h3>
                   <p className="text-yellow-100 text-sm leading-relaxed">
-                    Dette er bare veiledende tall da vi har mistet tilgang til Nordnet API og ikke kan gi dere nøyaktige tall på dette tidspunktet. Index og Forvaltningsgruppen jobber på saken.
+                    Dette er bare veiledende tall da vi har mistet tilgang til Nordnet API og kan derfor ikke gi dere nøyaktige tall på dette tidspunktet. Index og Forvaltningsgruppen jobber på saken.
                   </p>
                 </div>
               </div>
