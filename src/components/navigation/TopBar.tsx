@@ -4,14 +4,14 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import clsx from "clsx";
-import FondetLogo from "../miscellaneous/FondetLogo";
+import TihldeLogo from "../miscellaneous/TihldeLogo";
 import { MoonIcon, SunIcon } from "lucide-react";
 import { useTheme } from "@/components/providers/ThemeProvider";
 
 const navigationItems = [
-  { id: "home", text: "Hjem", to: "/" },
-  { id: "studiene", text: "Studiene", to: "/studiene" },
-  { id: "kontakt", text: "Kontakt", to: "/kontakt" },
+  { id: "sok", text: "Søk om støtte", to: "/sok" },
+  { id: "om", text: "Om fondet", to: "/om" },
+  { id: "gruppe", text: "Forvaltningsgruppen", to: "/gruppe" },
 ];
 
 const TopBar: React.FC = () => {
@@ -51,7 +51,7 @@ const TopBar: React.FC = () => {
           aria-label="Til forsiden"
           className="text-logo font-bold text-2xl flex items-center justify-self-start gap-2"
         >
-          <FondetLogo size="large" className="w-32 sm:w-44 h-auto" />
+          <TihldeLogo size="large" className="w-32 sm:w-44 h-auto" />
         </Link>
         <div className="hidden sm:flex gap-8 justify-self-center">
           {navigationItems.map((item) => (
@@ -68,14 +68,14 @@ const TopBar: React.FC = () => {
           ))}
         </div>
         <div className="flex gap-4 justify-self-end items-center">
-          <Link
+          <a
             href="https://tihlde.org"
             target="_blank"
             rel="noopener noreferrer"
             className="text-sm font-medium transition-colors text-foreground-secondary hover:text-foreground-primary"
           >
             Til hovedsiden
-          </Link>
+          </a>
           <button
             type="button"
             onClick={toggleTheme}

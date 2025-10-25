@@ -1,11 +1,9 @@
-import Navbar from "../components/Navbar";
 import ContactBox from "../components/ContactBox";
 
 export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-primary">
-      <Navbar />
-      <main className="flex flex-col items-center justify-center p-0 sm:p-8">
+      <main className="flex flex-col items-center justify-center p-0 sm:p-8 pt-24">
         <div className="text-center mb-12 px-4 sm:px-0 pt-8 sm:pt-0">
           <h1 className="text-4xl font-bold text-foreground">Fondet</h1>
         </div>
@@ -13,16 +11,16 @@ export default function Home() {
         {/* Two boxes container */}
         <div className="w-full max-w-6xl mx-auto space-y-6 px-0 sm:px-0">
           {/* First box */}
-          <div className="bg-[hsl(217,62%,12%)] border border-[hsl(217,62%,20%)] rounded-lg p-6 shadow-lg">
-            <h2 className="text-2xl font-semibold text-white mb-6">
+          <div className="bg-cardBackground border border-cardBorder rounded-lg p-6 shadow-lg">
+            <h2 className="text-2xl font-semibold text-foreground-primary mb-6">
               Fondets sammensetning
             </h2>
 
-            <div className="mb-6 p-4 bg-yellow-900/20 border border-yellow-500/30 rounded-md">
+            <div className="mb-6 p-4 bg-warning/10 border border-warning/30 rounded-md">
               <div className="flex items-start space-x-3">
-                <div className="flex-shrink-0">
+                <div className="shrink-0">
                   <svg
-                    className="w-5 h-5 text-yellow-400 mt-0.5"
+                    className="w-5 h-5 text-warning mt-0.5"
                     fill="currentColor"
                     viewBox="0 0 20 20"
                   >
@@ -34,10 +32,10 @@ export default function Home() {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="text-yellow-400 font-semibold text-sm mb-1">
+                  <h3 className="text-warning font-semibold text-sm mb-1">
                     Viktig merknad
                   </h3>
-                  <p className="text-yellow-100 text-sm leading-relaxed">
+                  <p className="text-foreground-secondary text-sm leading-relaxed">
                     Dette er bare veiledende tall da vi har mistet tilgang til
                     Nordnet API og kan derfor ikke gi dere nøyaktige tall på
                     dette tidspunktet. Index og Forvaltningsgruppen jobber på
@@ -50,91 +48,115 @@ export default function Home() {
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-[hsl(217,62%,20%)]">
-                    <th className="text-left py-3 px-4 text-white font-semibold">
+                  <tr className="border-b border-cardBorder">
+                    <th className="text-left py-3 px-4 text-foreground-primary font-semibold">
                       Fond
                     </th>
-                    <th className="text-left py-3 px-4 text-white font-semibold">
+                    <th className="text-left py-3 px-4 text-foreground-primary font-semibold">
                       Andel
                     </th>
-                    <th className="text-left py-3 px-4 text-white font-semibold">
+                    <th className="text-left py-3 px-4 text-foreground-primary font-semibold">
                       Utvikling
                     </th>
-                    <th className="text-left py-3 px-4 text-white font-semibold">
+                    <th className="text-left py-3 px-4 text-foreground-primary font-semibold">
                       Kategori
                     </th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr className="border-b border-[hsl(217,62%,15%)]">
-                    <td className="py-3 px-4 text-gray-300">DNB Finans A</td>
-                    <td className="py-3 px-4 text-gray-300">4.7%</td>
-                    <td className="py-3 px-4 text-gray-300">-</td>
-                    <td className="py-3 px-4 text-gray-300">
+                  <tr className="border-b border-cardBorder">
+                    <td className="py-3 px-4 text-foreground-secondary">
+                      DNB Finans A
+                    </td>
+                    <td className="py-3 px-4 text-foreground-secondary">
+                      4.7%
+                    </td>
+                    <td className="py-3 px-4 text-foreground-secondary">-</td>
+                    <td className="py-3 px-4 text-foreground-secondary">
                       Bransjefond, Finans
                     </td>
                   </tr>
-                  <tr className="border-b border-[hsl(217,62%,15%)]">
-                    <td className="py-3 px-4 text-gray-300">
+                  <tr className="border-b border-cardBorder">
+                    <td className="py-3 px-4 text-foreground-secondary">
                       Fondsfinans Utbytte B
                     </td>
-                    <td className="py-3 px-4 text-gray-300">9.5%</td>
-                    <td className="py-3 px-4 text-gray-300">-</td>
-                    <td className="py-3 px-4 text-gray-300">Norge</td>
+                    <td className="py-3 px-4 text-foreground-secondary">
+                      9.5%
+                    </td>
+                    <td className="py-3 px-4 text-foreground-secondary">-</td>
+                    <td className="py-3 px-4 text-foreground-secondary">
+                      Norge
+                    </td>
                   </tr>
-                  <tr className="border-b border-[hsl(217,62%,15%)]">
-                    <td className="py-3 px-4 text-gray-300">
+                  <tr className="border-b border-cardBorder">
+                    <td className="py-3 px-4 text-foreground-secondary">
                       KLP AksjeEuropa Indeks P
                     </td>
-                    <td className="py-3 px-4 text-gray-300">15.6%</td>
-                    <td className="py-3 px-4 text-gray-300">-</td>
-                    <td className="py-3 px-4 text-gray-300">
+                    <td className="py-3 px-4 text-foreground-secondary">
+                      15.6%
+                    </td>
+                    <td className="py-3 px-4 text-foreground-secondary">-</td>
+                    <td className="py-3 px-4 text-foreground-secondary">
                       Europa, Store selskaper, Blanding
                     </td>
                   </tr>
-                  <tr className="border-b border-[hsl(217,62%,15%)]">
-                    <td className="py-3 px-4 text-gray-300">
+                  <tr className="border-b border-cardBorder">
+                    <td className="py-3 px-4 text-foreground-secondary">
                       KLP AksjeGlobal Small Cap Indeks P
                     </td>
-                    <td className="py-3 px-4 text-gray-300">13.4%</td>
-                    <td className="py-3 px-4 text-gray-300">-</td>
-                    <td className="py-3 px-4 text-gray-300">
+                    <td className="py-3 px-4 text-foreground-secondary">
+                      13.4%
+                    </td>
+                    <td className="py-3 px-4 text-foreground-secondary">-</td>
+                    <td className="py-3 px-4 text-foreground-secondary">
                       Globale, Små/mellomstore selskaper
                     </td>
                   </tr>
-                  <tr className="border-b border-[hsl(217,62%,15%)]">
-                    <td className="py-3 px-4 text-gray-300">
+                  <tr className="border-b border-cardBorder">
+                    <td className="py-3 px-4 text-foreground-secondary">
                       Nordnet Danmark Indeks B
                     </td>
-                    <td className="py-3 px-4 text-gray-300">15.0%</td>
-                    <td className="py-3 px-4 text-gray-300">-</td>
-                    <td className="py-3 px-4 text-gray-300">Danmark</td>
+                    <td className="py-3 px-4 text-foreground-secondary">
+                      15.0%
+                    </td>
+                    <td className="py-3 px-4 text-foreground-secondary">-</td>
+                    <td className="py-3 px-4 text-foreground-secondary">
+                      Danmark
+                    </td>
                   </tr>
-                  <tr className="border-b border-[hsl(217,62%,15%)]">
-                    <td className="py-3 px-4 text-gray-300">
+                  <tr className="border-b border-cardBorder">
+                    <td className="py-3 px-4 text-foreground-secondary">
                       Nordnet Sverige Index
                     </td>
-                    <td className="py-3 px-4 text-gray-300">18.0%</td>
-                    <td className="py-3 px-4 text-gray-300">-</td>
-                    <td className="py-3 px-4 text-gray-300">Sverige</td>
+                    <td className="py-3 px-4 text-foreground-secondary">
+                      18.0%
+                    </td>
+                    <td className="py-3 px-4 text-foreground-secondary">-</td>
+                    <td className="py-3 px-4 text-foreground-secondary">
+                      Sverige
+                    </td>
                   </tr>
-                  <tr className="border-b border-[hsl(217,62%,15%)]">
-                    <td className="py-3 px-4 text-gray-300">
+                  <tr className="border-b border-cardBorder">
+                    <td className="py-3 px-4 text-foreground-secondary">
                       Nordnet USA Indeks
                     </td>
-                    <td className="py-3 px-4 text-gray-300">18.9%</td>
-                    <td className="py-3 px-4 text-gray-300">-</td>
-                    <td className="py-3 px-4 text-gray-300">
+                    <td className="py-3 px-4 text-foreground-secondary">
+                      18.9%
+                    </td>
+                    <td className="py-3 px-4 text-foreground-secondary">-</td>
+                    <td className="py-3 px-4 text-foreground-secondary">
                       USA, Store selskaper, Blanding
                     </td>
                   </tr>
                   <tr>
-                    <td className="py-3 px-4 text-gray-300">
+                    <td className="py-3 px-4 text-foreground-secondary">
                       Öhman Global Growth A
                     </td>
-                    <td className="py-3 px-4 text-gray-300">5.0%</td>
-                    <td className="py-3 px-4 text-gray-300">-</td>
-                    <td className="py-3 px-4 text-gray-300">
+                    <td className="py-3 px-4 text-foreground-secondary">
+                      5.0%
+                    </td>
+                    <td className="py-3 px-4 text-foreground-secondary">-</td>
+                    <td className="py-3 px-4 text-foreground-secondary">
                       Bransjefond, Teknologi
                     </td>
                   </tr>

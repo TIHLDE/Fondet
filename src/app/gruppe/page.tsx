@@ -1,4 +1,3 @@
-import Navbar from "../../components/Navbar";
 import ContactBox from "../../components/ContactBox";
 import Image from "next/image";
 import { UserRound } from "lucide-react";
@@ -299,8 +298,7 @@ export default function Group() {
   };
   return (
     <div className="min-h-screen bg-gradient-primary">
-      <Navbar />
-      <main className="flex flex-col items-center justify-center p-0 sm:p-8">
+      <main className="flex flex-col items-center justify-center p-0 sm:p-8 pt-24">
         <div className="text-center mb-8 px-4 sm:px-0 pt-8 sm:pt-8">
           <h1 className="text-4xl font-bold text-foreground-primary mb-8">
             Forvaltningsgruppen
@@ -318,7 +316,7 @@ export default function Group() {
               {currentMembers.map((member, index) => (
                 <div
                   key={index}
-                  className="bg-[hsl(217,62%,8%)] border border-cardBorder rounded-lg p-4 flex items-center space-x-4"
+                  className="bg-secondary border border-cardBorder rounded-lg p-4 flex items-center space-x-4"
                 >
                   <div className="w-16 h-16 rounded-full flex-shrink-0 overflow-hidden bg-secondary border border-cardBorder flex items-center justify-center">
                     {hasValidImage(member.image) ? (
@@ -364,7 +362,7 @@ export default function Group() {
               {previousMembers.map((member, index) => (
                 <div
                   key={index}
-                  className="bg-[hsl(217,62%,8%)] border border-cardBorder rounded-lg p-4 flex items-center space-x-4"
+                  className="bg-secondary border border-cardBorder rounded-lg p-4 flex items-center space-x-4"
                 >
                   <div className="w-16 h-16 rounded-full flex-shrink-0 overflow-hidden bg-secondary border border-cardBorder flex items-center justify-center">
                     {hasValidImage(member.image) ? (

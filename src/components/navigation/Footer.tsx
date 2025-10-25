@@ -1,7 +1,7 @@
 import { Separator } from "../ui/separator";
 import Image from "next/image";
 import Link from "next/link";
-import FondetLogo from "../miscellaneous/FondetLogo";
+import TihldeLogo from "../miscellaneous/TihldeLogo";
 import {
   FaInstagram,
   FaFacebookF,
@@ -51,7 +51,7 @@ const Footer = () => {
             aria-label="Til forsiden"
             className="text-logo font-bold text-2xl"
           >
-            <FondetLogo size="large" className="w-52 h-fit" />
+            <TihldeLogo size="large" className="w-52 h-fit" />
           </Link>
           <div className="flex space-x-8">
             {socials.map((social) => (
