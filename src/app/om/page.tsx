@@ -44,12 +44,12 @@ export default function About() {
                   Sammensetning
                 </h3>
                 <p className="mb-3">
-                  Fondet har totalt 10 medlemmer og består av:
+                  Fondet har totalt 12 medlemmer og består av:
                 </p>
                 <ul className="list-disc list-inside space-y-1 ml-4">
                   <li>1 Fondsforvalter</li>
                   <li>1 fra De Eldstes Raad</li>
-                  <li>8 Ordinære medlemmer</li>
+                  <li>10 Ordinære medlemmer</li>
                 </ul>
               </div>
 

@@ -47,6 +47,20 @@ export default function Group() {
       studie: "DATA",
     },
     {
+      name: "Edvard Emmanuel Klavenes",
+      role: "Analytiker",
+      image: "photo-1472099645785-5658abf4ff4e",
+      startYear: 2025,
+      studie: "DATA",
+    },
+    {
+      name: "Thomas Thien Nguyen",
+      role: "Analytiker",
+      image: "photo-1472099645785-5658abf4ff4e",
+      startYear: 2025,
+      studie: "DATA",
+    },
+    {
       name: "Martine Løkstad",
       role: "Fondsforvalter",
       image:
