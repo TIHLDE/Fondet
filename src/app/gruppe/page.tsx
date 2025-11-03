@@ -298,7 +298,7 @@ export default function Group() {
   };
   return (
     <div className="min-h-screen bg-gradient-primary">
-      <main className="flex flex-col items-center justify-center p-0 sm:p-8 pt-24">
+      <main className="flex flex-col items-center justify-center sm:px-8 sm:pb-8 pt-24">
         <div className="text-center mb-8 px-4 sm:px-0 pt-8 sm:pt-8">
           <h1 className="text-4xl font-bold text-foreground-primary mb-8">
             Forvaltningsgruppen
@@ -318,7 +318,7 @@ export default function Group() {
                   key={index}
                   className="bg-secondary border border-cardBorder rounded-lg p-4 flex items-center space-x-4"
                 >
-                  <div className="w-16 h-16 rounded-full flex-shrink-0 overflow-hidden bg-secondary border border-cardBorder flex items-center justify-center">
+                  <div className="w-16 h-16 rounded-full shrink-0 overflow-hidden bg-secondary border border-cardBorder flex items-center justify-center">
                     {hasValidImage(member.image) ? (
                       <Image
                         src={member.image}
@@ -331,7 +331,7 @@ export default function Group() {
                       <UserRound className="w-8 h-8 text-muted-foreground" />
                     )}
                   </div>
-                  <div className="flex-grow">
+                  <div className="grow">
                     <h3 className="text-foreground-primary font-semibold text-lg">
                       {member.name}
                     </h3>
@@ -341,7 +341,7 @@ export default function Group() {
                     </p>
                   </div>
                   <div className="text-right">
-                    <span className="text-foreground-secondary font-medium">
+                    <span className="text-foreground-secondary font-medium normal-case">
                       {getStudyProgram(member)}
                     </span>
                   </div>

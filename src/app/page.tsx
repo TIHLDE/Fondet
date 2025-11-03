@@ -3,7 +3,7 @@ import ContactBox from "../components/ContactBox";
 export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-primary">
-      <main className="flex flex-col items-center justify-center p-0 sm:p-8 pt-24">
+      <main className="flex flex-col items-center justify-center sm:px-8 sm:pb-8 pt-24">
         <div className="text-center mb-12 px-4 sm:px-0 pt-8 sm:pt-0">
           <h1 className="text-4xl font-bold text-foreground">Fondet</h1>
         </div>
