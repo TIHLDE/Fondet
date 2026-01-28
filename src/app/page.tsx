@@ -1,4 +1,6 @@
 import ContactBox from "../components/ContactBox";
+import PortfolioChart from "../components/PortfolioChart";
+import AllocationChart from "../components/AllocationChart";
 
 export default function Home() {
   return (
@@ -10,7 +12,23 @@ export default function Home() {
 
         {/* Two boxes container */}
         <div className="w-full max-w-6xl mx-auto space-y-6 px-0 sm:px-0">
-          {/* First box */}
+          {/* Portfolio value chart */}
+          <div className="bg-cardBackground border border-cardBorder rounded-lg p-6 shadow-lg">
+            <h2 className="text-2xl font-semibold text-foreground-primary mb-6">
+              Porteføljeverdi over tid
+            </h2>
+            <PortfolioChart />
+          </div>
+
+          {/* Allocation chart */}
+          <div className="bg-cardBackground border border-cardBorder rounded-lg p-6 shadow-lg">
+            <h2 className="text-2xl font-semibold text-foreground-primary mb-6">
+              Fondsallokering
+            </h2>
+            <AllocationChart />
+          </div>
+
+          {/* Detailed table */}
           <div className="bg-cardBackground border border-cardBorder rounded-lg p-6 shadow-lg">
             <h2 className="text-2xl font-semibold text-foreground-primary mb-6">
               Fondets sammensetning

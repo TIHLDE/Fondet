@@ -58,7 +58,7 @@ export default function Group() {
       role: "Analytiker",
       image: "photo-1472099645785-5658abf4ff4e",
       startYear: 2025,
-      studie: "DATA",
+      studie: "DIGFOR",
     },
     {
       name: "Martine Løkstad",
