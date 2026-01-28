@@ -40,6 +40,12 @@ export default function Navbar() {
           {/* Desktop Navigation - hidden on mobile */}
           <div className="hidden md:flex items-center space-x-8">
             <Link
+              href="/"
+              className="text-green-400 font-semibold hover:text-green-300 transition-colors"
+            >
+              Portefølje
+            </Link>
+            <Link
               href="/sok"
               className="text-sidebar-foreground font-medium hover:text-muted-foreground transition-colors"
             >
@@ -107,6 +113,13 @@ export default function Navbar() {
         {isMenuOpen && (
           <div className="md:hidden">
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-sidebar-background border-t border-border">
+              <Link
+                href="/"
+                className="block px-3 py-2 text-green-400 font-semibold hover:text-green-300 hover:bg-sidebar-accent rounded-md transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Portefølje
+              </Link>
               <Link
                 href="/sok"
                 className="block px-3 py-2 text-sidebar-foreground font-medium hover:text-muted-foreground hover:bg-sidebar-accent rounded-md transition-colors"

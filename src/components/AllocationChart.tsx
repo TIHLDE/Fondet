@@ -3,20 +3,20 @@
 import { useQuery } from "@tanstack/react-query";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 
-interface AllocationEntry {
-  fund: string;
-  allocation: number;
-  category: string;
-}
-
 interface StocksData {
-  portfolio: { date: string; value: number }[];
-  allocation: AllocationEntry[];
+  portfolio: { date: string; fund: number; benchmark: number }[];
+  allocation: { fund: string; allocation: number; category: string }[];
 }
 
 const COLORS = [
-  "#3b82f6", "#10b981", "#f59e0b", "#ef4444",
-  "#8b5cf6", "#ec4899", "#06b6d4", "#f97316",
+  "#f87171",
+  "#d4a574",
+  "#d4d46a",
+  "#6dd4a0",
+  "#6dd4d4",
+  "#7b8dcd",
+  "#a07bcd",
+  "#e47baa",
 ];
 
 export default function AllocationChart() {
@@ -28,7 +28,7 @@ export default function AllocationChart() {
 
   if (isLoading) {
     return (
-      <div className="h-64 flex items-center justify-center text-foreground-secondary">
+      <div className="h-96 flex items-center justify-center text-gray-400">
         Laster allokeringsgraf...
       </div>
     );
@@ -44,49 +44,57 @@ export default function AllocationChart() {
   }));
 
   return (
-    <div className="w-full flex flex-col lg:flex-row items-center gap-4">
-      <div className="w-full lg:w-1/2 h-72">
-        <ResponsiveContainer width="100%" height="100%">
-          <PieChart>
-            <Pie
-              data={chartData}
-              cx="50%"
-              cy="50%"
-              innerRadius={60}
-              outerRadius={100}
-              paddingAngle={2}
-              dataKey="value"
-            >
-              {chartData.map((_, index) => (
-                <Cell key={index} fill={COLORS[index % COLORS.length]} />
-              ))}
-            </Pie>
-            <Tooltip
-              contentStyle={{
-                backgroundColor: "var(--card-background)",
-                border: "1px solid var(--card-border)",
-                borderRadius: "8px",
-                color: "var(--foreground)",
-              }}
-              formatter={(value: number | undefined) => [`${value ?? 0}%`, "Andel"]}
-            />
-          </PieChart>
-        </ResponsiveContainer>
-      </div>
-      <div className="w-full lg:w-1/2">
-        <ul className="space-y-2">
-          {data.allocation.map((entry, i) => (
-            <li key={entry.fund} className="flex items-center gap-2 text-sm">
-              <span
-                className="inline-block w-3 h-3 rounded-full shrink-0"
-                style={{ backgroundColor: COLORS[i % COLORS.length] }}
+    <div className="w-full">
+      <h2 className="text-2xl font-semibold text-white mb-6">
+        Fondets sammensetning
+      </h2>
+      <div className="flex flex-col lg:flex-row items-center gap-8">
+        <div className="w-full lg:w-1/2 h-96">
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Pie
+                data={chartData}
+                cx="50%"
+                cy="50%"
+                innerRadius="55%"
+                outerRadius="85%"
+                paddingAngle={1.5}
+                dataKey="value"
+                stroke="none"
+              >
+                {chartData.map((_, index) => (
+                  <Cell key={index} fill={COLORS[index % COLORS.length]} />
+                ))}
+              </Pie>
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: "#0f172a",
+                  border: "1px solid rgba(255,255,255,0.15)",
+                  borderRadius: "8px",
+                  color: "#fff",
+                  fontSize: 13,
+                }}
+                formatter={(value: number | undefined) => [`${value ?? 0}%`, "Andel"]}
               />
-              <span className="text-foreground-secondary">
-                {entry.fund} — {entry.allocation}%
-              </span>
-            </li>
-          ))}
-        </ul>
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+
+        <div className="w-full lg:w-1/2">
+          <ul className="space-y-3">
+            {data.allocation.map((entry, i) => (
+              <li key={entry.fund} className="flex items-center gap-3 text-sm">
+                <span
+                  className="inline-block w-5 h-4 rounded-sm shrink-0"
+                  style={{ backgroundColor: COLORS[i % COLORS.length] }}
+                />
+                <span className="text-gray-200">
+                  {entry.fund}: {entry.allocation}%
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </div>
   );

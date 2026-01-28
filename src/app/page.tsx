@@ -10,28 +10,21 @@ export default function Home() {
           <h1 className="text-4xl font-bold text-foreground">Fondet</h1>
         </div>
 
-        {/* Two boxes container */}
         <div className="w-full max-w-6xl mx-auto space-y-6 px-0 sm:px-0">
-          {/* Portfolio value chart */}
+          {/* Portfolio return chart */}
           <div className="bg-cardBackground border border-cardBorder rounded-lg p-6 shadow-lg">
-            <h2 className="text-2xl font-semibold text-foreground-primary mb-6">
-              Porteføljeverdi over tid
-            </h2>
             <PortfolioChart />
           </div>
 
-          {/* Allocation chart */}
+          {/* Allocation donut chart */}
           <div className="bg-cardBackground border border-cardBorder rounded-lg p-6 shadow-lg">
-            <h2 className="text-2xl font-semibold text-foreground-primary mb-6">
-              Fondsallokering
-            </h2>
             <AllocationChart />
           </div>
 
           {/* Detailed table */}
           <div className="bg-cardBackground border border-cardBorder rounded-lg p-6 shadow-lg">
             <h2 className="text-2xl font-semibold text-foreground-primary mb-6">
-              Fondets sammensetning
+              Fondets sammensetning (detaljer)
             </h2>
 
             <div className="mb-6 p-4 bg-warning/10 border border-warning/30 rounded-md">
@@ -127,7 +120,7 @@ export default function Home() {
                     </td>
                     <td className="py-3 px-4 text-foreground-secondary">-</td>
                     <td className="py-3 px-4 text-foreground-secondary">
-                      Globale, Små/mellomstore selskaper
+                      Globale, Sm&aring;/mellomstore selskaper
                     </td>
                   </tr>
                   <tr className="border-b border-cardBorder">
@@ -168,7 +161,7 @@ export default function Home() {
                   </tr>
                   <tr>
                     <td className="py-3 px-4 text-foreground-secondary">
-                      Öhman Global Growth A
+                      &Ouml;hman Global Growth A
                     </td>
                     <td className="py-3 px-4 text-foreground-secondary">
                       5.0%

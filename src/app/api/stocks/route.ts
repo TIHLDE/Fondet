@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server";
 
-export const revalidate = 3600; // Cache for 1 hour
+export const revalidate = 3600;
 
 interface PortfolioEntry {
   date: string;
-  value: number;
+  fund: number;
+  benchmark: number;
 }
 
 interface AllocationEntry {
@@ -25,12 +26,23 @@ const FALLBACK_ALLOCATION: AllocationEntry[] = [
 ];
 
 const FALLBACK_PORTFOLIO: PortfolioEntry[] = [
-  { date: "2024-01-01", value: 100000 },
-  { date: "2024-02-01", value: 102500 },
-  { date: "2024-03-01", value: 105000 },
-  { date: "2024-04-01", value: 103000 },
-  { date: "2024-05-01", value: 107000 },
-  { date: "2024-06-01", value: 110000 },
+  { date: "2023-02-01", fund: 0, benchmark: 0 },
+  { date: "2023-03-01", fund: 2.1, benchmark: 1.5 },
+  { date: "2023-04-01", fund: -1.3, benchmark: -3.2 },
+  { date: "2023-05-01", fund: 3.5, benchmark: 0.8 },
+  { date: "2023-06-01", fund: 5.2, benchmark: 3.1 },
+  { date: "2023-07-01", fund: 7.8, benchmark: 5.4 },
+  { date: "2023-08-01", fund: 9.1, benchmark: 6.2 },
+  { date: "2023-09-01", fund: 8.3, benchmark: 7.0 },
+  { date: "2023-10-01", fund: 10.5, benchmark: 8.1 },
+  { date: "2023-11-01", fund: 11.2, benchmark: 7.5 },
+  { date: "2023-12-01", fund: 12.8, benchmark: 9.3 },
+  { date: "2024-01-01", fund: 14.1, benchmark: 11.0 },
+  { date: "2024-02-01", fund: 16.5, benchmark: 13.2 },
+  { date: "2024-03-01", fund: 19.8, benchmark: 14.8 },
+  { date: "2024-04-01", fund: 24.3, benchmark: 15.1 },
+  { date: "2024-05-01", fund: 26.1, benchmark: 17.2 },
+  { date: "2024-06-01", fund: 29.5, benchmark: 16.8 },
 ];
 
 function parseCSV(csv: string): string[][] {
@@ -81,8 +93,9 @@ export async function GET() {
     if (portfolioRows && portfolioRows.length > 1) {
       portfolio = portfolioRows.slice(1).map((row) => ({
         date: row[0] || "",
-        value: parseFloat(row[1]) || 0,
-      })).filter((e) => e.date && e.value > 0);
+        fund: parseFloat(row[1]) || 0,
+        benchmark: parseFloat(row[2]) || 0,
+      }));
     }
 
     if (allocationRows && allocationRows.length > 1) {
