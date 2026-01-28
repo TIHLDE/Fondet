@@ -1,10 +1,11 @@
 import Link from "next/link";
 import ContactBox from "../../components/ContactBox";
 import MemberCard from "../../components/MemberCard";
-import { getCurrentMembers } from "@/data/members";
+import { getCurrentMembers, getGroupImage } from "@/data/members";
 
 export default function Group() {
   const currentMembers = getCurrentMembers();
+  const groupImage = getGroupImage();
 
   return (
     <div className="min-h-screen bg-gradient-primary">
@@ -15,6 +16,18 @@ export default function Group() {
           </h1>
           <p className="text-gray-400">Nåværende medlemmer</p>
         </div>
+
+        {groupImage && (
+          <div className="w-full max-w-6xl mx-auto px-4 sm:px-0 mb-6">
+            <div className="bg-cardBackground border border-cardBorder rounded-lg overflow-hidden shadow-lg">
+              <img
+                src={groupImage}
+                alt="Gruppebilde"
+                className="w-full h-auto object-cover"
+              />
+            </div>
+          </div>
+        )}
 
         <div className="w-full max-w-6xl mx-auto px-4 sm:px-0 mb-6">
           <div className="bg-cardBackground border border-cardBorder rounded-lg p-6 sm:p-8 shadow-lg">

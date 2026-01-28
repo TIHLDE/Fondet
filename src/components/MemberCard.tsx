@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { UserRound } from "lucide-react";
+import { UserRound, Linkedin } from "lucide-react";
 import type { Member } from "@/data/members";
 
 export default function MemberCard({ member }: { member: Member }) {
@@ -8,7 +8,7 @@ export default function MemberCard({ member }: { member: Member }) {
   return (
     <div className="flex flex-col">
       {/* Portrait image */}
-      <div className="w-full aspect-[3/4] rounded-lg overflow-hidden bg-secondary border border-cardBorder flex items-center justify-center mb-3">
+      <div className="w-full aspect-[3/4] rounded-lg overflow-hidden bg-secondary border border-cardBorder flex items-center justify-center mb-3 relative">
         {hasImage ? (
           <Image
             src={member.image}
@@ -32,10 +32,20 @@ export default function MemberCard({ member }: { member: Member }) {
         {member.role}
       </p>
 
-      {/* Study + year */}
-      <p className="text-gray-500 text-xs mt-0.5">
-        {member.studie} &middot; {member.startYear}{member.endYear ? `–${member.endYear}` : ""}
-      </p>
+      {/* LinkedIn icon */}
+      {member.linkedin && (
+        <div className="mt-1.5">
+          <a
+            href={`https://linkedin.com/in/${member.linkedin}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex text-gray-400 hover:text-blue-400 transition-colors"
+            aria-label={`${member.name} LinkedIn`}
+          >
+            <Linkedin className="w-5 h-5" />
+          </a>
+        </div>
+      )}
     </div>
   );
 }

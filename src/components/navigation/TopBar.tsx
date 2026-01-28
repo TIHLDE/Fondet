@@ -9,6 +9,7 @@ import { MoonIcon, SunIcon } from "lucide-react";
 import { useTheme } from "@/components/providers/ThemeProvider";
 
 const navigationItems = [
+  { id: "hjem", text: "Hjem", to: "/" },
   { id: "sok", text: "Søk om støtte", to: "/sok" },
   { id: "om", text: "Om fondet", to: "/om" },
   { id: "gruppe", text: "Forvaltningsgruppen", to: "/gruppe" },
@@ -60,7 +61,9 @@ const TopBar: React.FC = () => {
               href={item.to}
               className={clsx(
                 "text-sm font-medium transition-colors text-foreground-secondary hover:text-foreground-primary",
-                pathname === item.to ? "font-bold text-foreground-primary" : ""
+                (item.to === "/" ? pathname === "/" : pathname.startsWith(item.to))
+                  ? "font-bold text-foreground-primary"
+                  : ""
               )}
             >
               {item.text}
@@ -68,6 +71,12 @@ const TopBar: React.FC = () => {
           ))}
         </div>
         <div className="flex gap-4 justify-self-end items-center">
+          <a
+            href="/admin"
+            className="text-sm font-medium transition-colors text-foreground-secondary hover:text-foreground-primary"
+          >
+            Admin
+          </a>
           <a
             href="https://tihlde.org"
             target="_blank"

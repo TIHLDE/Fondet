@@ -42,12 +42,14 @@ function formatDateLabel(dateStr: string) {
 
 function filterByRange(data: PortfolioEntry[], months: number): PortfolioEntry[] {
   if (data.length === 0) return data;
-  const now = new Date();
+  // Use the latest data point as the reference, not the current real date
+  const latest = new Date(data[data.length - 1].date);
   let cutoff: Date;
   if (months === -1) {
-    cutoff = new Date(now.getFullYear(), 0, 1);
+    // "I ÅR" = year-to-date of the latest data point's year
+    cutoff = new Date(latest.getFullYear(), 0, 1);
   } else {
-    cutoff = new Date(now);
+    cutoff = new Date(latest);
     cutoff.setMonth(cutoff.getMonth() - months);
   }
   const filtered = data.filter((e) => new Date(e.date) >= cutoff);
