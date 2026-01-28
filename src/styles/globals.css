@@ -1,0 +1,74 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: #dde5f6;
+  --color-foreground-primary: #191f2e;
+  --color-foreground-secondary: #4b566f;
+  --color-card-background: #eaf2ff;
+  --color-card-foreground: #4b566f;
+  --color-card-border: #ccd3e4;
+  --color-button-background: #1c458a;
+  --color-button-foreground: #eff1f4;
+  --color-button-border: #0b3477;
+  --color-accent: #245ec0;
+  --color-input-background: #dae6fa;
+  --color-input-foreground: #4b566f;
+  --color-input-border: #ccd3e4;
+  --color-logo: #191f2e;
+  --color-warning: #f5a623;
+  --color-success: #27ae60;
+  --color-info: #2172c5;
+  --color-muted-foreground: #94a3b8;
+  --color-secondary: #f0f4ff;
+}
+
+:root {
+  --background: #dde5f6;
+  --foreground-primary: #191f2e;
+  --foreground-secondary: #4b566f;
+  --button-background: #1c458a;
+  --button-foreground: #eff1f4;
+  --button-border: #0b3477;
+  --logo: #191f2e;
+  --card-background: #eaf2ff;
+  --card-foreground: #4b566f;
+  --card-border: #ccd3e4;
+  --accent: #245ec0;
+  --input-background: #dae6fa;
+  --input-foreground: #4b566f;
+  --input-border: #ccd3e4;
+  --warning: #f5a623;
+  --success: #27ae60;
+  --info: #2172c5;
+  --muted-foreground: #94a3b8;
+  --secondary: #f0f4ff;
+}
+
+.dark {
+  --background: #01030b;
+  --foreground-primary: #eeeef0;
+  --foreground-secondary: #b2b3bd;
+  --button-background: #2e64bf;
+  --button-foreground: #eeeef0;
+  --button-border: #0e3574;
+  --logo: #eff1f4;
+  --card-background: #070b16;
+  --card-foreground: #b2b3bd;
+  --card-border: #28292d;
+  --accent: #81b5ff;
+  --input-background: #111621;
+  --input-foreground: #b2b3bd;
+  --input-border: #28292d;
+  --warning: #fbbf24;
+  --success: #34d399;
+  --info: #60a5fa;
+  --muted-foreground: #64748b;
+  --secondary: #070b16;
+}
+
+body {
+  color: var(--foreground-primary);
+  background: var(--background);
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+}
