@@ -1,4 +1,5 @@
 import ContactBox from "../../components/ContactBox";
+import SoknadSkjema from "../../components/SoknadSkjema";
 
 export default function Apply() {
   return (
@@ -103,15 +104,14 @@ export default function Apply() {
                     </a>
                   </p>
                 </div>
-
-                <div className="mt-6 p-4 bg-[hsl(217,62%,8%)] border border-[hsl(217,62%,20%)] rounded-md">
-                  <p className="text-gray-300 font-medium">
-                    <strong>Søknaden sendes til:</strong> fondet@tihlde.org
-                  </p>
-                </div>
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Søknadsskjema */}
+        <div className="w-full max-w-6xl mx-auto px-0 sm:px-0 mb-6">
+          <SoknadSkjema />
         </div>
 
         {/* Previous Applications Box */}
