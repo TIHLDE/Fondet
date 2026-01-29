@@ -66,6 +66,10 @@
   --secondary: #070b16;
 }
 
+html {
+  overflow-y: scroll;
+}
+
 body {
   color: var(--foreground-primary);
   background: var(--background);

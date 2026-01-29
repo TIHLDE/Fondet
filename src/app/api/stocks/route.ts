@@ -119,7 +119,7 @@ export async function GET() {
   let portfolio: PortfolioEntry[] = FALLBACK_PORTFOLIO;
   let allocation: AllocationEntry[] = FALLBACK_ALLOCATION;
 
-  if (sheetId && sheetId !== "YOUR_GOOGLE_SHEET_ID_HERE") {
+  if (sheetId) {
     const [portfolioRows, allocationRows] = await Promise.all([
       fetchSheetCSV(sheetId, "Portfolio"),
       fetchSheetCSV(sheetId, "Allocation"),

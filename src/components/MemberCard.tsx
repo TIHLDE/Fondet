@@ -32,6 +32,16 @@ export default function MemberCard({ member }: { member: Member }) {
         {member.role}
       </p>
 
+      {/* Study program */}
+      <p className="text-gray-500 text-xs truncate">
+        {member.studie}
+      </p>
+
+      {/* Years */}
+      <p className="text-gray-500 text-xs">
+        {member.startYear}{member.endYear ? ` – ${member.endYear}` : " – nå"}
+      </p>
+
       {/* LinkedIn icon */}
       {member.linkedin && (
         <div className="mt-1.5">
