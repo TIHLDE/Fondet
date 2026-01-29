@@ -1,5 +1,5 @@
+import Link from "next/link";
 import ContactBox from "../../components/ContactBox";
-import SoknadSkjema from "../../components/SoknadSkjema";
 
 export default function Apply() {
   return (
@@ -85,8 +85,8 @@ export default function Apply() {
                 </ul>
 
                 <p className="text-gray-300 mt-6 leading-relaxed">
-                  Du kan enten bruke søknadsmalen eller fylle ut skjemaet
-                  nedenfor. Husk at du uansett må legge ved et budsjett som
+                  Du kan enten bruke søknadsmalen eller fylle ut skjemaet.
+                  Husk at du uansett må legge ved et budsjett som
                   viser hvordan midlene skal brukes. Det er også helt i orden å
                   legge ved flere dokumenter om det trengs.
                 </p>
@@ -105,13 +105,18 @@ export default function Apply() {
                   </p>
                 </div>
               </div>
+
+              {/* Søk støtte button */}
+              <div className="flex justify-center pt-4">
+                <Link
+                  href="/sok/skjema"
+                  className="inline-flex items-center px-8 py-3 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-lg transition-colors text-lg"
+                >
+                  Søk støtte
+                </Link>
+              </div>
             </div>
           </div>
-        </div>
-
-        {/* Søknadsskjema */}
-        <div className="w-full max-w-6xl mx-auto px-0 sm:px-0 mb-6">
-          <SoknadSkjema />
         </div>
 
         {/* Previous Applications Box */}

@@ -74,7 +74,10 @@ export default function AllocationChart() {
                   color: "#fff",
                   fontSize: 13,
                 }}
-                formatter={(value: number | undefined) => [`${value ?? 0}%`, "Andel"]}
+                formatter={(value: number | undefined) => [
+                  `${value ?? 0}%`,
+                  "Andel",
+                ]}
               />
             </PieChart>
           </ResponsiveContainer>

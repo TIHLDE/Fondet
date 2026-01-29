@@ -40,7 +40,10 @@ function formatDateLabel(dateStr: string) {
   return d.toLocaleDateString("nb-NO", { month: "short", year: "numeric" });
 }
 
-function filterByRange(data: PortfolioEntry[], months: number): PortfolioEntry[] {
+function filterByRange(
+  data: PortfolioEntry[],
+  months: number,
+): PortfolioEntry[] {
   if (data.length === 0) return data;
   // Use the latest data point as the reference, not the current real date
   const latest = new Date(data[data.length - 1].date);
@@ -67,14 +70,18 @@ export default function PortfolioChart() {
 
   const chartData = useMemo(() => {
     if (!data?.portfolio?.length) return [];
-    const filtered = filterByRange(data.portfolio, TIME_RANGES[selectedRange].months);
+    const filtered = filterByRange(
+      data.portfolio,
+      TIME_RANGES[selectedRange].months,
+    );
     return filtered.map((e) => ({
       ...e,
       label: formatDateLabel(e.date),
     }));
   }, [data, selectedRange]);
 
-  const latestReturn = chartData.length > 0 ? chartData[chartData.length - 1].fund : 0;
+  const latestReturn =
+    chartData.length > 0 ? chartData[chartData.length - 1].fund : 0;
 
   if (isLoading) {
     return (
@@ -94,15 +101,25 @@ export default function PortfolioChart() {
         <h2 className="text-2xl font-semibold text-white">
           Fondets avkastning
         </h2>
-        <span className={`text-3xl font-bold ${latestReturn >= 0 ? "text-green-400" : "text-red-400"}`}>
-          {latestReturn >= 0 ? "+" : ""}{latestReturn.toFixed(1)}%
+        <span
+          className={`text-3xl font-bold ${latestReturn >= 0 ? "text-green-400" : "text-red-400"}`}
+        >
+          {latestReturn >= 0 ? "+" : ""}
+          {latestReturn.toFixed(1)}%
         </span>
       </div>
 
       <div className="w-full h-80">
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={chartData} margin={{ top: 5, right: 20, left: 10, bottom: 5 }}>
-            <CartesianGrid horizontal={true} vertical={false} stroke="rgba(255,255,255,0.12)" />
+          <LineChart
+            data={chartData}
+            margin={{ top: 5, right: 20, left: 10, bottom: 5 }}
+          >
+            <CartesianGrid
+              horizontal={true}
+              vertical={false}
+              stroke="rgba(255,255,255,0.12)"
+            />
             <XAxis
               dataKey="label"
               tick={{ fill: "#94a3b8", fontSize: 11 }}
@@ -117,7 +134,11 @@ export default function PortfolioChart() {
               tickLine={false}
               axisLine={false}
             />
-            <ReferenceLine y={0} stroke="rgba(255,255,255,0.35)" strokeDasharray="6 4" />
+            <ReferenceLine
+              y={0}
+              stroke="rgba(255,255,255,0.35)"
+              strokeDasharray="6 4"
+            />
             <Tooltip
               contentStyle={{
                 backgroundColor: "#0f172a",
@@ -126,9 +147,13 @@ export default function PortfolioChart() {
                 color: "#fff",
                 fontSize: 13,
               }}
-              formatter={(value: number | undefined, name: string | undefined) => {
+              formatter={(
+                value: number | undefined,
+                name: string | undefined,
+              ) => {
                 const v = value ?? 0;
-                const label = name === "fund" ? "TIHLDE-Fondet" : "Hovedindeksen (OSEBX)";
+                const label =
+                  name === "fund" ? "TIHLDE-Fondet" : "Hovedindeksen (OSEBX)";
                 return [`${v >= 0 ? "+" : ""}${v.toFixed(1)}%`, label];
               }}
               labelFormatter={(label) => label}
@@ -166,9 +191,9 @@ export default function PortfolioChart() {
             key={range.label}
             onClick={() => setSelectedRange(i)}
             className={`px-4 py-2 text-xs font-medium rounded-lg border transition-colors ${
-              i === selectedRange
-                ? "bg-white text-black border-white font-bold"
-                : "border-gray-500 text-gray-300 hover:text-white hover:border-gray-300"
+              i === selectedRange ?
+                "bg-white text-black border-white font-bold"
+              : "border-gray-500 text-gray-300 hover:text-white hover:border-gray-300"
             }`}
           >
             {range.label}
