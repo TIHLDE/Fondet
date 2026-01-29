@@ -10,9 +10,10 @@ import { useTheme } from "@/components/providers/ThemeProvider";
 
 const navigationItems = [
   { id: "hjem", text: "Hjem", to: "/" },
-  { id: "sok", text: "Søk om støtte", to: "/sok" },
-  { id: "om", text: "Om fondet", to: "/om" },
-  { id: "gruppe", text: "Forvaltningsgruppen", to: "/gruppe" },
+  { id: "apply", text: "Søk om støtte", to: "/apply" },
+  { id: "about", text: "Om fondet", to: "/about" },
+  { id: "reports", text: "Rapporter", to: "/reports" },
+  { id: "group", text: "Forvaltningsgruppen", to: "/group" },
 ];
 
 const TopBar: React.FC = () => {
@@ -54,7 +55,7 @@ const TopBar: React.FC = () => {
         >
           <TihldeLogo size="large" className="w-32 sm:w-44 h-auto" />
         </Link>
-        <div className="hidden sm:flex gap-8 justify-self-center">
+        <div className="hidden sm:flex gap-8 justify-self-center whitespace-nowrap">
           {navigationItems.map((item) => (
             <Link
               key={item.id}

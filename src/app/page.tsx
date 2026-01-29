@@ -1,8 +1,6 @@
 import ContactBox from "../components/ContactBox";
 import PortfolioChart from "../components/PortfolioChart";
 import AllocationChart from "../components/AllocationChart";
-import ReportsList from "../components/ReportsList";
-
 export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-primary">
@@ -176,9 +174,6 @@ export default function Home() {
               </table>
             </div>
           </div>
-
-          {/* Reports */}
-          <ReportsList />
 
           {/* Contact Box */}
           <ContactBox />

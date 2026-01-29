@@ -46,19 +46,25 @@ export default function Navbar() {
               Portefølje
             </Link>
             <Link
-              href="/sok"
+              href="/apply"
               className="text-sidebar-foreground font-medium hover:text-muted-foreground transition-colors"
             >
               Søk om støtte
             </Link>
             <Link
-              href="/om"
+              href="/about"
               className="text-sidebar-foreground font-medium hover:text-muted-foreground transition-colors"
             >
               Om fondet
             </Link>
             <Link
-              href="/gruppe"
+              href="/reports"
+              className="text-sidebar-foreground font-medium hover:text-muted-foreground transition-colors"
+            >
+              Rapporter
+            </Link>
+            <Link
+              href="/group"
               className="text-sidebar-foreground font-medium hover:text-muted-foreground transition-colors"
             >
               Forvaltningsgruppen
@@ -121,21 +127,28 @@ export default function Navbar() {
                 Portefølje
               </Link>
               <Link
-                href="/sok"
+                href="/apply"
                 className="block px-3 py-2 text-sidebar-foreground font-medium hover:text-muted-foreground hover:bg-sidebar-accent rounded-md transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Søk om støtte
               </Link>
               <Link
-                href="/om"
+                href="/about"
                 className="block px-3 py-2 text-sidebar-foreground font-medium hover:text-muted-foreground hover:bg-sidebar-accent rounded-md transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Om fondet
               </Link>
               <Link
-                href="/gruppe"
+                href="/reports"
+                className="block px-3 py-2 text-sidebar-foreground font-medium hover:text-muted-foreground hover:bg-sidebar-accent rounded-md transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Rapporter
+              </Link>
+              <Link
+                href="/group"
                 className="block px-3 py-2 text-sidebar-foreground font-medium hover:text-muted-foreground hover:bg-sidebar-accent rounded-md transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >

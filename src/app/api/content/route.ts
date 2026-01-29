@@ -23,6 +23,9 @@ export async function PUT(request: NextRequest) {
   if (body.reports !== undefined) {
     data.reports = body.reports;
   }
+  if (body.applications !== undefined) {
+    data.applications = body.applications;
+  }
   writeData(data);
   return NextResponse.json({ success: true });
 }

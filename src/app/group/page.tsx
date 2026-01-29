@@ -42,7 +42,7 @@ export default function Group() {
         {/* Link to previous members */}
         <div className="w-full max-w-6xl mx-auto px-4 sm:px-0 mb-6">
           <Link
-            href="/gruppe/tidligere"
+            href="/group/tidligere"
             className="block bg-cardBackground border border-cardBorder rounded-lg p-6 shadow-lg hover:border-gray-500 transition-colors text-center"
           >
             <span className="text-gray-300 font-medium">

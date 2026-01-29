@@ -1,25 +1,25 @@
 @import "tailwindcss";
 
 @theme {
-  --color-background: #dde5f6;
-  --color-foreground-primary: #191f2e;
-  --color-foreground-secondary: #4b566f;
-  --color-card-background: #eaf2ff;
-  --color-card-foreground: #4b566f;
-  --color-card-border: #ccd3e4;
-  --color-button-background: #1c458a;
-  --color-button-foreground: #eff1f4;
-  --color-button-border: #0b3477;
-  --color-accent: #245ec0;
-  --color-input-background: #dae6fa;
-  --color-input-foreground: #4b566f;
-  --color-input-border: #ccd3e4;
-  --color-logo: #191f2e;
-  --color-warning: #f5a623;
-  --color-success: #27ae60;
-  --color-info: #2172c5;
-  --color-muted-foreground: #94a3b8;
-  --color-secondary: #f0f4ff;
+  --color-background: var(--background);
+  --color-foreground-primary: var(--foreground-primary);
+  --color-foreground-secondary: var(--foreground-secondary);
+  --color-card-background: var(--card-background);
+  --color-card-foreground: var(--card-foreground);
+  --color-card-border: var(--card-border);
+  --color-button-background: var(--button-background);
+  --color-button-foreground: var(--button-foreground);
+  --color-button-border: var(--button-border);
+  --color-accent: var(--accent);
+  --color-input-background: var(--input-background);
+  --color-input-foreground: var(--input-foreground);
+  --color-input-border: var(--input-border);
+  --color-logo: var(--logo);
+  --color-warning: var(--warning);
+  --color-success: var(--success);
+  --color-info: var(--info);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-secondary: var(--secondary);
 }
 
 :root {

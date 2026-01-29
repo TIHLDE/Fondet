@@ -29,7 +29,7 @@ export default function ReportsList() {
   return (
     <div className="bg-cardBackground border border-cardBorder rounded-lg p-6 shadow-lg">
       <h2 className="text-2xl font-semibold text-foreground-primary mb-4">
-        Rapporter og dokumenter
+        Rapporter
       </h2>
       {Object.entries(grouped).map(([type, items]) => (
         <div key={type} className="mb-4 last:mb-0">

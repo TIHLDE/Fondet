@@ -5,9 +5,9 @@ import { usePathname, useRouter } from "next/navigation";
 
 const navItems = [
   { href: "/admin", label: "Oversikt" },
-  { href: "/admin/medlemmer", label: "Medlemmer" },
-  { href: "/admin/rapporter", label: "Rapporter" },
-  { href: "/admin/soknader", label: "Søknader" },
+  { href: "/admin/members", label: "Medlemmer" },
+  { href: "/admin/reports", label: "Rapporter" },
+  { href: "/admin/applications", label: "Søknader" },
 ];
 
 export default function AdminLayout({

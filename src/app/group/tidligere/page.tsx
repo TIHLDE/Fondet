@@ -14,7 +14,7 @@ export default function PreviousMembers() {
             Tidligere medlemmer
           </h1>
           <Link
-            href="/gruppe"
+            href="/group"
             className="text-gray-400 hover:text-white transition-colors"
           >
             &larr; Tilbake til nåværende medlemmer

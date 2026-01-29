@@ -30,6 +30,9 @@ export default function MedlemmerPage() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editValues, setEditValues] = useState<Partial<Member>>({});
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [uploadingGroupImage, setUploadingGroupImage] = useState(false);
 
   useEffect(() => {
     fetch("/api/members")
@@ -40,11 +43,47 @@ export default function MedlemmerPage() {
   function startEdit(member: Member) {
     setEditingId(member.id);
     setEditValues({ ...member });
+    setImagePreview(member.image || null);
   }
 
   function cancelEdit() {
     setEditingId(null);
     setEditValues({});
+    setImagePreview(null);
+  }
+
+  async function handleGroupImageUpload(file: File) {
+    setUploadingGroupImage(true);
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("id", "group");
+    const res = await fetch("/api/members/upload", { method: "POST", body: formData });
+    if (res.ok) {
+      const { url } = await res.json();
+      await fetch("/api/members/group-image", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ groupImage: url }),
+      });
+      const refreshed = await fetch("/api/members").then((r) => r.json());
+      setData(refreshed);
+    }
+    setUploadingGroupImage(false);
+  }
+
+  async function handleImageUpload(file: File) {
+    if (!editValues.id) return;
+    setUploading(true);
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("id", editValues.id);
+    const res = await fetch("/api/members/upload", { method: "POST", body: formData });
+    if (res.ok) {
+      const { url } = await res.json();
+      setEditValues((v) => ({ ...v, image: url }));
+      setImagePreview(url);
+    }
+    setUploading(false);
   }
 
   async function saveEdit() {
@@ -77,7 +116,7 @@ export default function MedlemmerPage() {
                 <th className="px-3 py-2">Start</th>
                 <th className="px-3 py-2">Slutt</th>
                 <th className="px-3 py-2">LinkedIn</th>
-                <th className="px-3 py-2">Bilde URL</th>
+                <th className="px-3 py-2">Bilde</th>
                 <th className="px-3 py-2">Handlinger</th>
               </tr>
             </thead>
@@ -180,13 +219,21 @@ export default function MedlemmerPage() {
                           />
                         </td>
                         <td className="px-3 py-2">
-                          <input
-                            className="bg-gray-800 text-white px-2 py-1 rounded w-full"
-                            value={editValues.image ?? ""}
-                            onChange={(e) =>
-                              setEditValues((v) => ({ ...v, image: e.target.value }))
-                            }
-                          />
+                          <div className="flex flex-col gap-1">
+                            <input
+                              type="file"
+                              accept="image/*"
+                              className="bg-gray-800 text-white px-2 py-1 rounded w-full text-xs"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) handleImageUpload(file);
+                              }}
+                            />
+                            {uploading && <span className="text-yellow-400 text-xs">Laster opp...</span>}
+                            {imagePreview && (
+                              <img src={imagePreview} alt="Forhåndsvisning" className="w-12 h-12 object-cover rounded" />
+                            )}
+                          </div>
                         </td>
                         <td className="px-3 py-2 space-x-2 whitespace-nowrap">
                           <button
@@ -212,7 +259,9 @@ export default function MedlemmerPage() {
                         <td className="px-3 py-2">{m.startYear}</td>
                         <td className="px-3 py-2">{m.endYear ?? "-"}</td>
                         <td className="px-3 py-2">{m.linkedin ?? "-"}</td>
-                        <td className="px-3 py-2 max-w-[200px] truncate">{m.image || "-"}</td>
+                        <td className="px-3 py-2">
+                          {m.image ? <img src={m.image} alt={m.name} className="w-10 h-10 object-cover rounded" /> : "-"}
+                        </td>
                         <td className="px-3 py-2">
                           <button
                             onClick={() => startEdit(m)}
@@ -239,6 +288,26 @@ export default function MedlemmerPage() {
 
   return (
     <div>
+      <div className="mb-10">
+        <h2 className="text-xl font-semibold text-white mb-4">Gruppebilde</h2>
+        <div className="flex items-center gap-4">
+          {data.groupImage && (
+            <img src={data.groupImage} alt="Gruppebilde" className="w-32 h-20 object-cover rounded" />
+          )}
+          <div className="flex flex-col gap-1">
+            <input
+              type="file"
+              accept="image/*"
+              className="bg-gray-800 text-white px-2 py-1 rounded text-sm"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) handleGroupImageUpload(file);
+              }}
+            />
+            {uploadingGroupImage && <span className="text-yellow-400 text-xs">Laster opp...</span>}
+          </div>
+        </div>
+      </div>
       {renderTable(data.allMembers, "Nåværende medlemmer")}
       {renderTable(data.previousMembers, "Tidligere medlemmer")}
     </div>
