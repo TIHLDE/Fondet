@@ -3,13 +3,26 @@ import PortfolioChart from "../components/PortfolioChart";
 import AllocationChart from "../components/AllocationChart";
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gradient-primary">
-      <main className="flex flex-col items-center justify-center sm:px-8 sm:pb-8 pt-24">
+    <div className="min-h-screen w-full relative">
+      <main className="flex flex-col items-center justify-center pt-24 relative z-10">
         <div className="text-center mb-12 px-4 sm:px-0 pt-8 sm:pt-0">
           <h1 className="text-4xl font-bold text-foreground">Fondet</h1>
         </div>
 
-        <div className="w-full max-w-6xl mx-auto space-y-6 px-0 sm:px-0">
+        {/* Wave divider with background */}
+        <div className="absolute left-0 right-0 top-0 bottom-0 -z-10">
+          {/* Colored background */}
+          <div 
+            className="absolute inset-0" 
+            style={{
+              background: 'linear-gradient(90deg, rgba(30,64,175,0.2) 0%, rgba(59,130,246,0.3) 50%, rgba(96,165,250,0.2) 100%)'
+            }}
+          />
+          {/* Wave on top */}
+          
+        </div>
+
+        <div className="w-full max-w-6xl mx-auto space-y-6 px-4 sm:px-8 pb-8">
           {/* Portfolio return chart */}
           <div className="bg-cardBackground border border-cardBorder rounded-lg p-6 shadow-lg">
             <PortfolioChart />

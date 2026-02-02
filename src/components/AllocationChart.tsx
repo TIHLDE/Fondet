@@ -9,14 +9,14 @@ interface StocksData {
 }
 
 const COLORS = [
-  "#f87171",
-  "#d4a574",
-  "#d4d46a",
-  "#6dd4a0",
-  "#6dd4d4",
-  "#7b8dcd",
-  "#a07bcd",
-  "#e47baa",
+  "#3b82f6", // blue
+  "#8b5cf6", // violet
+  "#ec4899", // pink
+  "#f59e0b", // amber
+  "#10b981", // emerald
+  "#06b6d4", // cyan
+  "#f97316", // orange
+  "#6366f1", // indigo
 ];
 
 export default function AllocationChart() {
@@ -56,27 +56,33 @@ export default function AllocationChart() {
                 data={chartData}
                 cx="50%"
                 cy="50%"
-                innerRadius="55%"
-                outerRadius="85%"
-                paddingAngle={1.5}
+                innerRadius="60%"
+                outerRadius="80%"
+                paddingAngle={2}
                 dataKey="value"
-                stroke="none"
+                stroke="#1e293b"
+                strokeWidth={2}
               >
                 {chartData.map((_, index) => (
-                  <Cell key={index} fill={COLORS[index % COLORS.length]} />
+                  <Cell 
+                    key={index} 
+                    fill={COLORS[index % COLORS.length]}
+                  />
                 ))}
               </Pie>
               <Tooltip
                 contentStyle={{
-                  backgroundColor: "#0f172a",
-                  border: "1px solid rgba(255,255,255,0.15)",
-                  borderRadius: "8px",
-                  fontSize: 13,
+                  backgroundColor: "#1e293b",
+                  border: "1px solid #334155",
+                  borderRadius: "12px",
+                  fontSize: 14,
+                  padding: "12px 16px",
+                  boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.3)",
                 }}
-                itemStyle={{ color: "#fff" }}
-                formatter={(value: number | undefined) => [
+                itemStyle={{ color: "#fff", fontWeight: 500 }}
+                formatter={(value: number | undefined, name: string) => [
                   `${value ?? 0}%`,
-                  "Andel",
+                  name,
                 ]}
               />
             </PieChart>
@@ -88,11 +94,14 @@ export default function AllocationChart() {
             {data.allocation.map((entry, i) => (
               <li key={entry.fund} className="flex items-center gap-3 text-sm">
                 <span
-                  className="inline-block w-5 h-4 rounded-sm shrink-0"
+                  className="inline-block w-5 h-5 rounded shrink-0"
                   style={{ backgroundColor: COLORS[i % COLORS.length] }}
                 />
-                <span className="text-gray-200">
-                  {entry.fund}: {entry.allocation}%
+                <span className="text-gray-100 font-medium">
+                  {entry.fund}
+                </span>
+                <span className="text-gray-400 ml-auto">
+                  {entry.allocation}%
                 </span>
               </li>
             ))}
