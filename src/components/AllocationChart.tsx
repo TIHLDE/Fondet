@@ -71,9 +71,9 @@ export default function AllocationChart() {
                   backgroundColor: "#0f172a",
                   border: "1px solid rgba(255,255,255,0.15)",
                   borderRadius: "8px",
-                  color: "#fff",
                   fontSize: 13,
                 }}
+                itemStyle={{ color: "#fff" }}
                 formatter={(value: number | undefined) => [
                   `${value ?? 0}%`,
                   "Andel",
