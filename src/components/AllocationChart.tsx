@@ -107,7 +107,7 @@ export default function AllocationChart() {
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full rounded-xl border border-white/10 bg-slate-900/30 backdrop-blur-sm p-6 shadow-lg">
       <h2 className="text-2xl font-semibold text-white mb-6 from-white to-gray-400 bg-clip-text text-transparent">
         Fondets sammensetning
       </h2>

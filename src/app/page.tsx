@@ -4,38 +4,43 @@ import AllocationChart from "../components/AllocationChart";
 export default function Home() {
   return (
     <div className="min-h-screen w-full relative">
-      <main className="flex flex-col items-center justify-center pt-24 relative z-10">
-        <div className="text-center mb-12 px-4 sm:px-0 pt-8 sm:pt-0">
-          <h1 className="text-4xl font-bold text-foreground">Fondet</h1>
-        </div>
+      {/* Background */}
+      <div className="absolute left-0 right-0 top-0 bottom-0 -z-10">
+        <div 
+          className="absolute inset-0" 
+          style={{
+            background: 'linear-gradient(90deg, rgba(30,64,175,0.2) 0%, rgba(59,130,246,0.3) 50%, rgba(96,165,250,0.2) 100%)'
+          }}
+        />
+      </div>
 
-        {/* Wave divider with background */}
-        <div className="absolute left-0 right-0 top-0 bottom-0 -z-10">
-          {/* Colored background */}
-          <div 
-            className="absolute inset-0" 
-            style={{
-              background: 'linear-gradient(90deg, rgba(30,64,175,0.2) 0%, rgba(59,130,246,0.3) 50%, rgba(96,165,250,0.2) 100%)'
-            }}
-          />
-          {/* Wave on top */}
-          
+      <main className="flex flex-col items-center justify-center relative z-10">
+        {/* Title section with wave */}
+        <div style={{ marginBottom: '32px', width: '100%' }}>
+          <div style={{ paddingTop: '64px', paddingBottom: '0px', background: '#000000', overflowWrap: 'break-word' }}>
+            <div className="max-w-6xl mx-auto px-4 sm:px-8">
+              <h1 className="text-4xl font-bold text-white" style={{ marginLeft: '13%', marginTop: '30px' }}>Fondet</h1>
+            </div>
+          </div>
+          <svg viewBox="0 1.4 20 1.2" width="100%" height="80" preserveAspectRatio="none">
+            <path fill="#000000" d="M 0 2 C 10 4 10 0 20 2 L 20 0 L 0 0 Z"></path>
+          </svg>
         </div>
 
         <div className="w-full max-w-6xl mx-auto space-y-6 px-4 sm:px-8 pb-8">
           {/* Portfolio return chart */}
-          <div className="bg-cardBackground border border-cardBorder rounded-lg p-6 shadow-lg">
+          <div className="bg-cardBackground rounded-lg p-6">
             <PortfolioChart />
           </div>
 
           {/* Allocation donut chart */}
-          <div className="bg-cardBackground border border-cardBorder rounded-lg p-6 shadow-lg">
+          <div className="bg-cardBackground rounded-lg p-6">
             <AllocationChart />
           </div>
 
           {/* Detailed table */}
-          <div className="bg-cardBackground border border-cardBorder rounded-lg p-6 shadow-lg">
-            <h2 className="text-2xl font-semibold text-foreground-primary mb-6">
+          <div className="rounded-xl border border-white/10 bg-slate-900/30 backdrop-blur-sm p-6 shadow-lg">
+            <h2 className="text-2xl font-semibold text-white mb-6">
               Fondets sammensetning (detaljer)
             </h2>
 

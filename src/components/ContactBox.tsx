@@ -1,7 +1,7 @@
 export default function ContactBox() {
   return (
-    <div className="bg-cardBackground border border-cardBorder rounded-lg p-8 shadow-lg">
-      <h2 className="text-2xl font-semibold text-foreground-primary mb-6">
+    <div className="rounded-xl border border-white/10 bg-slate-900/30 backdrop-blur-sm p-6 shadow-lg">
+      <h2 className="text-2xl font-semibold text-white mb-6">
         Kontakt forvaltningsgruppen
       </h2>
 

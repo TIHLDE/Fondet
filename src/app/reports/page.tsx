@@ -35,22 +35,40 @@ export default function RapporterPublicPage() {
   const groupedApplications = groupByType(applications);
 
   return (
-    <div className="min-h-screen bg-gradient-primary">
-      <main className="flex flex-col items-center justify-center sm:px-8 sm:pb-8 pt-24">
-        <div className="text-center mb-12 px-4 sm:px-0 pt-8 sm:pt-0">
-          <h1 className="text-4xl font-bold text-foreground">Rapporter og dokumenter</h1>
+    <div className="min-h-screen w-full relative">
+      {/* Background */}
+      <div className="absolute left-0 right-0 top-0 bottom-0 -z-10">
+        <div 
+          className="absolute inset-0" 
+          style={{
+            background: 'linear-gradient(90deg, rgba(30,64,175,0.2) 0%, rgba(59,130,246,0.3) 50%, rgba(96,165,250,0.2) 100%)'
+          }}
+        />
+      </div>
+
+      <main className="flex flex-col items-center justify-center relative z-10">
+        {/* Title section with wave */}
+        <div style={{ marginBottom: '32px', width: '100%' }}>
+          <div style={{ paddingTop: '64px', paddingBottom: '16px', background: '#000000', overflowWrap: 'break-word' }}>
+            <div className="max-w-6xl mx-auto px-4 sm:px-8">
+              <h1 className="text-4xl font-bold text-white" style={{ marginLeft: '20px' }}>Rapporter og dokumenter</h1>
+            </div>
+          </div>
+          <svg viewBox="0 1.4 20 1.2" width="100%" height="80" preserveAspectRatio="none">
+            <path fill="#000000" d="M 0 2 C 10 4 10 0 20 2 L 20 0 L 0 0 Z"></path>
+          </svg>
         </div>
 
-        <div className="w-full max-w-6xl mx-auto space-y-6 px-0 sm:px-0">
+        <div className="w-full max-w-6xl mx-auto space-y-6 px-4 sm:px-8">
           {/* Rapporter */}
           {reports.length > 0 && (
-            <div className="bg-cardBackground border border-cardBorder rounded-lg p-6 shadow-lg">
-              <h2 className="text-2xl font-semibold text-foreground-primary mb-4">
+            <div className="rounded-xl border border-white/10 bg-slate-900/30 backdrop-blur-sm p-6 shadow-lg">
+              <h2 className="text-2xl font-semibold text-white mb-4">
                 Rapporter
               </h2>
               {Object.entries(groupedReports).map(([type, items]) => (
                 <div key={type} className="mb-4 last:mb-0">
-                  <h3 className="text-sm font-semibold text-foreground-secondary uppercase tracking-wide mb-2">
+                  <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-2">
                     {type}
                   </h3>
                   <div className="space-y-2">
@@ -60,12 +78,12 @@ export default function RapporterPublicPage() {
                         href={r.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center justify-between p-3 rounded border border-cardBorder hover:bg-cardBorder/20 transition"
+                        className="flex items-center justify-between p-3 rounded border border-white/10 hover:bg-white/5 transition"
                       >
-                        <span className="text-foreground-primary font-medium">
+                        <span className="text-white font-medium">
                           {r.title}
                         </span>
-                        <span className="text-foreground-secondary text-sm">
+                        <span className="text-gray-400 text-sm">
                           Åpne &rarr;
                         </span>
                       </a>
@@ -78,13 +96,13 @@ export default function RapporterPublicPage() {
 
           {/* Søknader og vedtak */}
           {applications.length > 0 && (
-            <div className="bg-cardBackground border border-cardBorder rounded-lg p-6 shadow-lg">
-              <h2 className="text-2xl font-semibold text-foreground-primary mb-4">
+            <div className="rounded-xl border border-white/10 bg-slate-900/30 backdrop-blur-sm p-6 shadow-lg">
+              <h2 className="text-2xl font-semibold text-white mb-4">
                 Søknader og vedtak
               </h2>
               {Object.entries(groupedApplications).map(([type, items]) => (
                 <div key={type} className="mb-4 last:mb-0">
-                  <h3 className="text-sm font-semibold text-foreground-secondary uppercase tracking-wide mb-2">
+                  <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-2">
                     {type}
                   </h3>
                   <div className="space-y-2">
@@ -94,12 +112,12 @@ export default function RapporterPublicPage() {
                         href={a.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center justify-between p-3 rounded border border-cardBorder hover:bg-cardBorder/20 transition"
+                        className="flex items-center justify-between p-3 rounded border border-white/10 hover:bg-white/5 transition"
                       >
-                        <span className="text-foreground-primary font-medium">
+                        <span className="text-white font-medium">
                           {a.title}
                         </span>
-                        <span className="text-foreground-secondary text-sm">
+                        <span className="text-gray-400 text-sm">
                           Åpne &rarr;
                         </span>
                       </a>
@@ -111,8 +129,8 @@ export default function RapporterPublicPage() {
           )}
 
           {reports.length === 0 && applications.length === 0 && (
-            <div className="bg-cardBackground border border-cardBorder rounded-lg p-6 shadow-lg text-center">
-              <p className="text-foreground-secondary">Ingen dokumenter tilgjengelig ennå.</p>
+            <div className="rounded-xl border border-white/10 bg-slate-900/30 backdrop-blur-sm p-6 shadow-lg text-center">
+              <p className="text-gray-400">Ingen dokumenter tilgjengelig ennå.</p>
             </div>
           )}
         </div>
