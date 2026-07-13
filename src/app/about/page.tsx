@@ -2,20 +2,38 @@ import ContactBox from "../../components/ContactBox";
 
 export default function About() {
   return (
-    <div className="min-h-screen bg-gradient-primary">
-      <main className="flex flex-col items-center justify-center sm:px-8 sm:pb-8 pt-24">
-        <div className="text-center mb-8 px-4 sm:px-0 pt-8 sm:pt-8">
-          <h1 className="text-4xl font-bold text-foreground mb-8">Om fondet</h1>
+    <div className="min-h-screen w-full relative">
+      {/* Background */}
+      <div className="absolute left-0 right-0 top-0 bottom-0 -z-10">
+        <div 
+          className="absolute inset-0" 
+          style={{
+            background: 'linear-gradient(90deg, rgba(30,64,175,0.2) 0%, rgba(59,130,246,0.3) 50%, rgba(96,165,250,0.2) 100%)'
+          }}
+        />
+      </div>
+
+      <main className="flex flex-col items-center justify-center relative z-10">
+        {/* Title section with wave */}
+        <div style={{ marginBottom: '32px', width: '100%' }}>
+          <div style={{ paddingTop: '64px', paddingBottom: '16px', background: '#000000', overflowWrap: 'break-word' }}>
+            <div className="max-w-6xl mx-auto px-4 sm:px-8">
+              <h1 className="text-4xl font-bold text-white" style={{ marginLeft: '20px' }}>Om fondet</h1>
+            </div>
+          </div>
+          <svg viewBox="0 1.4 20 1.2" width="100%" height="80" preserveAspectRatio="none">
+            <path fill="#000000" d="M 0 2 C 10 4 10 0 20 2 L 20 0 L 0 0 Z"></path>
+          </svg>
         </div>
 
         {/* Large top box */}
-        <div className="w-full max-w-6xl mx-auto px-0 sm:px-0 mb-6">
-          <div className="bg-[hsl(217,62%,12%)] border border-[hsl(217,62%,20%)] rounded-lg p-6 sm:p-8 shadow-lg">
+        <div className="w-full max-w-6xl mx-auto px-4 sm:px-8 mb-6">
+          <div className="rounded-xl border border-white/10 bg-slate-900/30 backdrop-blur-sm p-6 sm:p-8 shadow-lg">
             <h2 className="text-2xl font-semibold text-white mb-6">
               Om TIHLDE-fondet
             </h2>
 
-            <div className="space-y-6 text-gray-300 leading-relaxed">
+            <div className="space-y-6 text-white leading-relaxed">
               <p className="text-lg">
                 TIHLDE-fondet er et organ underlagt generalforsamlingen og er
                 dermed sidestilt Hovedstyret. Dette er for at Hovedstyret ikke
@@ -92,10 +110,10 @@ export default function About() {
         </div>
 
         {/* Two boxes side by side */}
-        <div className="w-full max-w-6xl mx-auto px-0 sm:px-0 mb-6">
+        <div className="w-full max-w-6xl mx-auto px-4 sm:px-8 mb-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Left box */}
-            <div className="bg-[hsl(217,62%,12%)] border border-[hsl(217,62%,20%)] rounded-lg p-6 sm:p-8 shadow-lg">
+            <div className="rounded-xl border border-white/10 bg-slate-900/30 backdrop-blur-sm p-6 sm:p-8 shadow-lg">
               <h3 className="text-xl font-semibold text-white mb-4">
                 Strategi og vedtekter
               </h3>
@@ -120,7 +138,7 @@ export default function About() {
             </div>
 
             {/* Right box */}
-            <div className="bg-[hsl(217,62%,12%)] border border-[hsl(217,62%,20%)] rounded-lg p-6 sm:p-8 shadow-lg">
+            <div className="rounded-xl border border-white/10 bg-slate-900/30 backdrop-blur-sm p-6 sm:p-8 shadow-lg">
               <h3 className="text-xl font-semibold text-white mb-4">
                 Årsrapporter
               </h3>
@@ -163,7 +181,7 @@ export default function About() {
         </div>
 
         {/* Contact Box */}
-        <div className="w-full max-w-6xl mx-auto px-0 sm:px-0">
+        <div className="w-full max-w-6xl mx-auto px-4 sm:px-8">
           <ContactBox />
         </div>
       </main>

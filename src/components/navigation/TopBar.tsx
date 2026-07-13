@@ -43,8 +43,8 @@ const TopBar: React.FC = () => {
   return (
     <header
       className={clsx(
-        "fixed z-30 w-full top-0 transition-all duration-150 backdrop-blur-md",
-        isOnTop ? "bg-transparent" : "bg-background/95 dark:bg-background/60"
+        "fixed z-30 w-full top-0 transition-all duration-150",
+        isOnTop ? "bg-black" : "bg-black"
       )}
     >
       <nav className="grid grid-cols-2 sm:grid-cols-3 items-center py-3 px-4 sm:px-8 w-full">

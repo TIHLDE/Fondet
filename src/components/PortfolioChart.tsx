@@ -96,8 +96,8 @@ export default function PortfolioChart() {
   }
 
   return (
-    <div className="w-full">
-      <div className="flex items-baseline justify-between mb-6">
+    <div className="w-full rounded-xl border border-white/10 bg-slate-900/30 backdrop-blur-sm p-6 shadow-lg">
+      <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-semibold text-white">
           Fondets avkastning
         </h2>
