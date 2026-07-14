@@ -29,7 +29,15 @@ const PERIODS = [
   { key: "YEAR_10", label: "10 år", days: 3653 },
 ];
 
-const INDEXES = ["OSEBX", "OMXS30", "OMXC25", "S&P 500"];
+const INDEXES = [
+  "OSEBX",
+  "OMXS30",
+  "OMXC25",
+  "OMXH25",
+  "S&P 500",
+  "NASDAQ 100",
+  "DAX",
+];
 const FUND_LABEL = "TIHLDE-fondet";
 
 const FUND_COLOR = "#00c896";
@@ -37,7 +45,10 @@ const INDEX_COLORS: Record<string, string> = {
   OSEBX: "#4d8bff",
   OMXS30: "#ffa726",
   OMXC25: "#a78bfa",
+  OMXH25: "#26c6da",
   "S&P 500": "#f06292",
+  "NASDAQ 100": "#9ccc65",
+  DAX: "#ef5350",
 };
 
 type Point = { time: number; value: number };
@@ -228,6 +239,7 @@ export default function FundPerformanceChart() {
     [],
   );
   const previewRef = useRef<ISeriesApi<"Line"> | null>(null);
+  const updatingPreviewRef = useRef(false);
   const activeToolRef = useRef<ToolKey | null>(null);
   const pendingRef = useRef<DrawPoint | null>(null);
   const idRef = useRef(0);
@@ -380,14 +392,16 @@ export default function FundPerformanceChart() {
     });
 
     chart.subscribeCrosshairMove((param) => {
-      // setData below re-fires crosshair events synchronously; only react
-      // to moves that come from an actual pointer event to avoid recursion
-      if (!param.sourceEvent) return;
+      // setData below re-fires crosshair events synchronously. Guard against
+      // both the sourceless programmatic re-fire and any re-entrant call while
+      // we are mid-update, else it recurses with garbage coordinate prices.
+      if (!param.sourceEvent || updatingPreviewRef.current) return;
       const tool = activeToolRef.current;
       const pending = pendingRef.current;
       if (!tool || !pending) return;
       const p = pointFrom(param);
       if (!p || p.time === pending.time) return;
+      if (!Number.isFinite(p.price) || Math.abs(p.price) > 1e6) return;
       if (!previewRef.current) {
         previewRef.current = chart.addSeries(LineSeries, {
           color: "#9598a1",
@@ -399,12 +413,17 @@ export default function FundPerformanceChart() {
         });
       }
       const pts = [pending, p].sort((a, b) => a.time - b.time);
-      previewRef.current.setData(
-        pts.map((q) => ({
-          time: q.time as UTCTimestamp,
-          value: q.price,
-        })),
-      );
+      updatingPreviewRef.current = true;
+      try {
+        previewRef.current.setData(
+          pts.map((q) => ({
+            time: q.time as UTCTimestamp,
+            value: q.price,
+          })),
+        );
+      } finally {
+        updatingPreviewRef.current = false;
+      }
     });
 
     return () => {
@@ -812,6 +831,20 @@ export default function FundPerformanceChart() {
               </div>
             )}
           </div>
+
+          {drawings.length > 0 && (
+            <button
+              onClick={() => {
+                setDrawings([]);
+                setActiveTool(null);
+              }}
+              aria-label="Fjern alle tegninger"
+              title="Fjern alle tegninger"
+              className="flex h-9 w-9 items-center justify-center rounded-md border border-cardBorder text-foreground-secondary transition-colors hover:border-red-400 hover:text-red-400"
+            >
+              <Trash2 className="h-4 w-4" aria-hidden />
+            </button>
+          )}
 
           <button
             onClick={toggleFullscreen}
