@@ -1,5 +1,41 @@
 {
-  "reports": [],
+  "reports": [
+    {
+      "title": "Årsrapport 2025",
+      "url": "/reports/arsrapport-2025.pdf",
+      "type": "Årsrapporter"
+    },
+    {
+      "title": "Årsrapport 2024",
+      "url": "https://drive.google.com/file/d/18B9gpWVnZFXWxGHKIgTT5qdWJp2ezhHE/view",
+      "type": "Årsrapporter"
+    },
+    {
+      "title": "Årsrapport 2023",
+      "url": "https://drive.google.com/file/d/1lSWyh7RhnsUhej0nJu9O-ATqqmYNsgOW/view",
+      "type": "Årsrapporter"
+    },
+    {
+      "title": "Årsrapport 2022",
+      "url": "https://drive.google.com/file/d/1uJ6WKTGz2xjkWRheneRtK0HgF81skZ_Z/view",
+      "type": "Årsrapporter"
+    },
+    {
+      "title": "Årsrapport 2021",
+      "url": "https://drive.google.com/file/d/1elNEV5qC9pKON7UA9W4L1jbINO-Yfshg/view",
+      "type": "Årsrapporter"
+    },
+    {
+      "title": "Fondets vedtekter",
+      "url": "https://drive.google.com/file/d/1Qkg6MFx0Qgxev2MyJ8YsfFHkg92E0E-p/view",
+      "type": "Strategi og vedtekter"
+    },
+    {
+      "title": "Fondets overordnede strategi",
+      "url": "https://drive.google.com/file/d/15zGyLCQvKOjn3aW9p5l1zqTm1Bod0UIK/view",
+      "type": "Strategi og vedtekter"
+    }
+  ],
   "applications": [
     {
       "title": "Søknad – Hovedstyret: Kjøkken (15.05.2025)",
