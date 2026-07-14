@@ -122,18 +122,29 @@ flowchart TD
 ```
 
 - Støttede bildeformater: jpg, jpeg, png, webp. Anbefalt stående 3:4,
-  minst 600 px bredt. Oppslaget skjer i `src/lib/member-images.ts`.
-- Gruppebilde: legg `group.jpg` (eller png/webp) i `public/members/`.
+  minst 600 px bredt. Oppslaget skjer i `src/lib/member-images.ts` og
+  bildene serveres via `/api/members/<fil>`.
+- Gruppebilde: legg `group.jpg` (eller png/webp) i samme mappe.
 - Mangler bildet, vises en nøytral plassholder. Ingenting knekker.
+- I produksjon ligger bildene på et montert volum, ikke i repoet: sett
+  `MEMBERS_IMAGE_DIR` til volum-mappen (systemd-enheten monterer
+  `~/srv/Fondet/data/members` til `/app/data/members`). Nye bilder legges
+  der på serveren, ikke i `public/members`. Er `MEMBERS_IMAGE_DIR` ikke satt,
+  brukes `public/members` (lokal utvikling og CI), som også er reserve i
+  produksjon slik at allerede committede bilder fortsatt virker.
 
 ## Miljøvariabler
 
-Kun én, og den er valgfri. Opprett `.env.local` i rotmappen:
+Begge er valgfrie. Opprett `.env.local` i rotmappen:
 
 ```
 # Resend-nøkkel for søknadsskjemaet (gratis: 100 e-poster/dag).
 # Uten nøkkel svarer skjemaet med en tydelig feilmelding.
 RESEND_API_KEY=
+
+# Mappe med medlems- og gruppebilder, servert via /api/members/<fil>.
+# Settes i produksjon til et montert volum. Uten verdi brukes public/members.
+MEMBERS_IMAGE_DIR=
 ```
 
 Merk: Resend sender fra `onboarding@resend.dev` til domenet er verifisert.
