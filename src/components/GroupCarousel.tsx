@@ -45,23 +45,23 @@ export default function GroupCarousel({ images }: { images: string[] }) {
       aria-roledescription="karusell"
       aria-label="Bilder av forvaltningsgruppen"
       data-testid="group-carousel"
-      className="relative w-full overflow-hidden sm:rounded-lg sm:border border-y border-cardBorder bg-cardBackground shadow-lg"
+      className="relative mx-auto w-full max-w-lg overflow-hidden sm:rounded-lg sm:border border-y border-cardBorder bg-cardBackground shadow-lg"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onFocus={() => setPaused(true)}
       onBlur={() => setPaused(false)}
     >
-      <div className="relative w-full aspect-[3/2] max-h-[70vh]">
+      <div className="relative w-full aspect-[2/3]">
         {images.map((src, i) => (
           <Image
             key={src}
             src={src}
             alt={`Gruppebilde ${i + 1} av ${images.length}`}
             fill
-            sizes="100vw"
+            sizes="(min-width: 640px) 512px, 100vw"
             priority={i === 0}
             aria-hidden={i !== index}
-            className={`object-cover object-[50%_40%] transition-opacity duration-700 motion-reduce:transition-none ${
+            className={`object-cover transition-opacity duration-700 motion-reduce:transition-none ${
               i === index ? "opacity-100" : "opacity-0"
             }`}
           />

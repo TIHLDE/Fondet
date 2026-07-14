@@ -1,5 +1,5 @@
 import Link from "next/link";
-import MemberCard from "../../../components/MemberCard";
+import PaginatedMemberGrid from "../../../components/PaginatedMemberGrid";
 import { getPreviousMembers } from "@/data/members";
 import { withImages } from "@/lib/member-images";
 import type { Metadata } from "next";
@@ -28,11 +28,7 @@ export default function PreviousMembers() {
 
         <div className="w-full max-w-6xl mx-auto px-4 sm:px-0 mb-6">
           <div className="bg-cardBackground border border-cardBorder rounded-lg p-6 sm:p-8 shadow-lg">
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
-              {previousMembers.map((member) => (
-                <MemberCard key={member.name} member={member} />
-              ))}
-            </div>
+            <PaginatedMemberGrid members={previousMembers} />
           </div>
         </div>
 
