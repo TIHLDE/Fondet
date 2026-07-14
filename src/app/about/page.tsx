@@ -22,11 +22,11 @@ export default function About() {
 
             <div className="space-y-6 text-foreground-secondary leading-relaxed">
               <p className="text-lg">
-                TIHLDE-fondet er et organ underlagt generalforsamlingen og er
-                dermed sidestilt Hovedstyret. Dette er for at Hovedstyret ikke
-                skal kunne påvirke fondets beslutninger. Fondet skal
-                komplementere økonomien til TIHLDE ved å gi muligheten til å
-                gjøre investeringer som ikke er en del av TIHLDEs budsjett.
+                TIHLDE-fondet forvalter linjeforeningens oppsparte midler.
+                Fondet er underlagt generalforsamlingen og sidestilt
+                Hovedstyret, slik at Hovedstyret ikke kan påvirke beslutningene
+                som tas. Midlene skal komme medlemmene til gode gjennom
+                investeringer som ikke dekkes av TIHLDEs ordinære budsjett.
               </p>
 
               <div>
@@ -34,13 +34,11 @@ export default function About() {
                   Formål
                 </h3>
                 <p className="mb-4">
-                  Formålet til TIHLDE-fondet er å forvalte oppsparte midler på
-                  en hensiktsmessig måte og i TIHLDEs beste interesse gjennom å
-                  investere i ulike aksjefond. Fondet vil også ta innspill fra
-                  TIHLDEs medlemmer om forslag til innkjøp som ikke blir
-                  budsjettert. Dette kan være alt fra små investeringer som en
-                  ny kaffetrakter til større investeringer som en egen
-                  TIHLDE-kjeller.
+                  Pengene står i aksjefond, og målet er trygg og langsiktig
+                  avkastning i TIHLDEs interesse. Fondet tar også imot forslag
+                  fra TIHLDEs medlemmer om innkjøp som ikke er budsjettert. Det
+                  kan være smått, som en ny kaffetrakter, eller stort, som en
+                  egen TIHLDE-kjeller.
                 </p>
               </div>
 
@@ -48,13 +46,11 @@ export default function About() {
                 <h3 className="text-xl font-semibold text-foreground-primary mb-3">
                   Sammensetning
                 </h3>
-                <p className="mb-3">
-                  Fondet har totalt 12 medlemmer og består av:
-                </p>
+                <p className="mb-3">Fondet har tolv medlemmer:</p>
                 <ul className="list-disc list-inside space-y-1 ml-4">
-                  <li>1 Fondsforvalter</li>
+                  <li>1 fondsforvalter</li>
                   <li>1 fra De Eldstes Raad</li>
-                  <li>10 Ordinære medlemmer</li>
+                  <li>10 ordinære medlemmer</li>
                 </ul>
               </div>
 
@@ -63,10 +59,10 @@ export default function About() {
                   Forvalter
                 </h3>
                 <p className="mb-4">
-                  Fondsforvalter sin hovedoppgave er å organisere og delegere
-                  oppgaver til de andre medlemmene i fondet. Forvalter står for
-                  kommunikasjon og formidling av informasjon ut til hovedstyret
-                  og generalformsamlingen.
+                  Fondsforvalteren organiserer arbeidet og delegerer oppgaver
+                  til resten av gruppen. Forvalteren er også fondets stemme
+                  utad, og holder Hovedstyret og generalforsamlingen oppdatert
+                  om hvordan det går.
                 </p>
               </div>
 
@@ -75,10 +71,10 @@ export default function About() {
                   Eldste i forvaltningsgruppen
                 </h3>
                 <p className="mb-4">
-                  Eldste i forvaltningsgruppen sin oppgave er å delta aktivt for
-                  å vedlikeholde verdier og tradisjoner til linjeforeningen,
-                  samt å delta aktivt i forvaltningen som fondet gjør. Dette er
-                  et medlem som har vært med i hovedstyret tidligere.
+                  Ett av medlemmene kommer fra De Eldstes Raad og har tidligere
+                  sittet i Hovedstyret. Rollen skal ta vare på verdiene og
+                  tradisjonene i linjeforeningen, og deltar ellers i
+                  forvaltningen på lik linje med de andre.
                 </p>
               </div>
 
@@ -87,9 +83,9 @@ export default function About() {
                   Medlemmer
                 </h3>
                 <p>
-                  De resterende medlemmene sin hovedoppgave er å ha fokus på
-                  forvaltning og valg av investeringer. Målet er å velge trygge
-                  investeringer som linjeforeningen kan tjene på langsiktig.
+                  De ti ordinære medlemmene står for selve forvaltningen. De
+                  følger markedet, vurderer fondene og velger investeringer som
+                  linjeforeningen kan tjene på over tid.
                 </p>
               </div>
             </div>
