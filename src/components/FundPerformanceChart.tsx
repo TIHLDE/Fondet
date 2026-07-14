@@ -243,6 +243,7 @@ export default function FundPerformanceChart() {
   const activeToolRef = useRef<ToolKey | null>(null);
   const pendingRef = useRef<DrawPoint | null>(null);
   const idRef = useRef(0);
+  const reenterFullscreenRef = useRef(false);
 
   useEffect(() => {
     activeToolRef.current = activeTool;
@@ -614,6 +615,11 @@ export default function FundPerformanceChart() {
     if (!activeTool) return;
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key !== "Escape") return;
+      // The browser exits fullscreen on Esc and that can't be prevented, so
+      // flag a re-entry: cancelling a tool should not drop out of fullscreen.
+      if (document.fullscreenElement === wrapperRef.current) {
+        reenterFullscreenRef.current = true;
+      }
       pendingRef.current = null;
       if (previewRef.current && chartRef.current) {
         chartRef.current.removeSeries(previewRef.current);
@@ -626,8 +632,21 @@ export default function FundPerformanceChart() {
   }, [activeTool]);
 
   useEffect(() => {
-    const onChange = () =>
-      setFullscreen(document.fullscreenElement === wrapperRef.current);
+    const onChange = () => {
+      const isFs = document.fullscreenElement === wrapperRef.current;
+      // Esc while a drawing tool is active cancels the tool; re-enter so it
+      // doesn't also leave fullscreen. The Esc keypress is a user gesture, so
+      // requestFullscreen is allowed here; fall back to exiting if it rejects.
+      if (!isFs && reenterFullscreenRef.current) {
+        reenterFullscreenRef.current = false;
+        const el = wrapperRef.current;
+        if (el?.requestFullscreen) {
+          el.requestFullscreen().catch(() => setFullscreen(false));
+          return;
+        }
+      }
+      setFullscreen(isFs);
+    };
     document.addEventListener("fullscreenchange", onChange);
     return () => document.removeEventListener("fullscreenchange", onChange);
   }, []);
