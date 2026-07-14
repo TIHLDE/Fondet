@@ -34,10 +34,11 @@ for (const { path, heading } of PAGES) {
   });
 }
 
-test("homepage has no Følgere stat", async ({ page }) => {
+test("homepage has no Følgere or Vurdering stats", async ({ page }) => {
   await page.goto("/");
   await page.waitForLoadState("networkidle");
   await expect(page.getByText("Følgere")).toHaveCount(0);
+  await expect(page.getByText("Vurdering")).toHaveCount(0);
 });
 
 test("mobile menu opens and navigates", async ({ page, isMobile }) => {

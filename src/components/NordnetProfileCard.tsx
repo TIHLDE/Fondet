@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useQuery } from "@tanstack/react-query";
-import { Star, ExternalLink } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 import type { NordnetData } from "@/lib/nordnet-types";
 
 const NORDNET_PROFILE_URL =
@@ -51,13 +51,6 @@ export default function NordnetProfileCard() {
           </p>
         </div>
         <div className="flex items-center gap-6">
-          <div className="text-center">
-            <p className="text-lg font-semibold text-foreground-primary flex items-center gap-1 justify-center">
-              {profile.rating}/3
-              <Star className="w-4 h-4 fill-current text-warning" />
-            </p>
-            <p className="text-xs text-foreground-secondary">Vurdering</p>
-          </div>
           <a
             href={NORDNET_PROFILE_URL}
             target="_blank"
