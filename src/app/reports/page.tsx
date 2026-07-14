@@ -60,7 +60,7 @@ export default function RapporterPublicPage() {
             Rapporter og dokumenter
           </h1>
           <p className="text-foreground-secondary">
-            Årsrapporter, strategi, søknader og vedtak
+            Årsrapporter, kvartalsrapporter, strategi, søknader og vedtak
           </p>
         </div>
 
