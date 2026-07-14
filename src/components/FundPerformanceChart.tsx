@@ -28,18 +28,18 @@ const PERIODS = [
 const INDEXES = ["OSEBX", "OMXS30", "OMXC25", "S&P 500"];
 const FUND_LABEL = "TIHLDE-Fondet (likevektet)";
 
-const FUND_COLOR = "#089981";
+const FUND_COLOR = "#00c896";
 const LINE_COLORS = [
-  "#2962ff",
-  "#f57c00",
-  "#7e57c2",
-  "#e91e63",
-  "#00bcd4",
-  "#fdd835",
-  "#5c6bc0",
-  "#26a69a",
-  "#ff7043",
-  "#9598a1",
+  "#4d8bff",
+  "#ffa726",
+  "#a78bfa",
+  "#f06292",
+  "#22d3ee",
+  "#ffe14d",
+  "#818cf8",
+  "#2dd4bf",
+  "#ff8a65",
+  "#b9bdc9",
 ];
 
 export default function FundPerformanceChart() {
