@@ -1,8 +1,8 @@
-import Image from "next/image";
 import Link from "next/link";
 import MemberCard from "../../components/MemberCard";
+import GroupCarousel from "../../components/GroupCarousel";
 import { getCurrentMembers, getGroupImage } from "@/data/members";
-import { withImages, resolveGroupImage } from "@/lib/member-images";
+import { withImages, resolveGroupImages } from "@/lib/member-images";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 
 export default function Group() {
   const currentMembers = withImages(getCurrentMembers());
-  const groupImage = resolveGroupImage(getGroupImage());
+  const groupImages = resolveGroupImages(getGroupImage());
 
   return (
     <div className="w-full min-h-screen bg-gradient-primary">
@@ -23,18 +23,9 @@ export default function Group() {
           <p className="text-foreground-secondary">Nåværende medlemmer</p>
         </div>
 
-        {groupImage && (
-          <div className="w-full max-w-6xl mx-auto px-4 sm:px-0 mb-6">
-            <div className="bg-cardBackground border border-cardBorder rounded-lg overflow-hidden shadow-lg">
-              <Image
-                src={groupImage}
-                alt="Gruppebilde av forvaltningsgruppen"
-                width={1600}
-                height={900}
-                sizes="(max-width: 1152px) 100vw, 1152px"
-                className="w-full h-auto max-h-[32rem] object-cover object-[50%_42%]"
-              />
-            </div>
+        {groupImages.length > 0 && (
+          <div className="w-full mb-6">
+            <GroupCarousel images={groupImages} />
           </div>
         )}
 

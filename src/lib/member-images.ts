@@ -25,8 +25,26 @@ export function withImages(members: Member[]): Member[] {
   );
 }
 
-// Group photo convention: public/members/group.jpg (or .jpeg/.png/.webp).
-// Falls back to the groupImage URL in members.json.
-export function resolveGroupImage(fallback: string): string {
-  return findLocalImage("group") || fallback;
+// All group photos for the carousel: group.jpg first, then group-2.jpg,
+// group-3.jpg and so on, sorted by name. Falls back to the single image.
+export function resolveGroupImages(fallback: string): string[] {
+  let files: string[] = [];
+  try {
+    files = fs.readdirSync(MEMBERS_DIR);
+  } catch {
+    return fallback ? [fallback] : [];
+  }
+  const images = files
+    .filter((f) => /^group(-\d+)?\.(jpg|jpeg|png|webp)$/i.test(f))
+    // group.jpg first, then group-2, group-3, ...
+    .sort((a, b) => {
+      const num = (f: string) => {
+        const m = f.match(/^group-(\d+)\./i);
+        return m ? parseInt(m[1], 10) : 1;
+      };
+      return num(a) - num(b);
+    })
+    .map((f) => `/members/${f}`);
+  if (images.length > 0) return images;
+  return fallback ? [fallback] : [];
 }
