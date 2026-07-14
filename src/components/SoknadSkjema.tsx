@@ -1,6 +1,17 @@
 "use client";
 
 import { useState } from "react";
+import {
+  TIHLDE_GROUPS,
+  validateSoknad,
+  validKontaktperson,
+  validTelefon,
+  validEpost,
+  wordCount,
+  MIN_SUM,
+  MIN_WORDS,
+  MIN_WORDS_KONSEKVENSER,
+} from "@/lib/soknad-validation";
 
 interface BudsjettPost {
   utgift: string;
@@ -12,7 +23,6 @@ export default function SoknadSkjema() {
   const [kontaktperson, setKontaktperson] = useState("");
   const [telefon, setTelefon] = useState("");
   const [epost, setEpost] = useState("");
-  const [hvemSoker, setHvemSoker] = useState("");
   const [onsketSum, setOnsketSum] = useState("");
   const [hvaStotte, setHvaStotte] = useState("");
   const [begrunnelse, setBegrunnelse] = useState("");
@@ -26,6 +36,54 @@ export default function SoknadSkjema() {
     ok: boolean;
     msg: string;
   } | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+
+  function checkField(name: string, value: string) {
+    let err = "";
+    if (value.trim()) {
+      switch (name) {
+        case "kontaktperson":
+          if (!validKontaktperson(value))
+            err = "Oppgi fullt navn (fornavn og etternavn)";
+          break;
+        case "telefon":
+          if (!validTelefon(value))
+            err = "8 siffer, eventuelt med +47";
+          break;
+        case "epost":
+          if (!validEpost(value)) err = "Ugyldig e-postadresse";
+          break;
+        case "onsketSum":
+          if (!(Number(value) >= MIN_SUM))
+            err = "Minimum søknadssum er 5 000 kr";
+          break;
+        case "hvaStotte":
+        case "begrunnelse":
+          if (wordCount(value) < MIN_WORDS)
+            err = `Beskriv med minst ${MIN_WORDS} ord (${wordCount(value)} nå)`;
+          break;
+        case "konsekvenser":
+          if (wordCount(value) < MIN_WORDS_KONSEKVENSER)
+            err = `Beskriv med minst ${MIN_WORDS_KONSEKVENSER} ord`;
+          break;
+      }
+    }
+    setFieldErrors((prev) => ({ ...prev, [name]: err }));
+  }
+
+  function fieldError(name: string) {
+    const err = fieldErrors[name];
+    if (!err) return null;
+    return (
+      <p
+        id={`${name}-error`}
+        className="mt-1 text-sm text-red-600 dark:text-red-400"
+        role="alert"
+      >
+        {err}
+      </p>
+    );
+  }
 
   function addBudsjettPost() {
     setBudsjett([...budsjett, { utgift: "", sum: "" }]);
@@ -53,24 +111,31 @@ export default function SoknadSkjema() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setResult(null);
+
+    const soknad = {
+      sokerNavn,
+      kontaktperson,
+      telefon,
+      epost,
+      onsketSum,
+      hvaStotte,
+      begrunnelse,
+      konsekvenser,
+      budsjett,
+    };
+
+    const feil = validateSoknad(soknad);
+    if (feil) {
+      setResult({ ok: false, msg: feil });
+      return;
+    }
+
     setSending(true);
 
     const res = await fetch("/api/soknad", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        sokerNavn,
-        kontaktperson,
-        telefon,
-        epost,
-        hvemSoker,
-        onsketSum,
-        hvaStotte,
-        begrunnelse,
-        konsekvenser,
-        budsjett,
-        tillegg,
-      }),
+      body: JSON.stringify({ ...soknad, tillegg }),
     });
 
     if (res.ok) {
@@ -86,148 +151,201 @@ export default function SoknadSkjema() {
   }
 
   const inputClass =
-    "w-full px-4 py-3 bg-[hsl(217,62%,8%)] border border-[hsl(217,62%,20%)] rounded-lg text-white placeholder:text-gray-500 focus:outline-none focus:border-blue-500 transition";
-  const labelClass = "block text-sm font-semibold text-white mb-1";
+    "w-full px-4 py-3 bg-background border border-cardBorder rounded-lg text-foreground-primary placeholder:text-foreground-secondary focus:outline-none focus:border-blue-500 transition";
+
+  const inputWithError = (name: string) =>
+    fieldErrors[name]
+      ? inputClass.replace("border-cardBorder", "border-red-500")
+      : inputClass;
+  const labelClass = "block text-sm font-semibold text-foreground-primary mb-1";
 
   return (
-    <div className="bg-[hsl(217,62%,12%)] border border-[hsl(217,62%,20%)] rounded-lg p-6 sm:p-8 shadow-lg">
-      <h2 className="text-xl font-semibold text-white mb-6">
+    <div className="bg-cardBackground border border-cardBorder rounded-lg p-6 sm:p-8 shadow-lg">
+      <h2 className="text-xl font-semibold text-foreground-primary mb-6">
         Søknadsskjema
       </h2>
 
       <form onSubmit={handleSubmit} className="space-y-8">
         {/* Avsender */}
         <div className="space-y-4">
-          <h3 className="text-lg font-medium text-white">Avsender</h3>
+          <h3 className="text-lg font-medium text-foreground-primary">Avsender</h3>
           <div>
-            <label className={labelClass}>Hvem søker? *</label>
-            <input
+            <label htmlFor="soker-navn" className={labelClass}>Hvem søker? *</label>
+            <select
+              id="soker-navn"
               required
               className={inputClass}
               value={sokerNavn}
               onChange={(e) => setSokerNavn(e.target.value)}
-              placeholder="F.eks. Drift, HS, Promo..."
-            />
+            >
+              <option value="" disabled>
+                Velg gruppe...
+              </option>
+              {Object.entries(TIHLDE_GROUPS).map(([kategori, grupper]) => (
+                <optgroup key={kategori} label={kategori}>
+                  {grupper.map((g) => (
+                    <option key={g} value={g}>
+                      {g}
+                    </option>
+                  ))}
+                </optgroup>
+              ))}
+            </select>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className={labelClass}>Kontaktperson *</label>
+              <label htmlFor="kontaktperson" className={labelClass}>Kontaktperson *</label>
               <input
+                id="kontaktperson"
                 required
-                className={inputClass}
+                className={inputWithError("kontaktperson")}
                 value={kontaktperson}
                 onChange={(e) => setKontaktperson(e.target.value)}
+                onBlur={(e) => checkField("kontaktperson", e.target.value)}
+                aria-invalid={!!fieldErrors["kontaktperson"]}
+                aria-describedby={
+                  fieldErrors["kontaktperson"] ? "kontaktperson-error" : undefined
+                }
                 placeholder="Fullt navn"
               />
+              {fieldError("kontaktperson")}
             </div>
             <div>
-              <label className={labelClass}>Telefon *</label>
+              <label htmlFor="telefon" className={labelClass}>Telefon *</label>
               <input
+                id="telefon"
                 required
                 type="tel"
-                className={inputClass}
+                inputMode="tel"
+                pattern="(\+47)?[0-9 ]{8,}"
+                className={inputWithError("telefon")}
                 value={telefon}
                 onChange={(e) => setTelefon(e.target.value)}
+                onBlur={(e) => checkField("telefon", e.target.value)}
+                aria-invalid={!!fieldErrors["telefon"]}
+                aria-describedby={
+                  fieldErrors["telefon"] ? "telefon-error" : undefined
+                }
                 placeholder="Telefonnummer"
               />
+              {fieldError("telefon")}
             </div>
           </div>
           <div>
-            <label className={labelClass}>E-post *</label>
+            <label htmlFor="epost" className={labelClass}>E-post *</label>
             <input
+              id="epost"
               required
               type="email"
-              className={inputClass}
+              className={inputWithError("epost")}
               value={epost}
               onChange={(e) => setEpost(e.target.value)}
+              onBlur={(e) => checkField("epost", e.target.value)}
+              aria-invalid={!!fieldErrors["epost"]}
+              aria-describedby={fieldErrors["epost"] ? "epost-error" : undefined}
               placeholder="din@epost.no"
             />
+            {fieldError("epost")}
           </div>
         </div>
 
         {/* Formål */}
         <div className="space-y-4">
-          <h3 className="text-lg font-medium text-white">Formål</h3>
-          <p className="text-sm text-gray-400">
+          <h3 className="text-lg font-medium text-foreground-primary">Formål</h3>
+          <p className="text-sm text-foreground-secondary">
             Grei ut når dere forklarer og begrunner. Forsøk å være så
             detaljert som mulig, slik at det blir enklere for oss å fatte en
             god beslutning.
           </p>
 
           <div>
-            <label className={labelClass}>
-              Hvem søker? (Navn og eventuell undergruppe, interessegruppe,
-              komité etc.) *
-            </label>
-            <textarea
-              required
-              rows={3}
-              className={inputClass}
-              value={hvemSoker}
-              onChange={(e) => setHvemSoker(e.target.value)}
-              placeholder="Beskriv hvem som søker..."
-            />
-          </div>
-
-          <div>
-            <label className={labelClass}>Ønsket sum (kr) *</label>
+            <label htmlFor="onsket-sum" className={labelClass}>Ønsket sum (kr) *</label>
             <input
+              id="onsket-sum"
               required
               type="number"
               min={5000}
-              className={inputClass}
+              className={inputWithError("onsketSum")}
               value={onsketSum}
               onChange={(e) => setOnsketSum(e.target.value)}
+              onBlur={(e) => checkField("onsketSum", e.target.value)}
+              aria-invalid={!!fieldErrors["onsketSum"]}
+              aria-describedby={
+                fieldErrors["onsketSum"] ? "onsketSum-error" : undefined
+              }
               placeholder="Minimum 5 000 kr"
             />
+            {fieldError("onsketSum")}
           </div>
 
           <div>
-            <label className={labelClass}>
+            <label htmlFor="hva-stotte" className={labelClass}>
               Forklar hva det søkes om støtte til *
             </label>
             <textarea
+              id="hva-stotte"
               required
               rows={4}
-              className={inputClass}
+              className={inputWithError("hvaStotte")}
               value={hvaStotte}
               onChange={(e) => setHvaStotte(e.target.value)}
+              onBlur={(e) => checkField("hvaStotte", e.target.value)}
+              aria-invalid={!!fieldErrors["hvaStotte"]}
+              aria-describedby={
+                fieldErrors["hvaStotte"] ? "hvaStotte-error" : undefined
+              }
               placeholder="Beskriv hva støtten skal brukes til..."
             />
+            {fieldError("hvaStotte")}
           </div>
 
           <div>
-            <label className={labelClass}>
+            <label htmlFor="begrunnelse" className={labelClass}>
               Begrunn hvorfor støtte skal tildeles *
             </label>
             <textarea
+              id="begrunnelse"
               required
               rows={4}
-              className={inputClass}
+              className={inputWithError("begrunnelse")}
               value={begrunnelse}
               onChange={(e) => setBegrunnelse(e.target.value)}
+              onBlur={(e) => checkField("begrunnelse", e.target.value)}
+              aria-invalid={!!fieldErrors["begrunnelse"]}
+              aria-describedby={
+                fieldErrors["begrunnelse"] ? "begrunnelse-error" : undefined
+              }
               placeholder="Forklar hvorfor dette er en god investering for TIHLDE..."
             />
+            {fieldError("begrunnelse")}
           </div>
 
           <div>
-            <label className={labelClass}>
-              Konsekvenser dersom støtte ikke tildeles
+            <label htmlFor="konsekvenser" className={labelClass}>
+              Konsekvenser dersom støtte ikke tildeles *
             </label>
             <textarea
+              id="konsekvenser"
+              required
               rows={3}
-              className={inputClass}
+              className={inputWithError("konsekvenser")}
               value={konsekvenser}
               onChange={(e) => setKonsekvenser(e.target.value)}
+              onBlur={(e) => checkField("konsekvenser", e.target.value)}
+              aria-invalid={!!fieldErrors["konsekvenser"]}
+              aria-describedby={
+                fieldErrors["konsekvenser"] ? "konsekvenser-error" : undefined
+              }
               placeholder="Hva skjer hvis søknaden ikke innvilges?"
             />
+            {fieldError("konsekvenser")}
           </div>
         </div>
 
         {/* Budsjett */}
         <div className="space-y-4">
-          <h3 className="text-lg font-medium text-white">Budsjett</h3>
-          <p className="text-sm text-gray-400">
+          <h3 className="text-lg font-medium text-foreground-primary">Budsjett</h3>
+          <p className="text-sm text-foreground-secondary">
             Av budsjettet skal det fremgå pris på alle individuelle utgifter
             støtten skal brukes til. Forsøk å finne realistiske priser.
           </p>
@@ -236,8 +354,10 @@ export default function SoknadSkjema() {
             {budsjett.map((post, i) => (
               <div key={i} className="flex gap-3 items-center">
                 <input
+                  required
                   className={inputClass}
                   placeholder="Utgift"
+                  aria-label={`Utgift ${i + 1}`}
                   value={post.utgift}
                   onChange={(e) =>
                     updateBudsjett(i, "utgift", e.target.value)
@@ -245,15 +365,18 @@ export default function SoknadSkjema() {
                 />
                 <div className="relative w-40 shrink-0">
                   <input
+                    required
                     type="number"
+                    min={1}
                     className={inputClass + " pr-10"}
                     placeholder="Sum"
+                    aria-label={`Sum for utgift ${i + 1}`}
                     value={post.sum}
                     onChange={(e) =>
                       updateBudsjett(i, "sum", e.target.value)
                     }
                   />
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-foreground-secondary text-sm">
                     kr
                   </span>
                 </div>
@@ -261,7 +384,8 @@ export default function SoknadSkjema() {
                   <button
                     type="button"
                     onClick={() => removeBudsjettPost(i)}
-                    className="text-red-400 hover:text-red-300 text-lg shrink-0"
+                    aria-label={`Fjern utgift ${i + 1}`}
+                    className="text-red-400 hover:text-red-300 text-lg shrink-0 min-w-11 min-h-11 flex items-center justify-center rounded-lg hover:bg-red-900/20 transition-colors"
                   >
                     &times;
                   </button>
@@ -273,14 +397,14 @@ export default function SoknadSkjema() {
           <button
             type="button"
             onClick={addBudsjettPost}
-            className="text-sm text-blue-400 hover:text-blue-300 font-medium"
+            className="text-sm text-blue-400 hover:text-blue-300 font-medium min-h-11 inline-flex items-center px-2 -mx-2 rounded-lg transition-colors"
           >
             + Legg til utgift
           </button>
 
-          <div className="flex justify-between items-center pt-3 border-t border-[hsl(217,62%,20%)]">
-            <span className="font-semibold text-white">Total sum</span>
-            <span className="font-semibold text-white">
+          <div className="flex justify-between items-center pt-3 border-t border-cardBorder">
+            <span className="font-semibold text-foreground-primary">Total sum</span>
+            <span className="font-semibold text-foreground-primary">
               {totalBudsjett.toLocaleString("nb-NO")} kr
             </span>
           </div>
@@ -288,10 +412,11 @@ export default function SoknadSkjema() {
 
         {/* Tillegg */}
         <div className="space-y-2">
-          <h3 className="text-lg font-medium text-white">
+          <h3 className="text-lg font-medium text-foreground-primary">
             Tilleggsinformasjon
           </h3>
           <textarea
+            aria-label="Tilleggsinformasjon"
             rows={4}
             className={inputClass}
             value={tillegg}
@@ -305,8 +430,8 @@ export default function SoknadSkjema() {
           <div
             className={`p-4 rounded-lg text-sm font-medium ${
               result.ok
-                ? "bg-green-900/30 border border-green-700 text-green-300"
-                : "bg-red-900/30 border border-red-700 text-red-300"
+                ? "bg-green-100 border border-green-700 text-green-800 dark:bg-green-900/30 dark:text-green-300"
+                : "bg-red-100 border border-red-700 text-red-800 dark:bg-red-900/30 dark:text-red-300"
             }`}
           >
             {result.msg}

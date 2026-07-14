@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
-
-const resend = new Resend(process.env.RESEND_API_KEY);
+import { validateSoknad } from "@/lib/soknad-validation";
 
 export async function POST(request: NextRequest) {
   const body = await request.json();
@@ -11,7 +10,6 @@ export async function POST(request: NextRequest) {
     kontaktperson,
     telefon,
     epost,
-    hvemSoker,
     onsketSum,
     hvaStotte,
     begrunnelse,
@@ -20,14 +18,15 @@ export async function POST(request: NextRequest) {
     tillegg,
   } = body;
 
-  if (!sokerNavn || !kontaktperson || !telefon || !epost || !hvemSoker || !onsketSum || !hvaStotte || !begrunnelse) {
-    return NextResponse.json({ error: "Mangler påkrevde felt" }, { status: 400 });
+  const validationError = validateSoknad(body);
+  if (validationError) {
+    return NextResponse.json({ error: validationError }, { status: 400 });
   }
 
-  const sum = Number(onsketSum);
-  if (isNaN(sum) || sum < 5000) {
-    return NextResponse.json({ error: "Minimum søknadssum er 5 000 kr" }, { status: 400 });
+  if (!process.env.RESEND_API_KEY) {
+    return NextResponse.json({ error: "E-postutsending er ikke konfigurert" }, { status: 503 });
   }
+  const resend = new Resend(process.env.RESEND_API_KEY);
 
   const budsjettLines = (budsjett as { utgift: string; sum: string }[])
     .filter((b) => b.utgift && b.sum)
@@ -62,7 +61,7 @@ FORMÅL
 ──────
 
 Hvem søker?
-${hvemSoker}
+${sokerNavn}
 
 Ønsket sum:
 ${Number(onsketSum).toLocaleString("nb-NO")} kr
@@ -74,7 +73,7 @@ Begrunnelse for støtte:
 ${begrunnelse}
 
 Konsekvenser dersom støtte ikke tildeles:
-${konsekvenser || "Ikke oppgitt"}
+${konsekvenser}
 
 
 BUDSJETT
@@ -94,7 +93,7 @@ ${tillegg || "Ingen"}
       from: "TIHLDE-Fondet Søknad <onboarding@resend.dev>",
       to: "fondet@tihlde.org",
       replyTo: epost,
-      subject: `Søknad om støtte fra ${sokerNavn} – ${Number(onsketSum).toLocaleString("nb-NO")} kr`,
+      subject: `Søknad om støtte fra ${sokerNavn}: ${Number(onsketSum).toLocaleString("nb-NO")} kr`,
       text: emailBody,
     });
 
