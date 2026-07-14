@@ -1,7 +1,8 @@
 import Link from "next/link";
 import PaginatedMemberGrid from "../../../components/PaginatedMemberGrid";
+import GroupCarousel from "../../../components/GroupCarousel";
 import { getPreviousMembers } from "@/data/members";
-import { withImages } from "@/lib/member-images";
+import { withImages, resolveArchiveGroupImages } from "@/lib/member-images";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -10,6 +11,7 @@ export const metadata: Metadata = {
 
 export default function PreviousMembers() {
   const previousMembers = withImages(getPreviousMembers());
+  const archive = resolveArchiveGroupImages();
 
   return (
     <div className="w-full min-h-screen bg-gradient-primary">
@@ -25,6 +27,17 @@ export default function PreviousMembers() {
             &larr; Tilbake til nåværende medlemmer
           </Link>
         </div>
+
+        {archive.length > 0 && (
+          <div className="w-full max-w-6xl mx-auto sm:px-0 mb-10">
+            <GroupCarousel
+              images={archive.map((a) => a.src)}
+              captions={archive.map((a) => a.year)}
+              aspect="landscape"
+              label="Gruppebilder fra tidligere år"
+            />
+          </div>
+        )}
 
         <div className="w-full max-w-6xl mx-auto px-4 sm:px-0 mb-6">
           <div className="bg-cardBackground border border-cardBorder rounded-lg p-6 sm:p-8 shadow-lg">
