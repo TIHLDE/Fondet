@@ -1,29 +1,38 @@
+import Image from "next/image";
 import Link from "next/link";
-import ContactBox from "../../components/ContactBox";
 import MemberCard from "../../components/MemberCard";
 import { getCurrentMembers, getGroupImage } from "@/data/members";
+import { withImages, resolveGroupImage } from "@/lib/member-images";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Forvaltningsgruppen",
+};
 
 export default function Group() {
-  const currentMembers = getCurrentMembers();
-  const groupImage = getGroupImage();
+  const currentMembers = withImages(getCurrentMembers());
+  const groupImage = resolveGroupImage(getGroupImage());
 
   return (
-    <div className="min-h-screen bg-gradient-primary">
+    <div className="w-full min-h-screen bg-gradient-primary">
       <main className="flex flex-col items-center justify-center sm:px-8 sm:pb-8 pt-24">
         <div className="text-center mb-8 px-4 sm:px-0 pt-8 sm:pt-8">
-          <h1 className="text-4xl font-bold text-white mb-2">
+          <h1 className="text-3xl sm:text-4xl font-bold text-foreground-primary mb-2">
             Forvaltningsgruppen
           </h1>
-          <p className="text-gray-400">Nåværende medlemmer</p>
+          <p className="text-foreground-secondary">Nåværende medlemmer</p>
         </div>
 
         {groupImage && (
           <div className="w-full max-w-6xl mx-auto px-4 sm:px-0 mb-6">
             <div className="bg-cardBackground border border-cardBorder rounded-lg overflow-hidden shadow-lg">
-              <img
+              <Image
                 src={groupImage}
-                alt="Gruppebilde"
-                className="w-full h-auto object-cover"
+                alt="Gruppebilde av forvaltningsgruppen"
+                width={1600}
+                height={900}
+                sizes="(max-width: 1152px) 100vw, 1152px"
+                className="w-full h-auto max-h-[32rem] object-cover object-[50%_42%]"
               />
             </div>
           </div>
@@ -45,15 +54,12 @@ export default function Group() {
             href="/group/tidligere"
             className="block bg-cardBackground border border-cardBorder rounded-lg p-6 shadow-lg hover:border-gray-500 transition-colors text-center"
           >
-            <span className="text-gray-300 font-medium">
+            <span className="text-foreground-secondary font-medium">
               Se tidligere medlemmer &rarr;
             </span>
           </Link>
         </div>
 
-        <div className="w-full max-w-6xl mx-auto px-4 sm:px-0">
-          <ContactBox />
-        </div>
       </main>
     </div>
   );
