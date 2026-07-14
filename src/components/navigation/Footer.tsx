@@ -61,7 +61,7 @@ const Footer = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={social.id}
-                className="text-foreground-secondary hover:text-accent transition-colors"
+                className="text-foreground-secondary hover:text-accent transition-colors p-2.5 -m-2.5 rounded-lg"
               >
                 {social.icon}
               </Link>
@@ -89,28 +89,24 @@ const Footer = () => {
           ))}
         </div>
 
-        {/* Right side - Nito logo */}
+        {/* Right side - partner logo */}
         <div className="flex flex-col items-center md:items-start space-y-4">
           <h3 className="text-2xl font-semibold text-center">Samarbeid</h3>
-          {/* Show light logo in light mode, white logo in dark mode */}
-          <div className="relative h-[46px] w-[200px]">
+          <a
+            href="https://www.dnv.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="DNV"
+            className="inline-block bg-white rounded-md px-4 py-3"
+          >
             <Image
-              src={"/nito_logo_primaer_gronn_dyp.png"}
-              alt="NITO Logo light"
-              fill
-              className="object-contain block dark:hidden"
-              sizes="200px"
-              priority={false}
+              src="/dnv-logo.png"
+              alt="DNV"
+              width={120}
+              height={65}
+              className="h-14 w-auto object-contain"
             />
-            <Image
-              src={"/nito-logo-hvit.png"}
-              alt="NITO Logo dark"
-              fill
-              className="object-contain hidden dark:block"
-              sizes="200px"
-              priority={false}
-            />
-          </div>
+          </a>
         </div>
       </div>
     </div>

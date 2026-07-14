@@ -81,11 +81,6 @@ export function ThemeProvider({
     resolvedTheme,
   };
 
-  // Prevent hydration mismatch by not rendering until mounted
-  if (!mounted) {
-    return null;
-  }
-
   return (
     <ThemeProviderContext.Provider {...props} value={value}>
       {children}

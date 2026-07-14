@@ -1,0 +1,22 @@
+[Unit]
+Description=TIHLDE Fondet web (dev)
+After=network-online.target docker.service
+Wants=network-online.target
+
+[Service]
+ExecStartPre=/bin/sh -c 'for i in $(seq 1 60); do getent hosts ghcr.io >/dev/null 2>&1 && exit 0; sleep 5; done; echo "DNS not ready after 5min" >&2; exit 1'
+WorkingDirectory=%h/srv/Fondet
+ExecStart=/usr/bin/docker run --rm \
+    --name fondet \
+    --pull=always \
+    -p 127.0.0.1:3005:3000 \
+    --env-file %h/srv/Fondet/.env \
+    ghcr.io/tihlde/fondet:dev
+ExecStop=/usr/bin/docker stop fondet
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=default.target

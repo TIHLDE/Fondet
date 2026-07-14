@@ -1,3 +1,201 @@
 {
-  "reports": []
+  "reports": [
+    {
+      "title": "Årsrapport 2025",
+      "url": "/reports/arsrapport-2025.pdf",
+      "type": "Årsrapporter"
+    },
+    {
+      "title": "Årsrapport 2024",
+      "url": "https://drive.google.com/file/d/18B9gpWVnZFXWxGHKIgTT5qdWJp2ezhHE/view",
+      "type": "Årsrapporter"
+    },
+    {
+      "title": "Årsrapport 2023",
+      "url": "https://drive.google.com/file/d/1lSWyh7RhnsUhej0nJu9O-ATqqmYNsgOW/view",
+      "type": "Årsrapporter"
+    },
+    {
+      "title": "Årsrapport 2022",
+      "url": "https://drive.google.com/file/d/1uJ6WKTGz2xjkWRheneRtK0HgF81skZ_Z/view",
+      "type": "Årsrapporter"
+    },
+    {
+      "title": "Årsrapport 2021",
+      "url": "https://drive.google.com/file/d/1elNEV5qC9pKON7UA9W4L1jbINO-Yfshg/view",
+      "type": "Årsrapporter"
+    },
+    {
+      "title": "Fondets vedtekter",
+      "url": "https://drive.google.com/file/d/1Qkg6MFx0Qgxev2MyJ8YsfFHkg92E0E-p/view",
+      "type": "Strategi og vedtekter"
+    },
+    {
+      "title": "Fondets overordnede strategi",
+      "url": "https://drive.google.com/file/d/15zGyLCQvKOjn3aW9p5l1zqTm1Bod0UIK/view",
+      "type": "Strategi og vedtekter"
+    }
+  ],
+  "applications": [
+    {
+      "title": "Søknad – Hovedstyret: Kjøkken (15.05.2025)",
+      "url": "https://drive.google.com/file/d/1ntj1CTeBvdQlS9A7wbqB82ztLht0b4BA/view?usp=drive_link",
+      "type": "Søknad"
+    },
+    {
+      "title": "Vedtak – Hovedstyret: Kjøkken – 64 120 kr (15.05.2025)",
+      "url": "https://drive.google.com/file/d/109RuXdTPxf80oh7Dx7YmkmKqKdnauT8I/view?usp=drive_link",
+      "type": "Vedtak"
+    },
+    {
+      "title": "Søknad – Sosialen: Utmatrikuleringsball (12.02.2025)",
+      "url": "https://drive.google.com/file/d/1lTnpw6IlnvrYhGeY-y6k68E7Ql52ADxc/view?usp=drive_link",
+      "type": "Søknad"
+    },
+    {
+      "title": "Vedtak – Sosialen: Utmatrikuleringsball – 6 000 kr (12.02.2025)",
+      "url": "https://drive.google.com/file/d/17114ru4Bah5wTGje-mXqDGCsm6ybYN1Z/view?usp=drive_link",
+      "type": "Vedtak"
+    },
+    {
+      "title": "Søknad – TIHLDE Pythons Herrer: Påmeldingsavgift (28.08.2024)",
+      "url": "https://drive.google.com/file/d/1rZ9hJ4cmOveQfBAYiuY88phxIV0H0gsV/view?usp=drive_link",
+      "type": "Søknad"
+    },
+    {
+      "title": "Vedtak – TIHLDE Pythons Herrer: Påmeldingsavgift – Avslått (28.08.2024)",
+      "url": "https://drive.google.com/file/d/1fq_PAHbBx4vM8PP_WdDcwzOF_lcFNV4k/view?usp=drive_link",
+      "type": "Vedtak"
+    },
+    {
+      "title": "Søknad – TIHLDE Klatring: Klatreutstyr (09.11.2023)",
+      "url": "https://drive.google.com/file/d/1Y6iaCTCAL1OI1uQ4S60UpXoSbMQCtYPr/view?usp=sharing",
+      "type": "Søknad"
+    },
+    {
+      "title": "Vedtak – TIHLDE Klatring: Klatreutstyr – 6 000 kr (09.11.2023)",
+      "url": "https://drive.google.com/file/d/1GXYpcmG81L0eCOwNhSRfjeM7kz_Gurbm/view?usp=sharing",
+      "type": "Vedtak"
+    },
+    {
+      "title": "Søknad – Sosialen: Støtte til julebord (12.10.2023)",
+      "url": "https://drive.google.com/file/d/15hFwKChu8wGsuuICddP7vDnXTiDEK4x5/view?usp=sharing",
+      "type": "Søknad"
+    },
+    {
+      "title": "Vedtak – Sosialen: Støtte til julebord – Avslått (12.10.2023)",
+      "url": "https://drive.google.com/file/d/1yQvQ5Nzz4G6GLczW7-xrcUU37fRJ7hVY/view?usp=sharing",
+      "type": "Vedtak"
+    },
+    {
+      "title": "Søknad – TIHLDE Klatring: Klatrearrangement, Brattkort og utstyr (04.10.2023)",
+      "url": "https://drive.google.com/file/d/1iDqVY6KlnDqhZaTcdFcIPvS7tDUBG_Fy/view?usp=share_link",
+      "type": "Søknad"
+    },
+    {
+      "title": "Vedtak – TIHLDE Klatring: Klatrearrangement – Avslått (04.10.2023)",
+      "url": "https://drive.google.com/file/d/1ET0wv0zDGKJ6mFI36XFp6_RcHY9GVa9G/view?usp=sharing",
+      "type": "Vedtak"
+    },
+    {
+      "title": "Søknad – TIHLDE Pythons Herrer: Nye fotballer (26.09.2023)",
+      "url": "https://drive.google.com/file/d/1Rc6fiIgSq7342fKGYi9Si_7ZFZyb9dVd/view?usp=drive_link",
+      "type": "Søknad"
+    },
+    {
+      "title": "Vedtak – TIHLDE Pythons Herrer: Nye fotballer – 10 000 kr (26.09.2023)",
+      "url": "https://drive.google.com/file/d/1Rc6fiIgSq7342fKGYi9Si_7ZFZyb9dVd/view?usp=drive_link",
+      "type": "Vedtak"
+    },
+    {
+      "title": "Søknad – Redaksjonen: Extra utgave av TÖDDEL (31.05.2023)",
+      "url": "https://drive.google.com/open?id=1cTwhA7kIEkMpLQG5BQrrzuDFjGUHR4IW&usp=drive_copy",
+      "type": "Søknad"
+    },
+    {
+      "title": "Vedtak – Redaksjonen: Extra utgave av TÖDDEL – 8 750 kr (31.05.2023)",
+      "url": "https://drive.google.com/open?id=1xKRsiRBs1_UoqgObo-r7dRPksCE2izfc&usp=drive_copy",
+      "type": "Vedtak"
+    },
+    {
+      "title": "Søknad – TIHLDE ski: Merch for medlemmer (15.04.2023)",
+      "url": "https://drive.google.com/file/d/1iDXNkcLdKW78D3ewCQH6r7TzYMfx7Yl9/view?usp=share_link",
+      "type": "Søknad"
+    },
+    {
+      "title": "Vedtak – TIHLDE ski: Merch for medlemmer – Avslått (15.04.2023)",
+      "url": "https://drive.google.com/file/d/1TLFCPgBNrFmveHlpNF2TN9XehjTORIso/view?usp=share_link",
+      "type": "Vedtak"
+    },
+    {
+      "title": "Søknad – JubKom: Prisreduksjon gallabilletter (05.03.2023)",
+      "url": "https://drive.google.com/file/d/1JOnuCaGeAwLSlTbHTrSGM5yCNWk4xYyz/view?usp=share_link",
+      "type": "Søknad"
+    },
+    {
+      "title": "Vedtak – JubKom: Prisreduksjon gallabilletter – 45 000 kr (05.03.2023)",
+      "url": "https://drive.google.com/file/d/13Hj9_Rm4G9yB78vhedX9038_r4QZqc9A/view?usp=share_link",
+      "type": "Vedtak"
+    },
+    {
+      "title": "Søknad – JubKom: Merfinansiering (02.02.2023)",
+      "url": "https://drive.google.com/file/d/1YcjiUlu5_TWd4ZUbJNml0Cs0_NHP0Rbu/view?usp=share_link",
+      "type": "Søknad"
+    },
+    {
+      "title": "Vedtak – JubKom: Merfinansiering – Avslått (02.02.2023)",
+      "url": "https://drive.google.com/file/d/1beIJZZgyeDivG7yTuiEDc8XwKP3bkt8C/view?usp=share_link",
+      "type": "Vedtak"
+    },
+    {
+      "title": "Søknad – TIHLDE Pythons: Draktsett/treningsutstyr (03.08.2022)",
+      "url": "https://drive.google.com/file/d/14m1ULrmOaTsw3RHODD9dAFKVuLh5PYY8/view?usp=sharing",
+      "type": "Søknad"
+    },
+    {
+      "title": "Vedtak – TIHLDE Pythons: Draktsett/treningsutstyr – Avslått (03.08.2022)",
+      "url": "https://drive.google.com/file/d/1vCpItaxjHBiePuHKYJSOUEKAMaC8ykng/view?usp=sharing",
+      "type": "Vedtak"
+    },
+    {
+      "title": "Søknad – Promo: Kamerautstyr (05.06.2022)",
+      "url": "https://drive.google.com/file/d/1XaHta9jJ_1fQDOeWVPnre5BS6ILVd4U-/view?usp=sharing",
+      "type": "Søknad"
+    },
+    {
+      "title": "Vedtak – Promo: Kamerautstyr – 22 366 kr (05.06.2022)",
+      "url": "https://drive.google.com/file/d/16dbMy5bQQLokve3-tS4bLTZ3COj7ajjM/view?usp=sharing",
+      "type": "Vedtak"
+    },
+    {
+      "title": "Søknad – Hovedstyret: Soundbokser med bæreseler (16.02.2022)",
+      "url": "https://drive.google.com/file/d/1yAPBzPhfMj3NZbgiBLJ0w84n462JH2ow/view?usp=sharing",
+      "type": "Søknad"
+    },
+    {
+      "title": "Vedtak – Hovedstyret: Soundbokser med bæreseler – 24 495 kr (16.02.2022)",
+      "url": "https://drive.google.com/file/d/1e6yCtLxzluyQjsvngmaJUgYu0uxjsd5a/view?usp=sharing",
+      "type": "Vedtak"
+    },
+    {
+      "title": "Søknad – Hovedstyret: Ny fane for TIHLDE (09.11.2021)",
+      "url": "https://drive.google.com/file/d/1aMytRdz-MX7XY7wAjCYLm-M-K-SwFsKG/view?usp=sharing",
+      "type": "Søknad"
+    },
+    {
+      "title": "Vedtak – Hovedstyret: Ny fane for TIHLDE – Avslått (09.11.2021)",
+      "url": "https://drive.google.com/file/d/1i5rqXiXiE_8cQEKNNPzPF3nwgs1dO8OT/view?usp=sharing",
+      "type": "Vedtak"
+    },
+    {
+      "title": "Søknad – TIHLDE Pythons: Nytt draktsett (23.09.2021)",
+      "url": "https://drive.google.com/file/d/1P7NbilpTnR6jevfBfIYv40zEDFBpikrJ/view?usp=sharing",
+      "type": "Søknad"
+    },
+    {
+      "title": "Vedtak – TIHLDE Pythons: Nytt draktsett – 9 670 kr (23.09.2021)",
+      "url": "https://drive.google.com/file/d/1aAgP1h8ThU4WacNTxX4qKOVLEmEGMfna/view?usp=sharing",
+      "type": "Vedtak"
+    }
+  ]
 }

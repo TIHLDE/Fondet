@@ -4,7 +4,6 @@ import type { Metadata } from "next";
 import Providers from "./providers";
 import Navbar from "@/components/navigation/TopBar";
 import Footer from "@/components/navigation/Footer";
-import BottomBar from "@/components/navigation/BottomBar";
 import ThemeScript from "@/components/providers/ThemeScript";
 
 const inter = Inter({
@@ -15,7 +14,10 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "TIHLDE Fondet",
+  title: {
+    default: "TIHLDE Fondet",
+    template: "%s | TIHLDE Fondet",
+  },
   description:
     "TIHLDE-fondet - Forvaltningsgruppen for TIHLDEs investeringsfond",
 };
@@ -28,7 +30,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="w-full">
+    <html lang="no" className="w-full" suppressHydrationWarning>
       <head>
         <ThemeScript />
       </head>
@@ -39,7 +41,6 @@ export default function RootLayout({
             <main className="w-full flex flex-col items-center">
               {children}
             </main>
-            <BottomBar />
             <Footer />
           </div>
         </Providers>
