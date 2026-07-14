@@ -1,5 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { withImages, resolveGroupImages } from "./member-images";
+import {
+  withImages,
+  resolveGroupImages,
+  resolveArchiveGroupImages,
+} from "./member-images";
 import type { Member } from "@/data/members";
 
 function member(id: string, image = ""): Member {
@@ -19,6 +23,27 @@ describe("resolveGroupImages", () => {
   it("only returns group images", () => {
     for (const img of resolveGroupImages("")) {
       expect(img).toMatch(/^\/api\/members\/group(-\d+)?\.(jpg|jpeg|png|webp)$/);
+    }
+  });
+});
+
+describe("resolveArchiveGroupImages", () => {
+  it("returns year tagged images, newest year first", () => {
+    const archive = resolveArchiveGroupImages();
+    expect(archive.length).toBeGreaterThan(0);
+    for (const { src, year } of archive) {
+      expect(src).toMatch(/^\/api\/members\/group-\d{4}-\d+\.(jpg|jpeg|png|webp)$/);
+      expect(year).toMatch(/^\d{4}$/);
+    }
+    const years = archive.map((a) => a.year);
+    expect(years).toEqual([...years].sort().reverse());
+  });
+
+  it("keeps current group images out of the archive", () => {
+    const current = resolveGroupImages("");
+    const archive = resolveArchiveGroupImages().map((a) => a.src);
+    for (const src of archive) {
+      expect(current).not.toContain(src);
     }
   });
 });

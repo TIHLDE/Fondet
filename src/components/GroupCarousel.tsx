@@ -6,7 +6,17 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const INTERVAL_MS = 6000;
 
-export default function GroupCarousel({ images }: { images: string[] }) {
+export default function GroupCarousel({
+  images,
+  captions,
+  aspect = "portrait",
+  label = "Bilder av forvaltningsgruppen",
+}: {
+  images: string[];
+  captions?: string[];
+  aspect?: "portrait" | "landscape";
+  label?: string;
+}) {
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
   const reducedMotion = useRef(false);
@@ -43,22 +53,36 @@ export default function GroupCarousel({ images }: { images: string[] }) {
   return (
     <section
       aria-roledescription="karusell"
-      aria-label="Bilder av forvaltningsgruppen"
+      aria-label={label}
       data-testid="group-carousel"
-      className="relative mx-auto w-full max-w-lg overflow-hidden sm:rounded-lg sm:border border-y border-cardBorder bg-cardBackground shadow-lg"
+      className={`relative mx-auto w-full overflow-hidden sm:rounded-lg sm:border border-y border-cardBorder bg-cardBackground shadow-lg ${
+        aspect === "landscape" ? "max-w-3xl" : "max-w-lg"
+      }`}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onFocus={() => setPaused(true)}
       onBlur={() => setPaused(false)}
     >
-      <div className="relative w-full aspect-[2/3]">
+      <div
+        className={`relative w-full ${
+          aspect === "landscape" ? "aspect-[3/2]" : "aspect-[2/3]"
+        }`}
+      >
         {images.map((src, i) => (
           <Image
             key={src}
             src={src}
-            alt={`Gruppebilde ${i + 1} av ${images.length}`}
+            alt={
+              captions?.[i]
+                ? `Gruppebilde fra ${captions[i]}, ${i + 1} av ${images.length}`
+                : `Gruppebilde ${i + 1} av ${images.length}`
+            }
             fill
-            sizes="(min-width: 640px) 512px, 100vw"
+            sizes={
+              aspect === "landscape"
+                ? "(min-width: 768px) 768px, 100vw"
+                : "(min-width: 640px) 512px, 100vw"
+            }
             priority={i === 0}
             aria-hidden={i !== index}
             className={`object-cover transition-opacity duration-700 motion-reduce:transition-none ${
@@ -68,8 +92,19 @@ export default function GroupCarousel({ images }: { images: string[] }) {
         ))}
       </div>
 
+      {captions?.[index] && (
+        <p
+          aria-hidden
+          className="absolute left-3 top-3 rounded-full bg-black/70 px-3 py-1 text-sm font-medium text-white"
+        >
+          {captions[index]}
+        </p>
+      )}
+
       <p className="sr-only" aria-live="polite">
-        Bilde {index + 1} av {images.length}
+        {captions?.[index]
+          ? `Bilde ${index + 1} av ${images.length}, fra ${captions[index]}`
+          : `Bilde ${index + 1} av ${images.length}`}
       </p>
 
       {images.length > 1 && (

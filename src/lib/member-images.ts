@@ -66,3 +66,39 @@ export function resolveGroupImages(fallback: string): string[] {
   if (images.length > 0) return images;
   return fallback ? [fallback] : [];
 }
+
+export type ArchiveGroupImage = { src: string; year: string };
+
+function archiveYear(file: string): { year: string; number: number } | null {
+  const m = file.match(/^group-(\d{4})-(\d+)\.(jpg|jpeg|png|webp)$/i);
+  return m ? { year: m[1], number: parseInt(m[2], 10) } : null;
+}
+
+// Group photos from earlier years, for the previous members page. Named
+// group-<year>-<n>.jpg, e.g. group-2024-1.jpg, so they never collide with the
+// current group's group.jpg / group-2.jpg. Newest year first.
+export function resolveArchiveGroupImages(): ArchiveGroupImage[] {
+  const byName = new Map<string, ArchiveGroupImage>();
+  for (const dir of membersImageDirs()) {
+    let files: string[] = [];
+    try {
+      files = fs.readdirSync(dir);
+    } catch {
+      continue;
+    }
+    for (const f of files) {
+      const parsed = archiveYear(f);
+      if (parsed && !byName.has(f)) {
+        byName.set(f, { src: `/api/members/${f}`, year: parsed.year });
+      }
+    }
+  }
+  return Array.from(byName.keys())
+    .sort((a, b) => {
+      const left = archiveYear(a)!;
+      const right = archiveYear(b)!;
+      if (left.year !== right.year) return right.year.localeCompare(left.year);
+      return left.number - right.number;
+    })
+    .map((f) => byName.get(f)!);
+}
