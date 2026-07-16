@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
   const indexes = (params.get("indexes") ?? "")
     .split(",")
     .filter(Boolean)
-    .slice(0, 8);
+    .slice(0, 12);
 
   const fundSeries = await Promise.all(
     funds.map(async (f) => ({

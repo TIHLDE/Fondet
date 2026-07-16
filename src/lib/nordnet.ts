@@ -280,16 +280,31 @@ export async function resolveIndexIdentifier(
   query: string,
 ): Promise<string | null> {
   const groups = await getJSON<SearchGroup[]>(
-    `${NORDNET_API}/main_search?query=${encodeURIComponent(query)}&search_space=ALL&limit=3`,
+    `${NORDNET_API}/main_search?query=${encodeURIComponent(query)}&search_space=ALL&limit=25`,
     legacyApiHeaders,
   );
   if (!groups) return null;
+
+  const indexes: SearchResult[] = [];
   for (const group of groups) {
     for (const r of group.results) {
       if (r.entity_type === "INDEX" && r.market_data_order_book_id) {
-        return r.market_data_order_book_id;
+        indexes.push(r);
       }
     }
   }
-  return null;
+  if (indexes.length === 0) return null;
+
+  // Prefer an index whose name matches the query closely; the raw search
+  // often ranks tracker funds above the index itself, so scanning all INDEX
+  // hits and picking the best name match beats taking the first one.
+  const norm = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, "");
+  const q = norm(query);
+  const exact = indexes.find((r) => norm(r.display_name ?? "") === q);
+  if (exact) return exact.market_data_order_book_id!;
+  const contains = indexes.find((r) => {
+    const n = norm(r.display_name ?? "");
+    return n.includes(q) || q.includes(n);
+  });
+  return (contains ?? indexes[0]).market_data_order_book_id!;
 }
