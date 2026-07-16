@@ -12,20 +12,30 @@ import type { Member } from "@/data/members";
 
 const EXTENSIONS = [".jpg", ".jpeg", ".png", ".webp"];
 
+const REPO_DIR = path.join(process.cwd(), "public", "members");
+
 // Directories searched in order; the volume (if configured) overrides the
 // repo copy, and the repo copy is the fallback.
 export function membersImageDirs(): string[] {
   const dirs: string[] = [];
   if (process.env.MEMBERS_IMAGE_DIR) dirs.push(process.env.MEMBERS_IMAGE_DIR);
-  dirs.push(path.join(process.cwd(), "public", "members"));
+  dirs.push(REPO_DIR);
   return dirs;
+}
+
+// Public URL for a resolved file. Committed images under public/members are
+// served straight from /members by the static host (works on serverless too,
+// where the API route can't read files bundled outside the function). Volume
+// images have no static URL, so those go through the API route.
+function urlFor(dir: string, file: string): string {
+  return dir === REPO_DIR ? `/members/${file}` : `/api/members/${file}`;
 }
 
 function findLocalImage(id: string): string {
   for (const dir of membersImageDirs()) {
     for (const ext of EXTENSIONS) {
       if (fs.existsSync(path.join(dir, id + ext))) {
-        return `/api/members/${id}${ext}`;
+        return urlFor(dir, id + ext);
       }
     }
   }
@@ -56,7 +66,7 @@ export function resolveGroupImages(fallback: string): string[] {
     }
     for (const f of files) {
       if (/^group(-\d+)?\.(jpg|jpeg|png|webp)$/i.test(f) && !byName.has(f)) {
-        byName.set(f, `/api/members/${f}`);
+        byName.set(f, urlFor(dir, f));
       }
     }
   }
@@ -89,7 +99,7 @@ export function resolveArchiveGroupImages(): ArchiveGroupImage[] {
     for (const f of files) {
       const parsed = archiveYear(f);
       if (parsed && !byName.has(f)) {
-        byName.set(f, { src: `/api/members/${f}`, year: parsed.year });
+        byName.set(f, { src: urlFor(dir, f), year: parsed.year });
       }
     }
   }
