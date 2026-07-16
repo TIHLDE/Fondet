@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import {
   createChart,
   LineSeries,
@@ -29,27 +29,55 @@ const PERIODS = [
   { key: "YEAR_10", label: "10 år", days: 3653 },
 ];
 
-const INDEXES = [
-  "OSEBX",
-  "OMXS30",
-  "OMXC25",
-  "OMXH25",
-  "S&P 500",
-  "NASDAQ 100",
-  "DAX",
+// Popular world indices grouped by region. Names are resolved live against
+// Nordnet's public search at request time; any the search can't resolve degrade
+// to an "ingen data" note rather than being faked.
+const INDEX_GROUPS: { region: string; labels: string[] }[] = [
+  { region: "Norden", labels: ["OSEBX", "OMXS30", "OMXC25", "OMXH25"] },
+  {
+    region: "Europa",
+    labels: [
+      "DAX",
+      "CAC 40",
+      "FTSE 100",
+      "IBEX 35",
+      "FTSE MIB",
+      "AEX",
+      "SMI",
+      "Euro Stoxx 50",
+    ],
+  },
+  {
+    region: "USA",
+    labels: ["S&P 500", "NASDAQ 100", "Dow Jones", "Russell 2000"],
+  },
+  {
+    region: "Asia og Stillehavet",
+    labels: [
+      "Nikkei 225",
+      "Hang Seng",
+      "Shanghai Composite",
+      "ASX 200",
+      "KOSPI",
+      "Nifty 50",
+      "Sensex",
+    ],
+  },
 ];
-const FUND_LABEL = "TIHLDE-fondet";
 
+const INDEX_LABELS = INDEX_GROUPS.flatMap((g) => g.labels);
+
+// Distinct hues spread around the wheel; mid saturation/lightness reads on both
+// light and dark chart backgrounds.
+const INDEX_COLORS: Record<string, string> = Object.fromEntries(
+  INDEX_LABELS.map((label, i) => [
+    label,
+    `hsl(${Math.round((i * 360) / INDEX_LABELS.length)} 65% 55%)`,
+  ]),
+);
+
+const FUND_LABEL = "TIHLDE-fondet";
 const FUND_COLOR = "#00c896";
-const INDEX_COLORS: Record<string, string> = {
-  OSEBX: "#4d8bff",
-  OMXS30: "#ffa726",
-  OMXC25: "#a78bfa",
-  OMXH25: "#26c6da",
-  "S&P 500": "#f06292",
-  "NASDAQ 100": "#9ccc65",
-  DAX: "#ef5350",
-};
 
 type Point = { time: number; value: number };
 
@@ -117,68 +145,162 @@ function rsi(points: Point[], n: number): Point[] {
   return out;
 }
 
+// EMA at every point (seeded on the first value), used as a building block
+// for MACD where both averages must stay aligned by time.
+function emaSeries(points: Point[], n: number): Point[] {
+  if (points.length === 0) return [];
+  const k = 2 / (n + 1);
+  let value = points[0].value;
+  const out: Point[] = [{ time: points[0].time, value }];
+  for (let i = 1; i < points.length; i++) {
+    value = points[i].value * k + value * (1 - k);
+    out.push({ time: points[i].time, value });
+  }
+  return out;
+}
+
+function macd(
+  points: Point[],
+  fast = 12,
+  slow = 26,
+  signalLen = 9,
+): { macd: Point[]; signal: Point[] } {
+  if (points.length <= slow) return { macd: [], signal: [] };
+  const emaFast = emaSeries(points, fast);
+  const emaSlow = emaSeries(points, slow);
+  const line = points
+    .map((p, i) => ({ time: p.time, value: emaFast[i].value - emaSlow[i].value }))
+    .slice(slow - 1);
+  const signal = emaSeries(line, signalLen);
+  return { macd: line, signal };
+}
+
+// Stochastic on close values only (no intraday high/low in this feed): %K over
+// the close range of the window, %D as its short moving average.
+function stochastic(
+  points: Point[],
+  n = 14,
+  d = 3,
+): { k: Point[]; d: Point[] } {
+  if (points.length < n) return { k: [], d: [] };
+  const k: Point[] = [];
+  for (let i = n - 1; i < points.length; i++) {
+    const window = points.slice(i - n + 1, i + 1).map((p) => p.value);
+    const lo = Math.min(...window);
+    const hi = Math.max(...window);
+    const value = hi === lo ? 50 : ((points[i].value - lo) / (hi - lo)) * 100;
+    k.push({ time: points[i].time, value });
+  }
+  const dline: Point[] = [];
+  for (let i = d - 1; i < k.length; i++) {
+    const avg = k.slice(i - d + 1, i + 1).reduce((a, b) => a + b.value, 0) / d;
+    dline.push({ time: k[i].time, value: avg });
+  }
+  return { k, d: dline };
+}
+
 type IndicatorLine = {
   color: string;
   dashed: boolean;
-  pane: number;
   points: Point[];
 };
 
-const INDICATORS: {
+// group "overlay" draws on the price pane (0); group "oscillator" gets its own
+// pane below, assigned dynamically so several can stack. guides are horizontal
+// reference levels drawn in that oscillator's pane.
+type Indicator = {
   key: string;
+  group: "overlay" | "oscillator";
   color: string;
+  guides?: number[];
   lines: (p: Point[]) => IndicatorLine[];
-}[] = [
-  ...[20, 50, 200].map((n) => ({
+};
+
+const SMA_COLORS: Record<number, string> = {
+  20: "#ffe14d",
+  50: "#ff8a65",
+  100: "#38bdf8",
+  200: "#c084fc",
+};
+const EMA_COLORS: Record<number, string> = {
+  20: "#818cf8",
+  50: "#2dd4bf",
+  100: "#f59e0b",
+  200: "#fb7185",
+};
+
+const INDICATORS: Indicator[] = [
+  ...[20, 50, 100, 200].map<Indicator>((n) => ({
     key: `SMA ${n}`,
-    color: { 20: "#ffe14d", 50: "#ff8a65", 200: "#c084fc" }[n]!,
-    lines: (p: Point[]) => [
-      {
-        color: { 20: "#ffe14d", 50: "#ff8a65", 200: "#c084fc" }[n]!,
-        dashed: true,
-        pane: 0,
-        points: sma(p, n),
-      },
-    ],
+    group: "overlay",
+    color: SMA_COLORS[n],
+    lines: (p) => [{ color: SMA_COLORS[n], dashed: true, points: sma(p, n) }],
   })),
-  ...[20, 50, 200].map((n) => ({
+  ...[20, 50, 100, 200].map<Indicator>((n) => ({
     key: `EMA ${n}`,
-    color: { 20: "#818cf8", 50: "#2dd4bf", 200: "#fb7185" }[n]!,
-    lines: (p: Point[]) => [
-      {
-        color: { 20: "#818cf8", 50: "#2dd4bf", 200: "#fb7185" }[n]!,
-        dashed: true,
-        pane: 0,
-        points: ema(p, n),
-      },
-    ],
+    group: "overlay",
+    color: EMA_COLORS[n],
+    lines: (p) => [{ color: EMA_COLORS[n], dashed: true, points: ema(p, n) }],
   })),
   {
     key: "Bollinger 20",
+    group: "overlay",
     color: "#64b5f6",
-    lines: (p: Point[]) => {
+    lines: (p) => {
       const b = bollinger(p, 20, 2);
       return [b.upper, b.mid, b.lower].map((points) => ({
         color: "#64b5f6",
         dashed: true,
-        pane: 0,
         points,
       }));
     },
   },
   {
     key: "RSI 14",
+    group: "oscillator",
     color: "#e879f9",
-    lines: (p: Point[]) => [
-      { color: "#e879f9", dashed: false, pane: 1, points: rsi(p, 14) },
-    ],
+    guides: [30, 70],
+    lines: (p) => [{ color: "#e879f9", dashed: false, points: rsi(p, 14) }],
   },
+  {
+    key: "MACD",
+    group: "oscillator",
+    color: "#4d8bff",
+    guides: [0],
+    lines: (p) => {
+      const m = macd(p);
+      return [
+        { color: "#4d8bff", dashed: false, points: m.macd },
+        { color: "#ff8a65", dashed: false, points: m.signal },
+      ];
+    },
+  },
+  {
+    key: "Stochastic",
+    group: "oscillator",
+    color: "#22d3ee",
+    guides: [20, 80],
+    lines: (p) => {
+      const s = stochastic(p);
+      return [
+        { color: "#22d3ee", dashed: false, points: s.k },
+        { color: "#f472b6", dashed: false, points: s.d },
+      ];
+    },
+  },
+];
+
+const INDICATOR_GROUPS: { label: string; group: Indicator["group"] }[] = [
+  { label: "Kurs", group: "overlay" },
+  { label: "Oscillatorer", group: "oscillator" },
 ];
 
 const TOOLS = [
   { key: "trendline", label: "Trendlinje", clicks: 2 },
+  { key: "ray", label: "Stråle", clicks: 2 },
   { key: "hline", label: "Horisontal linje", clicks: 1 },
   { key: "fib", label: "Fibonacci", clicks: 2 },
+  { key: "zone", label: "Sone", clicks: 2 },
   { key: "long", label: "Long-posisjon", clicks: 2 },
   { key: "short", label: "Short-posisjon", clicks: 2 },
 ] as const;
@@ -204,6 +326,7 @@ type DrawnLine = {
   width: 2 | 3;
   dashed: boolean;
   pane: number;
+  guides?: number[];
   points: Point[];
 };
 
@@ -222,6 +345,7 @@ export default function FundPerformanceChart() {
   const [shownIndicators, setShownIndicators] = useState<Set<string>>(
     () => new Set(),
   );
+  const [indexSearch, setIndexSearch] = useState("");
   const [openMenu, setOpenMenu] = useState<
     "indexes" | "indicators" | "draw" | null
   >(null);
@@ -257,15 +381,34 @@ export default function FundPerformanceChart() {
       .join(",");
   }, [nordnet]);
 
-  const { data, isLoading } = useQuery<SeriesResponse>({
-    queryKey: ["nordnet-series", period, fundsParam],
+  // Only the selected indexes are fetched; each is resolved + rebased server
+  // side, so fetching all two dozen on every render would hammer Nordnet.
+  const shownIndexList = useMemo(
+    () => INDEX_LABELS.filter((l) => shownIndexes.has(l)),
+    [shownIndexes],
+  );
+  const indexesParam = shownIndexList.join(",");
+
+  const { data, isLoading, isFetching } = useQuery<SeriesResponse>({
+    queryKey: ["nordnet-series", period, fundsParam, indexesParam],
     queryFn: () =>
       fetch(
-        `/api/nordnet/series?period=${period}&funds=${encodeURIComponent(fundsParam)}&indexes=${encodeURIComponent(INDEXES.join(","))}`,
+        `/api/nordnet/series?period=${period}&funds=${encodeURIComponent(fundsParam)}&indexes=${encodeURIComponent(indexesParam)}`,
       ).then((r) => r.json()),
     enabled: fundsParam.length > 0,
     staleTime: 1000 * 60 * 30,
+    placeholderData: keepPreviousData,
   });
+
+  // selected indexes the API returned no points for (unresolved or empty feed)
+  const missingIndexes = useMemo(() => {
+    const returned = new Set(
+      (data?.series ?? [])
+        .filter((s) => s.kind === "index")
+        .map((s) => s.label),
+    );
+    return shownIndexList.filter((l) => !returned.has(l));
+  }, [data, shownIndexList]);
 
   const fondetSeries = useMemo<Series | null>(() => {
     const funds = (data?.series ?? []).filter((s) => s.kind === "fund");
@@ -283,15 +426,20 @@ export default function FundPerformanceChart() {
         pane: 0,
         points: fondetSeries.points,
       });
+      // overlays draw on the price pane; each active oscillator gets its own
+      // pane below, numbered 1..k in menu order.
+      let oscPane = 0;
       for (const ind of INDICATORS) {
         if (!shownIndicators.has(ind.key)) continue;
+        const pane = ind.group === "oscillator" ? ++oscPane : 0;
         ind.lines(fondetSeries.points).forEach((l, i) => {
           lines.push({
             label: `${ind.key}#${i}`,
             color: l.color,
             width: 2,
             dashed: l.dashed,
-            pane: l.pane,
+            pane,
+            guides: i === 0 ? ind.guides : undefined,
             points: l.points,
           });
         });
@@ -318,7 +466,7 @@ export default function FundPerformanceChart() {
       if (shownIndicators.has(ind.key))
         items.push({ label: ind.key, color: ind.color });
     }
-    for (const label of INDEXES) {
+    for (const label of INDEX_LABELS) {
       if (shownIndexes.has(label))
         items.push({ label, color: INDEX_COLORS[label] });
     }
@@ -473,8 +621,8 @@ export default function FundPerformanceChart() {
           value: p.value,
         })),
       );
-      if (d.label === "RSI 14#0") {
-        for (const level of [30, 70]) {
+      if (d.guides) {
+        for (const level of d.guides) {
           line.createPriceLine({
             price: level,
             color: axisColor,
@@ -488,14 +636,16 @@ export default function FundPerformanceChart() {
       seriesRef.current.set(d.label, line);
     }
 
-    // drop leftover empty panes (e.g. after toggling RSI off)
+    // drop leftover empty panes (e.g. after toggling an oscillator off) and
+    // give each remaining oscillator pane a fixed height
     try {
       const panes = chart.panes();
       for (let i = panes.length - 1; i > 0; i--) {
         if (panes[i].getSeries().length === 0) chart.removePane(i);
       }
-      if (panes.length > 1 && panes[1].getSeries().length > 0) {
-        panes[1].setHeight(110);
+      const kept = chart.panes();
+      for (let i = 1; i < kept.length; i++) {
+        if (kept[i].getSeries().length > 0) kept[i].setHeight(110);
       }
     } catch {
       // pane API differences between minor versions are non-fatal
@@ -522,6 +672,10 @@ export default function FundPerformanceChart() {
     priceLinesRef.current = [];
 
     const fund = seriesRef.current.get(FUND_LABEL);
+    // right edge of the plotted data, in chart (second) units, for rays
+    const lastTime = fondetSeries?.points.length
+      ? Math.floor(fondetSeries.points[fondetSeries.points.length - 1].time / 1000)
+      : null;
 
     const segment = (
       p1: DrawPoint,
@@ -562,6 +716,21 @@ export default function FundPerformanceChart() {
       if (!d.p2) continue;
       if (d.tool === "trendline") {
         segment(d.p1, d.p2, "#4d8bff", 2);
+      } else if (d.tool === "ray") {
+        if (lastTime === null || d.p2.time <= d.p1.time) {
+          segment(d.p1, d.p2, "#4d8bff", 2);
+        } else {
+          const slope = (d.p2.price - d.p1.price) / (d.p2.time - d.p1.time);
+          const endTime = Math.max(lastTime, d.p2.time);
+          const endPrice = d.p1.price + slope * (endTime - d.p1.time);
+          segment(d.p1, { time: endTime, price: endPrice }, "#4d8bff", 2);
+        }
+      } else if (d.tool === "zone") {
+        const t1 = Math.min(d.p1.time, d.p2.time);
+        const t2 = Math.max(d.p1.time, d.p2.time);
+        for (const price of [d.p1.price, d.p2.price]) {
+          segment({ time: t1, price }, { time: t2, price }, "#4d8bff", 1, true);
+        }
       } else if (d.tool === "fib") {
         for (const { level, color } of FIB_LEVELS) {
           const price = d.p1.price + (d.p2.price - d.p1.price) * level;
@@ -591,7 +760,7 @@ export default function FundPerformanceChart() {
         );
       }
     }
-  }, [drawings, drawn]);
+  }, [drawings, drawn, fondetSeries]);
 
   // close dropdowns on outside click or Escape
   useEffect(() => {
@@ -732,28 +901,62 @@ export default function FundPerformanceChart() {
               <div
                 role="menu"
                 aria-label="Sammenligningsindekser"
-                className="absolute right-0 top-full z-20 mt-1 min-w-44 rounded-md border border-cardBorder bg-cardBackground p-1 shadow-lg"
+                className="absolute right-0 top-full z-20 mt-1 flex max-h-80 w-60 flex-col rounded-md border border-cardBorder bg-cardBackground p-1 shadow-lg"
               >
-                {INDEXES.map((label) => (
-                  <button
-                    key={label}
-                    role="menuitemcheckbox"
-                    aria-checked={shownIndexes.has(label)}
-                    onClick={() => toggleIndex(label)}
-                    className={menuItemClass}
-                  >
-                    <Check
-                      className={`h-4 w-4 shrink-0 ${shownIndexes.has(label) ? "" : "invisible"}`}
-                      aria-hidden
-                    />
-                    <span
-                      className="h-2.5 w-2.5 shrink-0 rounded-full"
-                      style={{ backgroundColor: INDEX_COLORS[label] }}
-                      aria-hidden
-                    />
-                    {label}
-                  </button>
-                ))}
+                <input
+                  type="text"
+                  value={indexSearch}
+                  onChange={(e) => setIndexSearch(e.target.value)}
+                  placeholder="Søk indeks..."
+                  aria-label="Søk etter indeks"
+                  className="mb-1 w-full rounded border border-cardBorder bg-background px-2.5 py-2 text-sm text-foreground-primary placeholder:text-muted-foreground focus:border-foreground-secondary focus:outline-none"
+                />
+                <div className="overflow-y-auto">
+                  {INDEX_GROUPS.map((group) => {
+                    const q = indexSearch.trim().toLowerCase();
+                    const matches = group.labels.filter((l) =>
+                      l.toLowerCase().includes(q),
+                    );
+                    if (matches.length === 0) return null;
+                    return (
+                      <div key={group.region}>
+                        <p className="px-3 pb-1 pt-2 text-xs font-semibold text-muted-foreground">
+                          {group.region}
+                        </p>
+                        {matches.map((label) => (
+                          <button
+                            key={label}
+                            role="menuitemcheckbox"
+                            aria-checked={shownIndexes.has(label)}
+                            onClick={() => toggleIndex(label)}
+                            className={menuItemClass}
+                          >
+                            <Check
+                              className={`h-4 w-4 shrink-0 ${shownIndexes.has(label) ? "" : "invisible"}`}
+                              aria-hidden
+                            />
+                            <span
+                              className="h-2.5 w-2.5 shrink-0 rounded-full"
+                              style={{ backgroundColor: INDEX_COLORS[label] }}
+                              aria-hidden
+                            />
+                            {label}
+                          </button>
+                        ))}
+                      </div>
+                    );
+                  })}
+                  {INDEX_LABELS.every(
+                    (l) =>
+                      !l
+                        .toLowerCase()
+                        .includes(indexSearch.trim().toLowerCase()),
+                  ) && (
+                    <p className="px-3 py-2 text-sm text-muted-foreground">
+                      Ingen treff.
+                    </p>
+                  )}
+                </div>
               </div>
             )}
           </div>
@@ -774,27 +977,36 @@ export default function FundPerformanceChart() {
               <div
                 role="menu"
                 aria-label="Tekniske indikatorer"
-                className="absolute right-0 top-full z-20 mt-1 min-w-44 rounded-md border border-cardBorder bg-cardBackground p-1 shadow-lg"
+                className="absolute right-0 top-full z-20 mt-1 max-h-80 w-52 overflow-y-auto rounded-md border border-cardBorder bg-cardBackground p-1 shadow-lg"
               >
-                {INDICATORS.map((ind) => (
-                  <button
-                    key={ind.key}
-                    role="menuitemcheckbox"
-                    aria-checked={shownIndicators.has(ind.key)}
-                    onClick={() => toggleIndicator(ind.key)}
-                    className={menuItemClass}
-                  >
-                    <Check
-                      className={`h-4 w-4 shrink-0 ${shownIndicators.has(ind.key) ? "" : "invisible"}`}
-                      aria-hidden
-                    />
-                    <span
-                      className="h-2.5 w-2.5 shrink-0 rounded-full"
-                      style={{ backgroundColor: ind.color }}
-                      aria-hidden
-                    />
-                    {ind.key}
-                  </button>
+                {INDICATOR_GROUPS.map((g) => (
+                  <div key={g.group}>
+                    <p className="px-3 pb-1 pt-2 text-xs font-semibold text-muted-foreground">
+                      {g.label}
+                    </p>
+                    {INDICATORS.filter((ind) => ind.group === g.group).map(
+                      (ind) => (
+                        <button
+                          key={ind.key}
+                          role="menuitemcheckbox"
+                          aria-checked={shownIndicators.has(ind.key)}
+                          onClick={() => toggleIndicator(ind.key)}
+                          className={menuItemClass}
+                        >
+                          <Check
+                            className={`h-4 w-4 shrink-0 ${shownIndicators.has(ind.key) ? "" : "invisible"}`}
+                            aria-hidden
+                          />
+                          <span
+                            className="h-2.5 w-2.5 shrink-0 rounded-full"
+                            style={{ backgroundColor: ind.color }}
+                            aria-hidden
+                          />
+                          {ind.key}
+                        </button>
+                      ),
+                    )}
+                  </div>
                 ))}
               </div>
             )}
@@ -814,7 +1026,7 @@ export default function FundPerformanceChart() {
               <div
                 role="menu"
                 aria-label="Tegneverktøy"
-                className="absolute right-0 top-full z-20 mt-1 min-w-44 rounded-md border border-cardBorder bg-cardBackground p-1 shadow-lg"
+                className="absolute right-0 top-full z-20 mt-1 max-h-80 w-52 overflow-y-auto rounded-md border border-cardBorder bg-cardBackground p-1 shadow-lg"
               >
                 {TOOLS.map((t) => (
                   <button
@@ -895,6 +1107,11 @@ export default function FundPerformanceChart() {
       {isLoading && (
         <p className="text-sm text-foreground-secondary mt-2">
           Laster kursdata fra Nordnet...
+        </p>
+      )}
+      {!isFetching && missingIndexes.length > 0 && (
+        <p className="text-sm text-foreground-secondary mt-2" role="status">
+          Ingen data tilgjengelig for: {missingIndexes.join(", ")}.
         </p>
       )}
 
