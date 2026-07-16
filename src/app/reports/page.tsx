@@ -86,7 +86,7 @@ export default function RapporterPublicPage() {
 
           <div className="bg-cardBackground border border-cardBorder rounded-lg p-6 shadow-lg">
             <h2 className="text-2xl font-semibold text-foreground-primary mb-6">
-              Søknader og vedtak
+              Søknader
             </h2>
             <SoknaderTable />
           </div>
