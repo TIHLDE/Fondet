@@ -8,7 +8,7 @@
       "image": "",
       "startYear": 2025,
       "studie": "DIGTRANS",
-      "linkedin": ""
+      "linkedin": "tritacle"
     },
     {
       "id": "kaja-saetherhaug-dalamo",
@@ -17,7 +17,7 @@
       "image": "",
       "startYear": 2025,
       "studie": "DIGFOR",
-      "linkedin": ""
+      "linkedin": "tritacle"
     },
     {
       "id": "kristoffer-langva-qvenild",
@@ -26,7 +26,7 @@
       "image": "",
       "startYear": 2025,
       "studie": "DATA",
-      "linkedin": ""
+      "linkedin": "tritacle"
     },
     {
       "id": "nina-elise-kashagen",
@@ -35,7 +35,7 @@
       "image": "",
       "startYear": 2025,
       "studie": "DIGSEC",
-      "linkedin": ""
+      "linkedin": "tritacle"
     },
     {
       "id": "oskar-bornick-tveit",
@@ -44,16 +44,16 @@
       "image": "",
       "startYear": 2025,
       "studie": "DIGFOR",
-      "linkedin": ""
+      "linkedin": "tritacle"
     },
     {
       "id": "sigurd-evensen",
       "name": "Sigurd Evensen",
-      "role": "Analytiker",
+      "role": "Fondsforvalter",
       "image": "",
       "startYear": 2025,
       "studie": "DATA",
-      "linkedin": ""
+      "linkedin": "tritacle"
     },
     {
       "id": "edvard-emmanuel-klavenes",
@@ -62,7 +62,7 @@
       "image": "",
       "startYear": 2025,
       "studie": "DATA",
-      "linkedin": ""
+      "linkedin": "tritacle"
     },
     {
       "id": "thomas-thien-nguyen",
@@ -71,16 +71,16 @@
       "image": "",
       "startYear": 2025,
       "studie": "DIGFOR",
-      "linkedin": ""
+      "linkedin": "tritacle"
     },
     {
       "id": "martine-lokstad",
       "name": "Martine Løkstad",
-      "role": "Fondsforvalter",
+      "role": "Eldste",
       "image": "",
       "startYear": 2024,
       "studie": "DIGSEC",
-      "linkedin": ""
+      "linkedin": "tritacle"
     },
     {
       "id": "tri-tac-le",
@@ -92,26 +92,37 @@
       "linkedin": "tritacle"
     },
     {
-      "id": "trygve-jorgensen",
-      "name": "Trygve Jørgensen",
-      "role": "Eldste",
-      "image": "",
-      "startYear": 2025,
-      "studie": "DATA",
-      "linkedin": ""
-    },
-    {
       "id": "kasper-johansen-sando",
       "name": "Kasper Johansen Sandø",
       "role": "Analytiker",
       "image": "",
       "startYear": 2024,
       "studie": "DIGFOR",
-      "linkedin": "",
+      "linkedin": "tritacle",
       "endYear": 2025
     }
   ],
   "previousMembers": [
+    {
+      "id": "trygve-jorgensen",
+      "name": "Trygve Jørgensen",
+      "role": "Eldste",
+      "image": "",
+      "startYear": 2025,
+      "endYear": 2026,
+      "studie": "DATA",
+      "linkedin": "tritacle"
+    },
+    {
+      "id": "sigurd-evensen-analytiker",
+      "name": "Sigurd Evensen",
+      "role": "Analytiker",
+      "image": "",
+      "startYear": 2025,
+      "endYear": 2025,
+      "studie": "DATA",
+      "linkedin": "tritacle"
+    },
     {
       "id": "selma-eline-olsen",
       "name": "Selma Eline Olsen",
@@ -120,7 +131,7 @@
       "startYear": 2024,
       "endYear": 2025,
       "studie": "DIGFOR",
-      "linkedin": ""
+      "linkedin": "tritacle"
     },
     {
       "id": "imre-romstad",
@@ -130,7 +141,7 @@
       "startYear": 2024,
       "endYear": 2025,
       "studie": "DATA",
-      "linkedin": ""
+      "linkedin": "tritacle"
     },
     {
       "id": "sigurd-schmidt-hansen",
@@ -140,7 +151,7 @@
       "startYear": 2024,
       "endYear": 2025,
       "studie": "DIGSEC",
-      "linkedin": ""
+      "linkedin": "tritacle"
     },
     {
       "id": "erik-langvik",
@@ -150,7 +161,7 @@
       "startYear": 2024,
       "endYear": 2025,
       "studie": "DIGFOR",
-      "linkedin": ""
+      "linkedin": "tritacle"
     },
     {
       "id": "mari-hofsrud",
@@ -160,7 +171,7 @@
       "startYear": 2024,
       "endYear": 2025,
       "studie": "DIGFOR",
-      "linkedin": ""
+      "linkedin": "tritacle"
     },
     {
       "id": "vegard-johnsen",
@@ -170,7 +181,7 @@
       "startYear": 2024,
       "endYear": 2025,
       "studie": "DATA",
-      "linkedin": ""
+      "linkedin": "tritacle"
     },
     {
       "id": "anton-tveito",
@@ -180,7 +191,7 @@
       "startYear": 2024,
       "endYear": 2025,
       "studie": "DIGFOR",
-      "linkedin": ""
+      "linkedin": "tritacle"
     },
     {
       "id": "eirik-ryssdalsnes",
@@ -190,7 +201,7 @@
       "startYear": 2024,
       "endYear": 2024,
       "studie": "DIGFOR",
-      "linkedin": ""
+      "linkedin": "tritacle"
     },
     {
       "id": "andre-karsten",
@@ -200,7 +211,7 @@
       "startYear": 2024,
       "endYear": 2024,
       "studie": "DIGFOR",
-      "linkedin": ""
+      "linkedin": "tritacle"
     },
     {
       "id": "lars-magne-stangeland",
@@ -210,7 +221,7 @@
       "startYear": 2022,
       "endYear": 2024,
       "studie": "DIGFOR",
-      "linkedin": ""
+      "linkedin": "tritacle"
     },
     {
       "id": "sandra-hoem",
@@ -220,7 +231,7 @@
       "startYear": 2022,
       "endYear": 2024,
       "studie": "DIGFOR",
-      "linkedin": ""
+      "linkedin": "tritacle"
     },
     {
       "id": "agnes-bastiansen",
@@ -230,7 +241,7 @@
       "startYear": 2023,
       "endYear": 2024,
       "studie": "DIGFOR",
-      "linkedin": ""
+      "linkedin": "tritacle"
     },
     {
       "id": "sebastian-sneve",
@@ -240,7 +251,7 @@
       "startYear": 2023,
       "endYear": 2024,
       "studie": "DIGSEC",
-      "linkedin": ""
+      "linkedin": "tritacle"
     },
     {
       "id": "christian-stensoe",
@@ -250,7 +261,7 @@
       "startYear": 2023,
       "endYear": 2024,
       "studie": "DIGSEC",
-      "linkedin": ""
+      "linkedin": "tritacle"
     },
     {
       "id": "oskar-nygren",
@@ -260,7 +271,7 @@
       "startYear": 2022,
       "endYear": 2023,
       "studie": "DIGFOR",
-      "linkedin": ""
+      "linkedin": "tritacle"
     },
     {
       "id": "herman-westgaard-lund",
@@ -270,7 +281,7 @@
       "startYear": 2022,
       "endYear": 2023,
       "studie": "DIGFOR",
-      "linkedin": ""
+      "linkedin": "tritacle"
     },
     {
       "id": "hallvard-horgen",
@@ -280,7 +291,7 @@
       "startYear": 2022,
       "endYear": 2023,
       "studie": "DIGFOR",
-      "linkedin": ""
+      "linkedin": "tritacle"
     },
     {
       "id": "ulrik-aakre",
@@ -290,7 +301,7 @@
       "startYear": 2021,
       "endYear": 2022,
       "studie": "DIGFOR",
-      "linkedin": ""
+      "linkedin": "tritacle"
     },
     {
       "id": "mikkel-enghaug",
@@ -300,7 +311,7 @@
       "startYear": 2021,
       "endYear": 2022,
       "studie": "DIGFOR",
-      "linkedin": ""
+      "linkedin": "tritacle"
     },
     {
       "id": "helene-wiik",
@@ -310,7 +321,7 @@
       "startYear": 2021,
       "endYear": 2022,
       "studie": "DIGSEC",
-      "linkedin": ""
+      "linkedin": "tritacle"
     },
     {
       "id": "bjornar-osttveit",
@@ -320,7 +331,7 @@
       "startYear": 2021,
       "endYear": 2022,
       "studie": "DATA",
-      "linkedin": ""
+      "linkedin": "tritacle"
     },
     {
       "id": "mads-lundegaard",
@@ -330,7 +341,7 @@
       "startYear": 2021,
       "endYear": 2022,
       "studie": "DATA",
-      "linkedin": ""
+      "linkedin": "tritacle"
     }
   ]
 }
