@@ -1,5 +1,6 @@
 import ContactBox from "../components/ContactBox";
 import NordnetProfileCard from "../components/NordnetProfileCard";
+import FundTicker from "../components/FundTicker";
 import KeyMetrics from "../components/KeyMetrics";
 import FundPerformanceChart from "../components/FundPerformanceChart";
 import PerformanceBars from "../components/PerformanceBars";
@@ -17,6 +18,9 @@ export default function Home() {
         </div>
 
         <div className="w-full max-w-6xl mx-auto space-y-6 px-0 sm:px-0">
+          {/* Scrolling YTD return per fund, live from Nordnet */}
+          <FundTicker />
+
           <NordnetProfileCard />
 
           {/* At-a-glance metrics derived from the live holdings */}
