@@ -18,6 +18,15 @@ const nextConfig = {
       "/api/nordnet": ["./public/reports/**/*"],
       "/api/content": ["./src/data/*.json"],
       "/api/soknader": ["./src/data/*.json"],
+      // Admin routes edit the same JSON files, so the committed fallbacks must
+      // be traced into them as well.
+      "/api/admin/members": ["./src/data/*.json"],
+      "/api/admin/members/[id]": ["./src/data/*.json"],
+      "/api/admin/members/[id]/portrait": ["./src/data/*.json"],
+      "/api/admin/reports": ["./src/data/*.json"],
+      "/api/admin/reports/[index]": ["./src/data/*.json"],
+      "/api/admin/soknader": ["./src/data/*.json"],
+      "/api/admin/soknader/[index]": ["./src/data/*.json"],
     },
   },
   images: {

@@ -9,16 +9,27 @@
 import fs from "fs";
 import path from "path";
 import type { Member } from "@/data/members";
+import { getDataDir } from "@/lib/data-store";
 
-const EXTENSIONS = [".jpg", ".jpeg", ".png", ".webp"];
+export const IMAGE_EXTENSIONS = [".jpg", ".jpeg", ".png", ".webp"];
+const EXTENSIONS = IMAGE_EXTENSIONS;
 
 const REPO_DIR = path.join(process.cwd(), "public", "members");
 
+// Where admin uploads land: the configured volume, or the data dir when
+// MEMBERS_IMAGE_DIR is unset (local dev).
+export function uploadImageDir(): string {
+  return process.env.MEMBERS_IMAGE_DIR || path.join(getDataDir(), "members");
+}
+
 // Directories searched in order; the volume (if configured) overrides the
-// repo copy, and the repo copy is the fallback.
+// repo copy, and the repo copy is the fallback. The upload dir sits in the
+// middle so local admin uploads resolve without MEMBERS_IMAGE_DIR set.
 export function membersImageDirs(): string[] {
   const dirs: string[] = [];
   if (process.env.MEMBERS_IMAGE_DIR) dirs.push(process.env.MEMBERS_IMAGE_DIR);
+  const uploads = uploadImageDir();
+  if (!dirs.includes(uploads)) dirs.push(uploads);
   dirs.push(REPO_DIR);
   return dirs;
 }
