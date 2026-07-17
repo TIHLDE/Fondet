@@ -9,6 +9,7 @@ import {
   validEpost,
   wordCount,
   MIN_SUM,
+  MAX_SUM,
   MIN_WORDS,
   MIN_WORDS_KONSEKVENSER,
 } from "@/lib/soknad-validation";
@@ -276,6 +277,15 @@ export default function SoknadSkjema() {
               placeholder="Minimum 5 000 kr"
             />
             {fieldError("onsketSum")}
+            {Number(onsketSum) > MAX_SUM && (
+              <p
+                id="onsketSum-warning"
+                className="mt-1 text-sm text-amber-700 dark:text-amber-400"
+              >
+                Beløp over {MAX_SUM.toLocaleString("nb-NO")} kr må vedtas av
+                generalforsamlingen. Du kan fortsatt sende inn søknaden.
+              </p>
+            )}
           </div>
 
           <div>
@@ -385,7 +395,7 @@ export default function SoknadSkjema() {
                     type="button"
                     onClick={() => removeBudsjettPost(i)}
                     aria-label={`Fjern utgift ${i + 1}`}
-                    className="text-red-400 hover:text-red-300 text-lg shrink-0 min-w-11 min-h-11 flex items-center justify-center rounded-lg hover:bg-red-900/20 transition-colors"
+                    className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 text-lg shrink-0 min-w-11 min-h-11 flex items-center justify-center rounded-lg hover:bg-red-100 dark:hover:bg-red-900/20 transition-colors"
                   >
                     &times;
                   </button>

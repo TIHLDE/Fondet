@@ -41,7 +41,18 @@ export default function TradesList() {
   }
 
   const trades = data?.trades ?? [];
-  if (trades.length === 0) return null;
+  if (trades.length === 0) {
+    return (
+      <div className="w-full">
+        <h2 className="text-2xl font-semibold text-foreground-primary mb-6">
+          Siste handler
+        </h2>
+        <p className="text-foreground-secondary">
+          Ingen handler tilgjengelig akkurat nå.
+        </p>
+      </div>
+    );
+  }
 
   const pageCount = Math.ceil(trades.length / PAGE_SIZE);
   const visible = trades.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);

@@ -39,14 +39,25 @@ export default function PerformanceBars() {
   }, []);
 
   const holdings = data?.holdings ?? [];
-  if (isLoading || holdings.length === 0) return null;
+  if (isLoading) return null;
 
   const bars = holdings
     .filter((h: Holding) => h[metric] !== null)
     .map((h: Holding) => ({ name: h.name, value: h[metric] as number }))
     .sort((a, b) => b.value - a.value);
 
-  if (bars.length === 0) return null;
+  if (holdings.length === 0 || bars.length === 0) {
+    return (
+      <div className="w-full">
+        <h2 className="text-2xl font-semibold text-foreground-primary mb-4">
+          Avkastning per fond
+        </h2>
+        <p className="text-foreground-secondary">
+          Ingen avkastningstall tilgjengelig akkurat nå.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full">
@@ -103,16 +114,9 @@ export default function PerformanceBars() {
                 const label = METRICS.find((m) => m.key === metric)?.label;
                 const sign = bar.value > 0 ? "+" : "";
                 return (
-                  <div
-                    className="rounded-lg px-3 py-2 text-sm"
-                    style={{
-                      backgroundColor: "#1e222d",
-                      border: "1px solid rgba(255,255,255,0.15)",
-                      color: "#fff",
-                    }}
-                  >
+                  <div className="rounded-lg px-3 py-2 text-sm bg-cardBackground border border-cardBorder text-foreground-primary shadow-lg">
                     <p className="font-semibold">{bar.name}</p>
-                    <p className="text-gray-300">
+                    <p className="text-foreground-secondary">
                       Avkastning {label}: {sign}
                       {bar.value.toFixed(2).replace(".", ",")} %
                     </p>
