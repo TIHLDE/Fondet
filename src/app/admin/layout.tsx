@@ -7,14 +7,14 @@ export const metadata = {
   robots: { index: false, follow: false },
 };
 
-export default function AdminLayout({
+export default async function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   // Middleware has already verified the token for everything except the login
   // page; this only decides whether the logout button makes sense to show.
-  const loggedIn = cookies().has(SESSION_COOKIE);
+  const loggedIn = (await cookies()).has(SESSION_COOKIE);
   return (
     <div className="w-full max-w-5xl mx-auto px-4 py-8">
       {loggedIn && (

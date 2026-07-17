@@ -23,7 +23,7 @@ afterEach(() => {
 
 function get(file: string) {
   return GET(new Request("http://localhost/api/reports/x"), {
-    params: { file },
+    params: Promise.resolve({ file }),
   });
 }
 

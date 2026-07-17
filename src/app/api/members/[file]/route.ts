@@ -13,9 +13,10 @@ const TYPES: Record<string, string> = {
 // directories (a mounted volume in production, public/members otherwise).
 export async function GET(
   _req: Request,
-  { params }: { params: { file: string } },
+  { params }: { params: Promise<{ file: string }> },
 ) {
-  const safe = path.basename(params.file);
+  const { file } = await params;
+  const safe = path.basename(file);
   const ext = path.extname(safe).toLowerCase();
   const type = TYPES[ext];
   if (!type) return new Response("Not found", { status: 404 });

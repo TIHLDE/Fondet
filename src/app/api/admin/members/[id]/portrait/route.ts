@@ -9,7 +9,7 @@ import { IMAGE_EXTENSIONS, uploadImageDir } from "@/lib/member-images";
 
 const MAX_BYTES = 5 * 1024 * 1024;
 
-type Params = { params: { id: string } };
+type Params = { params: Promise<{ id: string }> };
 
 function knownMember(id: string): boolean {
   const data = readJson<MembersFile>("members");
@@ -20,7 +20,7 @@ function knownMember(id: string): boolean {
 // file type check and strips whatever metadata the original carried.
 export async function POST(request: NextRequest, { params }: Params) {
   if (!(await requireAdmin(request))) return unauthorized();
-  const id = params.id;
+  const { id } = await params;
   if (!/^[a-z0-9-]+$/.test(id) || !knownMember(id)) {
     return NextResponse.json({ error: "Fant ikke medlemmet" }, { status: 404 });
   }
@@ -63,7 +63,7 @@ export async function POST(request: NextRequest, { params }: Params) {
 
 export async function DELETE(request: NextRequest, { params }: Params) {
   if (!(await requireAdmin(request))) return unauthorized();
-  const id = params.id;
+  const { id } = await params;
   if (!/^[a-z0-9-]+$/.test(id)) {
     return NextResponse.json({ error: "Ugyldig id" }, { status: 400 });
   }

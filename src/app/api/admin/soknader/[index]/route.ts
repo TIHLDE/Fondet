@@ -4,7 +4,7 @@ import { readJson, writeJson } from "@/lib/data-store";
 import type { Soknad } from "@/data/soknader";
 import { parseSoknad, sortByDatoDesc } from "../helpers";
 
-type Params = { params: { index: string } };
+type Params = { params: Promise<{ index: string }> };
 
 function rowAt(rows: Soknad[], raw: string): number {
   const i = Number(raw);
@@ -15,6 +15,7 @@ function rowAt(rows: Soknad[], raw: string): number {
 // Replaces the whole row; the admin form always sends every field.
 export async function PATCH(request: NextRequest, { params }: Params) {
   if (!(await requireAdmin(request))) return unauthorized();
+  const { index } = await params;
 
   let body: unknown;
   try {
@@ -31,7 +32,7 @@ export async function PATCH(request: NextRequest, { params }: Params) {
   }
 
   const rows = readJson<Soknad[]>("soknader");
-  const i = rowAt(rows, params.index);
+  const i = rowAt(rows, index);
   if (i < 0) {
     return NextResponse.json({ error: "Fant ikke raden" }, { status: 404 });
   }
@@ -42,9 +43,10 @@ export async function PATCH(request: NextRequest, { params }: Params) {
 
 export async function DELETE(request: NextRequest, { params }: Params) {
   if (!(await requireAdmin(request))) return unauthorized();
+  const { index } = await params;
 
   const rows = readJson<Soknad[]>("soknader");
-  const i = rowAt(rows, params.index);
+  const i = rowAt(rows, index);
   if (i < 0) {
     return NextResponse.json({ error: "Fant ikke raden" }, { status: 404 });
   }

@@ -4,7 +4,7 @@ import { readJson, writeJson } from "@/lib/data-store";
 import type { Member, MembersFile } from "@/data/members";
 import { memberFields } from "../helpers";
 
-type Params = { params: { id: string } };
+type Params = { params: Promise<{ id: string }> };
 
 function findMember(data: MembersFile, id: string): Member | undefined {
   return [...data.allMembers, ...data.previousMembers].find((m) => m.id === id);
@@ -12,6 +12,7 @@ function findMember(data: MembersFile, id: string): Member | undefined {
 
 export async function PATCH(request: NextRequest, { params }: Params) {
   if (!(await requireAdmin(request))) return unauthorized();
+  const { id } = await params;
 
   let body: unknown;
   try {
@@ -25,7 +26,7 @@ export async function PATCH(request: NextRequest, { params }: Params) {
   }
 
   const data = readJson<MembersFile>("members");
-  const member = findMember(data, params.id);
+  const member = findMember(data, id);
   if (!member) {
     return NextResponse.json({ error: "Fant ikke medlemmet" }, { status: 404 });
   }
@@ -40,14 +41,15 @@ export async function PATCH(request: NextRequest, { params }: Params) {
 
 export async function DELETE(request: NextRequest, { params }: Params) {
   if (!(await requireAdmin(request))) return unauthorized();
+  const { id } = await params;
 
   const data = readJson<MembersFile>("members");
-  if (!findMember(data, params.id)) {
+  if (!findMember(data, id)) {
     return NextResponse.json({ error: "Fant ikke medlemmet" }, { status: 404 });
   }
-  data.allMembers = data.allMembers.filter((m) => m.id !== params.id);
+  data.allMembers = data.allMembers.filter((m) => m.id !== id);
   data.previousMembers = data.previousMembers.filter(
-    (m) => m.id !== params.id,
+    (m) => m.id !== id,
   );
   writeJson("members", data);
   return NextResponse.json({ ok: true });

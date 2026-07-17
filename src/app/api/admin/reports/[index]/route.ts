@@ -3,7 +3,7 @@ import { requireAdmin, unauthorized } from "@/lib/require-admin";
 import { readJson, writeJson } from "@/lib/data-store";
 import { reportFields, type ContentFile } from "../helpers";
 
-type Params = { params: { index: string } };
+type Params = { params: Promise<{ index: string }> };
 
 function entryAt(content: ContentFile, raw: string): number {
   const i = Number(raw);
@@ -13,6 +13,7 @@ function entryAt(content: ContentFile, raw: string): number {
 
 export async function PATCH(request: NextRequest, { params }: Params) {
   if (!(await requireAdmin(request))) return unauthorized();
+  const { index } = await params;
 
   let body: unknown;
   try {
@@ -26,7 +27,7 @@ export async function PATCH(request: NextRequest, { params }: Params) {
   }
 
   const content = readJson<ContentFile>("content");
-  const i = entryAt(content, params.index);
+  const i = entryAt(content, index);
   if (i < 0) {
     return NextResponse.json({ error: "Fant ikke raden" }, { status: 404 });
   }
@@ -37,9 +38,10 @@ export async function PATCH(request: NextRequest, { params }: Params) {
 
 export async function DELETE(request: NextRequest, { params }: Params) {
   if (!(await requireAdmin(request))) return unauthorized();
+  const { index } = await params;
 
   const content = readJson<ContentFile>("content");
-  const i = entryAt(content, params.index);
+  const i = entryAt(content, index);
   if (i < 0) {
     return NextResponse.json({ error: "Fant ikke raden" }, { status: 404 });
   }

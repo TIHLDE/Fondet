@@ -6,9 +6,10 @@ import { getDataDir } from "@/lib/data-store";
 // reports under public/reports are served statically and never hit this route.
 export async function GET(
   _req: Request,
-  { params }: { params: { file: string } },
+  { params }: { params: Promise<{ file: string }> },
 ) {
-  const safe = path.basename(params.file);
+  const { file } = await params;
+  const safe = path.basename(file);
   if (!/^[a-z0-9._-]+\.pdf$/i.test(safe)) {
     return new Response("Not found", { status: 404 });
   }
