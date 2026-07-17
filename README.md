@@ -19,8 +19,10 @@ Tre prinsipper styrer alt:
    headere og skal ikke kalles fra nettleseren. API-rutene i Next henter,
    normaliserer og cacher; klienten ser bare våre egne typer. Bytter Nordnet
    API, endres ett bibliotek (`src/lib/nordnet.ts`), ikke komponentene.
-3. **Ærlig data eller ingen data.** Vekting er ikke offentlig, så den vises
-   ikke. Seksjoner uten data skjules i stedet for å vise plassholdere.
+3. **Ærlig data eller ingen data.** Porteføljevekter, honorar og
+   referanseindeks leses fra forvaltningsgruppens egne kvartalsrapporter i
+   `public/reports`. Seksjoner uten data skjules i stedet for å vise
+   plassholdere.
 
 ```mermaid
 flowchart LR
@@ -66,10 +68,15 @@ Alt hentes uten innlogging. Integrasjonen ligger i `src/lib/nordnet.ts`.
 
 **Begrensninger som former designet:**
 
-- **Vekting er ikke offentlig.** Sammensetningen utledes fra handelshistorikken:
-  et fond regnes som eid når siste handel i fondet er et kjøp.
+- **Hvilke fond som eies utledes fra handelshistorikken:** et fond regnes som
+  eid når siste handel i fondet er et kjøp. Nordnets API oppgir ikke porteføljen
+  direkte.
+- **Vekter, honorar og referanseindeks kommer fra kvartalsrapportene.**
+  `src/lib/fordeling.ts` leser nyeste PDF i `public/reports` og matcher hvert
+  tall til fondene Nordnet oppgir som eid. Fond kjøpt etter siste rapport står
+  uten disse tallene til neste rapport kommer.
 - **«TIHLDE-Fondet»-linjen i grafen er et likevektet snitt** av beholdningene,
-  merket som det i UI-et. Uten vekter finnes ingen eksakt porteføljekurve.
+  merket som det i UI-et.
 - Ikke vis plassholder- eller eksempeldata. Tomme seksjoner skjules.
 
 ## Sider
