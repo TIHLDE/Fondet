@@ -14,12 +14,21 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://fondet.tihlde.org"),
   title: {
     default: "TIHLDE Fondet",
     template: "%s | TIHLDE Fondet",
   },
   description:
     "TIHLDE-fondet - Forvaltningsgruppen for TIHLDEs investeringsfond",
+  openGraph: {
+    type: "website",
+    locale: "nb_NO",
+    siteName: "TIHLDE Fondet",
+    title: "TIHLDE Fondet",
+    description:
+      "TIHLDE-fondet - Forvaltningsgruppen for TIHLDEs investeringsfond",
+  },
 };
 
 export const dynamic = "force-dynamic";

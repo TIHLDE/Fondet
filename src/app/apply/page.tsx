@@ -4,6 +4,8 @@ import SoknaderTable from "@/components/SoknaderTable";
 
 export const metadata: Metadata = {
   title: "Søk om støtte",
+  description:
+    "Søk om økonomisk støtte fra TIHLDE Fondet til prosjekter og arrangementer.",
 };
 
 export default function Apply() {

@@ -3,6 +3,8 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Om fondet",
+  description:
+    "Om TIHLDE Fondet: hvordan investeringsfondet forvaltes og hva midlene brukes til.",
 };
 
 export default function About() {

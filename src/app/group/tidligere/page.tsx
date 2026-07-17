@@ -7,6 +7,8 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Tidligere medlemmer",
+  description:
+    "Tidligere medlemmer av Forvaltningsgruppen i TIHLDE Fondet.",
 };
 
 export default function PreviousMembers() {
