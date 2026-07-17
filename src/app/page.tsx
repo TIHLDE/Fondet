@@ -1,7 +1,6 @@
 import ContactBox from "../components/ContactBox";
 import NordnetProfileCard from "../components/NordnetProfileCard";
 import FundTicker from "../components/FundTicker";
-import DataFreshness from "../components/DataFreshness";
 import BackToTop from "../components/BackToTop";
 import KeyMetrics from "../components/KeyMetrics";
 import FundPerformanceChart from "../components/FundPerformanceChart";
@@ -14,19 +13,18 @@ import Reveal from "../components/Reveal";
 
 export default function Home() {
   return (
-    <div className="w-full min-h-screen bg-gradient-primary">
+    <div className="w-full min-h-screen bg-gradient-primary overflow-x-hidden">
       <main className="flex flex-col items-center justify-center sm:px-8 sm:pb-8 pt-24">
-        <div className="text-center mb-12 px-4 sm:px-0 pt-8 sm:pt-0">
-          <h1 className="text-4xl font-bold text-foreground-primary">Fondet</h1>
-          <div className="mt-3">
-            <DataFreshness />
-          </div>
+        {/* Full-width terminal ticker: YTD return per fund, live from Nordnet */}
+        <FundTicker />
+
+        <div className="text-center mb-12 mt-10 px-4 sm:px-0">
+          <h1 className="text-4xl font-bold text-foreground-primary">
+            TIHLDE sitt fond
+          </h1>
         </div>
 
         <div className="w-full max-w-6xl mx-auto space-y-6 px-0 sm:px-0">
-          {/* Scrolling YTD return per fund, live from Nordnet */}
-          <FundTicker />
-
           <NordnetProfileCard />
 
           {/* At-a-glance metrics derived from the live holdings */}
