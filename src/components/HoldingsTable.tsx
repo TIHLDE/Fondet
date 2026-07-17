@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, ArrowUpRight, ArrowDownRight } from "lucide-react";
 import { useNordnet } from "./NordnetProfileCard";
 
 // prospectusUrl comes from Nordnet's API, so guard the anchor against a
@@ -18,10 +18,13 @@ function safeHttpUrl(url: string | null): string | null {
 
 function Pct({ value }: { value: number | null }) {
   if (value === null) return <span>-</span>;
-  const color = value >= 0 ? "text-success" : "text-red-600 dark:text-red-400";
+  const up = value >= 0;
+  const color = up ? "text-success" : "text-red-600 dark:text-red-400";
+  const Arrow = up ? ArrowUpRight : ArrowDownRight;
   return (
-    <span className={color}>
-      {value >= 0 ? "+" : ""}
+    <span className={`inline-flex items-center justify-end gap-0.5 ${color}`}>
+      <Arrow className="w-3.5 h-3.5" aria-hidden />
+      {up ? "+" : ""}
       {value.toFixed(2).replace(".", ",")} %
     </span>
   );
