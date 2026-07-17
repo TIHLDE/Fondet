@@ -1,8 +1,48 @@
 "use client";
 
 import Image from "next/image";
-import { ExternalLink, ArrowUpRight, ArrowDownRight } from "lucide-react";
+import { useState } from "react";
+import {
+  ExternalLink,
+  ArrowUpRight,
+  ArrowDownRight,
+  ChevronUp,
+  ChevronDown,
+} from "lucide-react";
 import { useNordnet } from "./NordnetProfileCard";
+import type { Holding } from "@/lib/nordnet-types";
+
+type SortKey = "name" | "weight" | "fee" | "nav" | "year" | "three";
+type SortDir = "asc" | "desc";
+
+const NUM_ACCESSOR: Record<Exclude<SortKey, "name">, (h: Holding) => number | null> = {
+  weight: (h) => h.weight,
+  fee: (h) => h.feePercent,
+  nav: (h) => h.nav,
+  year: (h) => h.performanceThisYear,
+  three: (h) => h.performanceThreeYears,
+};
+
+// Sort holdings by the chosen column. Missing numbers always sink to the
+// bottom, whichever direction is active, so blanks never crowd the top.
+function sortHoldings(rows: Holding[], key: SortKey, dir: SortDir): Holding[] {
+  const out = [...rows];
+  if (key === "name") {
+    out.sort((a, b) => a.name.localeCompare(b.name, "nb"));
+    if (dir === "desc") out.reverse();
+    return out;
+  }
+  const get = NUM_ACCESSOR[key];
+  out.sort((a, b) => {
+    const va = get(a);
+    const vb = get(b);
+    if (va === null && vb === null) return 0;
+    if (va === null) return 1;
+    if (vb === null) return -1;
+    return dir === "asc" ? va - vb : vb - va;
+  });
+  return out;
+}
 
 // prospectusUrl comes from Nordnet's API, so guard the anchor against a
 // javascript:/data: scheme before trusting it in href.
@@ -83,8 +123,19 @@ function Rating({ value }: { value: number | null }) {
   );
 }
 
+const COLUMNS: { key: SortKey; label: string; defaultDir: SortDir }[] = [
+  { key: "name", label: "Fond", defaultDir: "asc" },
+  { key: "weight", label: "Andel", defaultDir: "desc" },
+  { key: "fee", label: "Honorar", defaultDir: "asc" },
+  { key: "nav", label: "Kurs (NAV)", defaultDir: "desc" },
+  { key: "year", label: "I år", defaultDir: "desc" },
+  { key: "three", label: "3 år", defaultDir: "desc" },
+];
+
 export default function HoldingsTable() {
   const { data, isLoading } = useNordnet();
+  const [sortKey, setSortKey] = useState<SortKey>("name");
+  const [sortDir, setSortDir] = useState<SortDir>("asc");
 
   if (isLoading) {
     return (
@@ -92,9 +143,20 @@ export default function HoldingsTable() {
     );
   }
 
-  const holdings = data?.holdings ?? [];
+  const raw = data?.holdings ?? [];
   const weightAsOf = data?.weightAsOf ?? null;
-  if (holdings.length === 0) {
+  const holdings = sortHoldings(raw, sortKey, sortDir);
+
+  function toggleSort(col: (typeof COLUMNS)[number]) {
+    if (sortKey === col.key) {
+      setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+    } else {
+      setSortKey(col.key);
+      setSortDir(col.defaultDir);
+    }
+  }
+
+  if (raw.length === 0) {
     return (
       <p className="text-foreground-secondary">
         Fikk ikke hentet porteføljen fra Nordnet akkurat nå. Prøv igjen senere.
@@ -112,24 +174,40 @@ export default function HoldingsTable() {
         <table className="w-full">
           <thead>
             <tr className="border-b border-cardBorder">
-              <th className="text-left py-3 px-4 text-foreground-primary font-semibold">
-                Fond
-              </th>
-              <th className="text-right py-3 px-4 text-foreground-primary font-semibold">
-                Andel
-              </th>
-              <th className="text-right py-3 px-4 text-foreground-primary font-semibold">
-                Honorar
-              </th>
-              <th className="text-right py-3 px-4 text-foreground-primary font-semibold">
-                Kurs (NAV)
-              </th>
-              <th className="text-right py-3 px-4 text-foreground-primary font-semibold">
-                I år
-              </th>
-              <th className="text-right py-3 px-4 text-foreground-primary font-semibold">
-                3 år
-              </th>
+              {COLUMNS.map((col) => {
+                const activeSort = sortKey === col.key;
+                const first = col.key === "name";
+                const Chevron = sortDir === "asc" ? ChevronUp : ChevronDown;
+                return (
+                  <th
+                    key={col.key}
+                    aria-sort={
+                      activeSort
+                        ? sortDir === "asc"
+                          ? "ascending"
+                          : "descending"
+                        : "none"
+                    }
+                    className={`py-3 px-4 text-foreground-primary font-semibold ${
+                      first ? "text-left" : "text-right"
+                    }`}
+                  >
+                    <button
+                      type="button"
+                      onClick={() => toggleSort(col)}
+                      className={`inline-flex items-center gap-1 rounded transition-colors hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground-primary ${
+                        first ? "" : "flex-row-reverse"
+                      } ${activeSort ? "text-accent" : ""}`}
+                    >
+                      {col.label}
+                      <Chevron
+                        className={`w-3.5 h-3.5 ${activeSort ? "opacity-100" : "opacity-30"}`}
+                        aria-hidden
+                      />
+                    </button>
+                  </th>
+                );
+              })}
             </tr>
           </thead>
           <tbody>
