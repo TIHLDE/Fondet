@@ -7,6 +7,8 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Forvaltningsgruppen",
+  description:
+    "Møt Forvaltningsgruppen som forvalter TIHLDE Fondet.",
 };
 
 export default function Group() {

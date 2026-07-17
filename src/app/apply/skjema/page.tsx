@@ -3,6 +3,8 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Søknadsskjema",
+  description:
+    "Fyll ut søknadsskjemaet for å søke om støtte fra TIHLDE Fondet.",
 };
 
 export default function SkjemaPage() {
