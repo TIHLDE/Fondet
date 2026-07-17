@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import Providers from "./providers";
 import Navbar from "@/components/navigation/TopBar";
 import Footer from "@/components/navigation/Footer";
+import CommandPalette from "@/components/CommandPalette";
 import ThemeScript from "@/components/providers/ThemeScript";
 
 const inter = Inter({
@@ -52,6 +53,7 @@ export default function RootLayout({
             </main>
             <Footer />
           </div>
+          <CommandPalette />
         </Providers>
       </body>
     </html>
