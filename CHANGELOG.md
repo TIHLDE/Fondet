@@ -15,6 +15,9 @@
 ## Neste versjon
 
 ## Versjon 2026.07.18
+- ⚡ **Søknadsskjema**. Skjemaet varsler nå når ønsket sum overstiger 100 000 kr, siden slike beløp må vedtas av generalforsamlingen. Søknaden kan fortsatt sendes inn.
+- ⚡ **Tomme tilstander**. Avkastning per fond og siste handler viser nå en kort melding i stedet for å forsvinne når data mangler, og beholdningstabellen har fått en prøv igjen-knapp når Nordnet-data ikke kan hentes.
+- 🎨 **Kontrast**. Slett-knappen i budsjettradene og verktøytipset i avkastningsgrafen følger nå temafargene, med god kontrast i både lyst og mørkt tema.
 - 🎨 **Skjelettlasting**. Plassholderne under lasting speiler nå layouten til innholdet de venter på (profilkort, nøkkeltall, tabeller, donut), så siden ikke hopper når dataene kommer.
 - ⚡ **Handelshistorikk**. Aktivitetsfeeden leses nå 30 sider dypt i stedet for 6, slik at fond kjøpt langt tilbake ikke faller ut av porteføljen.
 - 🦟 **Avhengigheter**. Sikkerhetsoppdatert next, resend, js-yaml og verktøykjeden; 14 av 16 Dependabot-varsler lukket uten major-oppgradering.
