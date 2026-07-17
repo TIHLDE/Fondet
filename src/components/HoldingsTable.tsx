@@ -4,6 +4,18 @@ import Image from "next/image";
 import { ExternalLink } from "lucide-react";
 import { useNordnet } from "./NordnetProfileCard";
 
+// prospectusUrl comes from Nordnet's API, so guard the anchor against a
+// javascript:/data: scheme before trusting it in href.
+function safeHttpUrl(url: string | null): string | null {
+  if (!url) return null;
+  try {
+    const u = new URL(url);
+    return u.protocol === "https:" || u.protocol === "http:" ? url : null;
+  } catch {
+    return null;
+  }
+}
+
 function Pct({ value }: { value: number | null }) {
   if (value === null) return <span>-</span>;
   const color = value >= 0 ? "text-success" : "text-red-600 dark:text-red-400";
@@ -143,9 +155,9 @@ export default function HoldingsTable() {
                       <p className="text-xs text-foreground-secondary">
                         {h.benchmark ?? h.category ?? ""}
                       </p>
-                      {h.prospectusUrl && (
+                      {safeHttpUrl(h.prospectusUrl) && (
                         <a
-                          href={h.prospectusUrl}
+                          href={safeHttpUrl(h.prospectusUrl)!}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="inline-flex items-center gap-1 mt-0.5 text-xs text-accent hover:underline"
