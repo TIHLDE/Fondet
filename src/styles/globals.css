@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@config "../../tailwind.config.ts";
 
 @theme {
   --color-background: var(--background);
@@ -20,6 +21,20 @@
   --color-info: var(--info);
   --color-muted-foreground: var(--muted-foreground);
   --color-secondary: var(--secondary);
+
+  /* camelCase aliases: the components were written against these names
+     (bg-cardBackground, border-cardBorder, ...). Tailwind v4 only emits a
+     utility when the token name matches the class, so without these the
+     classes produce no CSS and the elements render with no background. */
+  --color-cardBackground: var(--card-background);
+  --color-cardForeground: var(--card-foreground);
+  --color-cardBorder: var(--card-border);
+  --color-buttonBackground: var(--button-background);
+  --color-buttonForeground: var(--button-foreground);
+  --color-buttonBorder: var(--button-border);
+  --color-inputBackground: var(--input-background);
+  --color-inputForeground: var(--input-foreground);
+  --color-inputBorder: var(--input-border);
 }
 
 :root {

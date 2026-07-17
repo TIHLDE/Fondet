@@ -1,4 +1,4 @@
-import membersData from "./members.json";
+import { readJson } from "@/lib/data-store";
 
 export interface Member {
   id: string;
@@ -11,26 +11,31 @@ export interface Member {
   linkedin?: string;
 }
 
-const all: Member[] = [
-  ...(membersData.allMembers as Member[]),
-  ...(membersData.previousMembers as Member[]),
-];
+export interface MembersFile {
+  groupImage?: string;
+  allMembers: Member[];
+  previousMembers: Member[];
+}
 
-export const allMembers: Member[] = all
-  .filter((m) => !m.endYear)
-  .sort((a, b) => a.startYear - b.startYear);
-export const previousMembers: Member[] = all
-  .filter((m) => !!m.endYear)
-  .sort((a, b) => (b.endYear ?? 0) - (a.endYear ?? 0) || b.startYear - a.startYear);
+function load(): Member[] {
+  const data = readJson<MembersFile>("members");
+  return [...data.allMembers, ...data.previousMembers];
+}
 
 export function getCurrentMembers(): Member[] {
-  return allMembers;
+  return load()
+    .filter((m) => !m.endYear)
+    .sort((a, b) => a.startYear - b.startYear);
 }
 
 export function getPreviousMembers(): Member[] {
-  return previousMembers;
+  return load()
+    .filter((m) => !!m.endYear)
+    .sort(
+      (a, b) => (b.endYear ?? 0) - (a.endYear ?? 0) || b.startYear - a.startYear,
+    );
 }
 
 export function getGroupImage(): string {
-  return membersData.groupImage ?? "";
+  return readJson<MembersFile>("members").groupImage ?? "";
 }

@@ -1,12 +1,30 @@
 "use client";
 
 import { useState } from "react";
-import { SOKNADER, PAGE_SIZE } from "@/data/soknader";
+import { useQuery } from "@tanstack/react-query";
+import { PAGE_SIZE, type Soknad } from "@/data/soknader";
 
 export default function SoknaderTable() {
   const [page, setPage] = useState(0);
-  const pageCount = Math.ceil(SOKNADER.length / PAGE_SIZE);
-  const visible = SOKNADER.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
+  const { data: soknader = [], isError } = useQuery<Soknad[]>({
+    queryKey: ["soknader"],
+    queryFn: async () => {
+      const res = await fetch("/api/soknader");
+      if (!res.ok) throw new Error("soknader fetch failed");
+      return res.json();
+    },
+    staleTime: 5 * 60 * 1000,
+  });
+  const pageCount = Math.ceil(soknader.length / PAGE_SIZE);
+  const visible = soknader.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
+
+  if (isError) {
+    return (
+      <p className="text-foreground-secondary">
+        Kunne ikke laste søknadene. Prøv igjen senere.
+      </p>
+    );
+  }
 
   return (
     <div>
