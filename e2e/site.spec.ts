@@ -1,7 +1,7 @@
 import { test, expect, type Page } from "@playwright/test";
 
 const PAGES = [
-  { path: "/", heading: "Fondet" },
+  { path: "/", heading: "TIHLDE sitt fond" },
   { path: "/about", heading: "Om fondet" },
   { path: "/group", heading: "Forvaltningsgruppen" },
   { path: "/group/tidligere", heading: "Tidligere medlemmer" },
