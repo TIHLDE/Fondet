@@ -7,6 +7,7 @@ import KeyMetrics from "../components/KeyMetrics";
 import FundPerformanceChart from "../components/FundPerformanceChart";
 import PerformanceBars from "../components/PerformanceBars";
 import AllocationDonut from "../components/AllocationDonut";
+import ReturnsMatrix from "../components/ReturnsMatrix";
 import HoldingsTable from "../components/HoldingsTable";
 import TradesList from "../components/TradesList";
 import Reveal from "../components/Reveal";
@@ -49,6 +50,13 @@ export default function Home() {
           <Reveal>
             <div className="bg-cardBackground border border-cardBorder rounded-lg p-6 shadow-lg card-hover">
               <AllocationDonut />
+            </div>
+          </Reveal>
+
+          {/* Return per fund across periods, live from Nordnet */}
+          <Reveal>
+            <div className="bg-cardBackground border border-cardBorder rounded-lg p-6 shadow-lg card-hover">
+              <ReturnsMatrix />
             </div>
           </Reveal>
 

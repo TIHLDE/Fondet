@@ -24,6 +24,7 @@ export interface Holding {
   performanceThisYear: number | null;
   performanceOneMonth: number | null;
   performanceThreeYears: number | null;
+  performanceFiveYears: number | null;
   // Morningstar rating (1-5) and SFDR article (6/8/9), from Nordnet.
   rating: number | null;
   esgArticle: number | null;
