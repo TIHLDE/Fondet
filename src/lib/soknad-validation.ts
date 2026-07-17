@@ -1,4 +1,7 @@
 export const MIN_SUM = 5000;
+// Soft ceiling: amounts above this must be decided by generalforsamlingen,
+// so the form warns but does not block.
+export const MAX_SUM = 100000;
 export const MIN_WORDS = 20;
 export const MIN_WORDS_KONSEKVENSER = 5;
 
