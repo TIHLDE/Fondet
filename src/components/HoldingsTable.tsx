@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { ExternalLink } from "lucide-react";
 import { useNordnet } from "./NordnetProfileCard";
 
 function Pct({ value }: { value: number | null }) {
@@ -142,6 +143,17 @@ export default function HoldingsTable() {
                       <p className="text-xs text-foreground-secondary">
                         {h.benchmark ?? h.category ?? ""}
                       </p>
+                      {h.prospectusUrl && (
+                        <a
+                          href={h.prospectusUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 mt-0.5 text-xs text-accent hover:underline"
+                        >
+                          Prospekt
+                          <ExternalLink className="w-3 h-3" aria-hidden />
+                        </a>
+                      )}
                     </div>
                   </div>
                 </td>

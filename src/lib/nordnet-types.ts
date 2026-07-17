@@ -32,6 +32,18 @@ export interface Holding {
   weight: number | null;
   feePercent: number | null;
   benchmark: string | null;
+  // Link to the fund's Morningstar prospectus/KID document, from Nordnet.
+  prospectusUrl: string | null;
+}
+
+// One fund's line in the newest quarterly report allocation. Unlike Holding,
+// this is the full published portfolio (including funds sold since), so the
+// weights sum to ~100 and can drive an allocation chart.
+export interface FordelingFund {
+  name: string;
+  weight: number;
+  feePercent: number | null;
+  benchmark: string | null;
 }
 
 export interface Trade {
@@ -49,8 +61,11 @@ export interface NordnetData {
   profile: NordnetProfile | null;
   holdings: Holding[];
   trades: Trade[];
-  // Report period the holding weights come from, e.g. "Q4 2025". Null if no
-  // report could be read.
+  // The full published allocation from the newest report, weights summing to
+  // ~100. Empty if no report could be read.
+  fordeling: FordelingFund[];
+  // Report period the weights come from, e.g. "Q4 2025". Null if no report
+  // could be read.
   weightAsOf: string | null;
 }
 

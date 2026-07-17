@@ -129,6 +129,7 @@ interface InstrumentInfo {
   last_nav_date?: string;
   rating?: number;
   sfdr_article?: number;
+  prospectus_url?: string;
   institute?: string;
   performance_one_month?: number;
   performance_this_year?: number;
@@ -151,6 +152,7 @@ export interface Holding {
   performanceThreeYears: number | null;
   rating: number | null;
   esgArticle: number | null;
+  prospectusUrl: string | null;
 }
 
 export async function getHoldings(trades: Trade[]): Promise<Holding[]> {
@@ -185,6 +187,7 @@ export async function getHoldings(trades: Trade[]): Promise<Holding[]> {
         performanceThreeYears: i?.performance_three_years ?? null,
         rating: i?.rating ?? null,
         esgArticle: i?.sfdr_article ?? null,
+        prospectusUrl: i?.prospectus_url ?? null,
       };
     }),
   );

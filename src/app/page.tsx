@@ -2,6 +2,7 @@ import ContactBox from "../components/ContactBox";
 import NordnetProfileCard from "../components/NordnetProfileCard";
 import FundPerformanceChart from "../components/FundPerformanceChart";
 import PerformanceBars from "../components/PerformanceBars";
+import AllocationDonut from "../components/AllocationDonut";
 import HoldingsTable from "../components/HoldingsTable";
 import TradesList from "../components/TradesList";
 
@@ -26,7 +27,10 @@ export default function Home() {
             <PerformanceBars />
           </div>
 
-          {/* Market split derived from holdings */}
+          {/* Published allocation from the newest report */}
+          <div className="bg-cardBackground border border-cardBorder rounded-lg p-6 shadow-lg">
+            <AllocationDonut />
+          </div>
 
           {/* Current holdings, live from Nordnet */}
           <div className="bg-cardBackground border border-cardBorder rounded-lg p-6 shadow-lg">

@@ -25,6 +25,7 @@ export async function GET() {
     profile,
     holdings: withReport,
     trades: trades.slice(0, 100),
+    fordeling: report?.funds ?? [],
     weightAsOf: report?.period ?? null,
   });
 }
