@@ -13,6 +13,9 @@
 ---
 
 ## Neste versjon
+- ✨ **Adminpanel**. Forvaltere kan nå logge inn med engangslenke på e-post (kun @tihlde.org-adresser på adminlisten) og redigere medlemmer, portretter, gruppebilder, rapporter og søknadsoversikten direkte på siden, uten å gå via GitHub.
+- ✨ **Filopplasting**. Portretter og gruppebilder komprimeres automatisk ved opplasting, og rapport-PDF-er lastes opp og serveres fra serverens datalager.
+- ⚡ **Innhold uten deploy**. Endringer gjort i adminpanelet lagres på serverens datavolum og vises umiddelbart, uten ny bygging eller utrulling av siden.
 
 ## Versjon 2026.07.18
 - ⚡ **Søknadsskjema**. Skjemaet varsler nå når ønsket sum overstiger 100 000 kr, siden slike beløp må vedtas av generalforsamlingen. Søknaden kan fortsatt sendes inn.
