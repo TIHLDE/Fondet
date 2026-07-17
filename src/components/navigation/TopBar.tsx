@@ -49,9 +49,11 @@ const TopBar: React.FC = () => {
     <header
       className={clsx(
         "fixed z-30 w-full top-0 transition-all duration-150 backdrop-blur-md",
-        isOnTop && !menuOpen
-          ? "bg-transparent"
-          : "bg-background/95 dark:bg-background/80"
+        menuOpen
+          ? "bg-background"
+          : isOnTop
+            ? "bg-transparent"
+            : "bg-background/95 dark:bg-background/80"
       )}
     >
       <nav className="flex items-center justify-between gap-4 py-3 px-4 sm:px-8 w-full">
