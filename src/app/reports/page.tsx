@@ -10,6 +10,55 @@ interface Document {
   type: string;
 }
 
+function reportYear(title: string): string | null {
+  const m = title.match(/\b(20\d{2})\b/);
+  return m ? m[1] : null;
+}
+
+// Quarterly reports pile up four per year, so this group gets a year picker.
+// The pills only appear once more than one year is present.
+function QuarterGroup({ type, items }: { type: string; items: Document[] }) {
+  const years = Array.from(
+    new Set(items.map((i) => reportYear(i.title)).filter((y): y is string => !!y)),
+  ).sort((a, b) => b.localeCompare(a));
+  const [year, setYear] = useState(years[0] ?? "");
+  const shown = year ? items.filter((i) => reportYear(i.title) === year) : items;
+
+  return (
+    <div>
+      <div className="flex items-center justify-between gap-3 mb-1">
+        <h2 className="text-sm font-semibold text-foreground-secondary uppercase tracking-wide">
+          {type}
+        </h2>
+        {years.length > 1 && (
+          <div className="flex flex-wrap gap-1">
+            {years.map((y) => (
+              <button
+                key={y}
+                type="button"
+                onClick={() => setYear(y)}
+                aria-pressed={y === year}
+                className={`min-h-[40px] rounded px-3 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground-primary ${
+                  y === year
+                    ? "bg-foreground-primary text-cardBackground"
+                    : "text-foreground-secondary hover:bg-cardBorder/30"
+                }`}
+              >
+                {y}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+      <div className="divide-y divide-cardBorder">
+        {shown.map((r, i) => (
+          <DocRow key={i} doc={r} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function DocRow({ doc }: { doc: Document }) {
   return (
     <a
@@ -68,18 +117,22 @@ export default function RapporterPublicPage() {
           {reports.length > 0 && (
             <div className="bg-cardBackground border border-cardBorder rounded-lg p-6 shadow-lg">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-6">
-                {Object.entries(groupedReports).map(([type, items]) => (
-                  <div key={type}>
-                    <h2 className="text-sm font-semibold text-foreground-secondary uppercase tracking-wide mb-1">
-                      {type}
-                    </h2>
-                    <div className="divide-y divide-cardBorder">
-                      {items.map((r, i) => (
-                        <DocRow key={i} doc={r} />
-                      ))}
+                {Object.entries(groupedReports).map(([type, items]) =>
+                  type === "Kvartalsrapporter" ? (
+                    <QuarterGroup key={type} type={type} items={items} />
+                  ) : (
+                    <div key={type}>
+                      <h2 className="text-sm font-semibold text-foreground-secondary uppercase tracking-wide mb-1">
+                        {type}
+                      </h2>
+                      <div className="divide-y divide-cardBorder">
+                        {items.map((r, i) => (
+                          <DocRow key={i} doc={r} />
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ),
+                )}
               </div>
             </div>
           )}
