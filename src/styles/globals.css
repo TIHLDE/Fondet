@@ -100,3 +100,32 @@ body {
     transition: none;
   }
 }
+
+/* Fund ticker: two stacked copies scroll left, looping at -50%. Pauses on
+   hover or keyboard focus so a value can be read. */
+@keyframes ticker {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.ticker-track {
+  display: inline-flex;
+  min-width: 100%;
+  animation: ticker 45s linear infinite;
+  will-change: transform;
+}
+
+.ticker:hover .ticker-track,
+.ticker:focus-within .ticker-track {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ticker-track {
+    animation: none;
+  }
+}
