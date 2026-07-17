@@ -150,6 +150,7 @@ export interface Holding {
   performanceThisYear: number | null;
   performanceOneMonth: number | null;
   performanceThreeYears: number | null;
+  performanceFiveYears: number | null;
   rating: number | null;
   esgArticle: number | null;
   prospectusUrl: string | null;
@@ -185,6 +186,7 @@ export async function getHoldings(trades: Trade[]): Promise<Holding[]> {
         performanceThisYear: i?.performance_this_year ?? null,
         performanceOneMonth: i?.performance_one_month ?? null,
         performanceThreeYears: i?.performance_three_years ?? null,
+        performanceFiveYears: i?.performance_five_years ?? null,
         rating: i?.rating ?? null,
         esgArticle: i?.sfdr_article ?? null,
         prospectusUrl: i?.prospectus_url ?? null,
