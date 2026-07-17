@@ -149,7 +149,7 @@ function DetailField({ label, value }: { label: string; value: string }) {
 }
 
 export default function HoldingsTable() {
-  const { data, isLoading } = useNordnet();
+  const { data, isLoading, isFetching, refetch } = useNordnet();
   const [sortKey, setSortKey] = useState<SortKey>("name");
   const [sortDir, setSortDir] = useState<SortDir>("asc");
   const [expanded, setExpanded] = useState<Set<number>>(new Set());
@@ -211,9 +211,17 @@ export default function HoldingsTable() {
 
   if (raw.length === 0) {
     return (
-      <p className="text-foreground-secondary">
-        Fikk ikke hentet porteføljen fra Nordnet akkurat nå. Prøv igjen senere.
-      </p>
+      <div className="text-foreground-secondary">
+        <p>Fikk ikke hentet porteføljen fra Nordnet akkurat nå.</p>
+        <button
+          type="button"
+          onClick={() => refetch()}
+          disabled={isFetching}
+          className="mt-3 inline-flex items-center rounded-md border border-cardBorder bg-cardBackground px-4 h-11 text-sm text-foreground-primary transition-colors hover:bg-cardBorder/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground-primary disabled:opacity-60"
+        >
+          {isFetching ? "Prøver igjen..." : "Prøv igjen"}
+        </button>
+      </div>
     );
   }
 
