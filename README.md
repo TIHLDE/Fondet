@@ -4,25 +4,50 @@ Nettside for TIHLDE sitt investeringsfond. Viser porteføljen live fra fondets
 offentlige Nordnet-profil, medlemmene i forvaltningsgruppen, rapporter og
 søknadsskjema for støtte.
 
-Stack: Next.js (App Router), TypeScript, Tailwind CSS, React Query,
+Dette dokumentet er skrevet for utviklere som skal videreutvikle eller drifte
+siden. Det forklarer ikke bare hva som er bygget, men hvorfor det er bygget
+slik, og hvilke avveininger som ligger bak.
+
+Stack: Next.js 14 (App Router), TypeScript, Tailwind CSS v4, React Query,
 lightweight-charts (TradingView) og Recharts.
 
 ## Idéen bak arkitekturen
 
-Tre prinsipper styrer alt:
+Prosjektet er en drift-minimal side som skal overleve at styret og
+forvaltningsgruppen skiftes ut hvert år. Det har formet tre valg som resten av
+koden henger på.
 
-1. **Ingen egen database og ingen innlogging.** Alt innhold er enten offentlig
-   data fra Nordnet eller filer i repoet (medlemmer, rapporter). Det finnes
-   ingenting å hacke, ingenting å migrere og ingenting som kan gå ned utenom
-   selve appen. Endringer i innhold er git-commits med full historikk.
-2. **Serveren er eneste vei til Nordnet.** Nordnets API-er krever spesielle
-   headere og skal ikke kalles fra nettleseren. API-rutene i Next henter,
-   normaliserer og cacher; klienten ser bare våre egne typer. Bytter Nordnet
-   API, endres ett bibliotek (`src/lib/nordnet.ts`), ikke komponentene.
-3. **Ærlig data eller ingen data.** Porteføljevekter, honorar og
-   referanseindeks leses fra forvaltningsgruppens egne kvartalsrapporter i
-   `public/reports`. Seksjoner uten data skjules i stedet for å vise
-   plassholdere.
+### 1. Ingen egen database og ingen innlogging
+
+Alt innhold er enten offentlig data fra Nordnet eller filer i repoet
+(medlemmer, rapporter, søknader). Det er ikke fordi en database hadde vært
+vanskelig, men fordi en database er noe som må driftes, sikkerhetsoppdateres,
+migreres og backes opp av folk som byttes ut årlig. En fil i git har full
+historikk gratis, kan reviewes i en pull request, og kan ikke gå ned uten at
+hele appen gjør det.
+
+Avveiningen: skriveoperasjoner (nye medlemmer, nye rapporter) blir git-commits
+i stedet for et admin-panel. Det er tregere for redaktøren, men det fjerner et
+helt lag med autentisering, roller og angrepsflate. For en side som endres noen
+ganger i semesteret er det en god byttehandel.
+
+### 2. Serveren er eneste vei til Nordnet
+
+Nordnets API-er krever spesielle headere (`client-id`, `Referer`) og tåler ikke
+å bli kalt fra nettleseren. API-rutene i Next henter, normaliserer og cacher;
+klienten ser bare våre egne typer i `src/lib/nordnet-types.ts`, aldri Nordnets
+rå respons.
+
+Poenget er isolasjon: bytter Nordnet API-form, endres ett bibliotek
+(`src/lib/nordnet.ts`) og komponentene merker ingenting. Klienten er koblet mot
+et stabilt indre grensesnitt, ikke mot en tredjepart vi ikke styrer.
+
+### 3. Ærlig data eller ingen data
+
+Seksjoner uten data skjules i stedet for å vise plassholdere eller eksempeltall.
+Et tomt felt er et gyldig utfall; en oppdiktet verdi er det ikke. Dette er en
+bevisst regel fordi siden viser et ekte fond med ekte penger, og en pen men
+feil graf er verre enn ingen graf.
 
 ```mermaid
 flowchart LR
@@ -50,9 +75,18 @@ flowchart LR
     K --> R[Resend, e-post til fondet@tihlde.org]
 ```
 
-To cachelag med samme levetid (30 min): ISR på serveren gjør at Nordnet
-maksimalt treffes to ganger i timen uansett trafikk, React Query gjør at
-klienten aldri spør samme side to ganger i samme økt.
+### Hvorfor to cachelag med samme levetid
+
+Både serveren (ISR) og klienten (React Query) cacher i 30 minutter, og det er
+med vilje. De løser to ulike problemer:
+
+- ISR på serveren gjør at Nordnet maksimalt treffes to ganger i timen uansett
+  hvor mange som er inne. Det beskytter tredjeparten mot vår trafikk.
+- React Query gjør at klienten ikke spør samme side to ganger i samme økt.
+  Det beskytter brukeren mot unødige nettverksrunder når de klikker rundt.
+
+Samme tall (30 min) er valgt slik at de to lagene ikke drar i hver sin retning:
+klienten ber aldri om ferskere data enn serveren gidder å hente.
 
 ## Datakilder
 
@@ -66,24 +100,29 @@ Alt hentes uten innlogging. Integrasjonen ligger i `src/lib/nordnet.ts`.
 | Kurshistorikk (fond og indekser) | `api.prod.nntech.io/market-data/v3/price-time-series/period/{PERIOD}/identifier/{uuid}` | Trenger header `Referer: https://www.nordnet.no/`. Fond gir prosent direkte (`?fundType=FUND_NOK`), indekser gir absolutte verdier som omregnes |
 | Indeks-oppslag (OSEBX m.fl.) | `www.nordnet.no/api/2/main_search?query=...` | Finner `market_data_order_book_id` ved kjøretid |
 
-**Begrensninger som former designet:**
+### Begrensninger som former designet
 
 - **Hvilke fond som eies utledes fra handelshistorikken:** et fond regnes som
-  eid når siste handel i fondet er et kjøp. Nordnets API oppgir ikke porteføljen
-  direkte.
+  eid når siste handel i fondet er et kjøp (`getHoldings` i `nordnet.ts`).
+  Nordnets API oppgir ikke porteføljen direkte, så vi bygger den fra
+  aktivitetsfeeden. Feeden hentes i inntil `FEED_MAX_PAGES` sider; øk den hvis
+  et eid fond mangler fordi siste kjøp ligger langt tilbake.
 - **Vekter, honorar og referanseindeks kommer fra kvartalsrapportene.**
-  `src/lib/fordeling.ts` leser nyeste PDF i `public/reports` og matcher hvert
-  tall til fondene Nordnet oppgir som eid. Fond kjøpt etter siste rapport står
-  uten disse tallene til neste rapport kommer.
-- **«TIHLDE-Fondet»-linjen i grafen er et likevektet snitt** av beholdningene,
-  merket som det i UI-et.
-- Ikke vis plassholder- eller eksempeldata. Tomme seksjoner skjules.
+  `src/lib/fordeling.ts` leser nyeste PDF i `public/reports`, parser hvert fonds
+  «Porteføljevekt», «Forvaltningshonorar» og «Referanseindeks», og matcher tallene
+  til fondene Nordnet oppgir som eid. En rapport godtas bare hvis vektene summerer
+  seg til nær 100 %, slik at halvferdige utkast ikke slår gjennom. Fond kjøpt
+  etter siste rapport står uten disse tallene til neste rapport kommer.
+- **«TIHLDE-Fondet»-linjen i grafen er et likevektet snitt** av beholdningene
+  (`equalWeightComposite` i `src/lib/series.ts`), merket som det i UI-et. Den
+  bruker ikke rapportvektene, fordi vektene bare finnes kvartalsvis mens grafen
+  er daglig, og en interpolert vektkurve hadde vært en gjetning vi ikke vil vise.
 
 ## Sider
 
 | Rute | Innhold |
 |------|---------|
-| `/` | Profilkort, utviklingsgraf med indeks-sammenligning, avkastning per fond, sammensetning, handler med paginering |
+| `/` | Profilkort, nøkkeltall, utviklingsgraf med indeks-sammenligning, avkastning per fond og periode, sammensetning, beholdninger og handler |
 | `/about` | Om fondet, vedtekter, årsrapporter |
 | `/apply` + `/apply/skjema` | Søknad om støtte, sendes som e-post via Resend |
 | `/group` + `/group/tidligere` | Forvaltningsgruppen, nåværende og tidligere |
@@ -91,10 +130,10 @@ Alt hentes uten innlogging. Integrasjonen ligger i `src/lib/nordnet.ts`.
 
 ## Hosting og deploy
 
-Appen bygges som et Docker-image og publiseres til GitHub Container
-Registry av GitHub Actions. Push til `dev` gir tag `:dev`, push til
-`main` gir `:latest`. CI (lint, typesjekk, tester, build) kjører på
-alle pusher og pull requests.
+Appen bygges som et Docker-image (`output: "standalone"`) og publiseres til
+GitHub Container Registry av GitHub Actions. Push til `dev` gir tag `:dev`, push
+til `main` gir `:latest`. CI (lint, typesjekk, tester, build) kjører på alle
+pusher og pull requests.
 
 ```mermaid
 flowchart LR
@@ -105,23 +144,27 @@ flowchart LR
     S -->|ISR, 30 min| NN[Nordnet API-er]
 ```
 
+Standalone-bygg er valgt fordi det gir et lite image uten `node_modules`, som
+starter raskt og ikke trenger en kjørende Node-verktøykjede på serveren.
+Deploy-mekanismen er bevisst enkel: `--pull=always` i systemd-enheten betyr at
+en restart av tjenesten er hele oppdateringen, det finnes ingen egen
+deploy-pipeline å vedlikeholde.
+
 Dev-miljøet kjører på en hjemmeserver bak Cloudflare Tunnel på
 fondet.tritacle.no. Serveren kjører `systemd/fondet.service` som en
-brukertjeneste: den starter containeren med `--pull=always`, så en
-restart av tjenesten henter siste `:dev`-image. `RESEND_API_KEY`
-ligger i `.env` på serveren, aldri i imaget eller i repoet.
+brukertjeneste. `RESEND_API_KEY` ligger i `.env` på serveren, aldri i imaget
+eller i repoet.
 
-Prod kan settes opp likt med `:latest`-taggen, eller på Vercel
-(importer repoet, sett `RESEND_API_KEY`, ferdig) om TIHLDE heller
-vil slippe serverdrift.
+Prod kan settes opp likt med `:latest`-taggen, eller på Vercel (importer repoet,
+sett `RESEND_API_KEY`, ferdig) om TIHLDE heller vil slippe serverdrift.
 
 ## Vedlikehold av medlemmer
 
-Alt styres med filer, ingen admin-innlogging:
+Alt styres med filer, ingen admin-innlogging (se prinsipp 1 over):
 
 ```mermaid
 flowchart TD
-    A[Nytt medlem] --> B[Legg til oppføring i src/data/members.json]
+    A[Nytt medlem] --> B[Legg til oppføring i src/data/members.ts]
     B --> C[Legg bilde i public/members/ navngitt som id, f.eks. sigurd-evensen.jpg]
     C --> D[Commit + push, CI bygger og deployer]
     E[Medlem slutter] --> F[Flytt oppføringen til previousMembers og sett endYear]
@@ -164,13 +207,22 @@ npm install
 npm run dev      # http://localhost:3000
 npm run build    # produksjonsbygg
 npm run lint
+npm test         # vitest
 ```
 
-## Design
+## Design og styling
 
-- Tema styres av CSS-variabler i `globals.css` og eksponeres via
-  `tailwind.config.ts` (`bg-cardBackground`, `text-foreground-primary` osv.).
-  Bruk alltid tokens, aldri hardkodede farger som `text-white`.
-- Utviklingsgrafen bruker TradingViews `lightweight-charts`, søylediagram og
+- Tema styres av CSS-variabler i `src/styles/globals.css`. De eksponeres som
+  Tailwind-farger i `@theme`-blokken (`bg-cardBackground`,
+  `text-foreground-primary` osv.). Bruk alltid disse tokenene, aldri hardkodede
+  farger som `text-white`, slik at lyst og mørkt tema følger med automatisk.
+- **Tailwind v4-felle:** en fargeutility lages bare når token-navnet i `@theme`
+  matcher klassen. Komponentene bruker camelCase-navn (`bg-cardBackground`), så
+  `@theme` må definere både kebab-case (`--color-card-background`) og
+  camelCase-aliaset (`--color-cardBackground`). Fjerner du aliaset, produserer
+  klassen ingen CSS og elementet blir bakgrunnsløst uten noen feilmelding.
+- Utviklingsgrafen bruker TradingViews `lightweight-charts`; søylediagram og
   donut bruker Recharts. Grønt for positiv avkastning, rødt for negativ.
 - Kjøp/salg og prosenter vises som farget tekst, ikke fargede bokser.
+- `⌘K` / `Ctrl+K` åpner hurtigsøket (`src/components/CommandPalette.tsx`) for å
+  hoppe mellom sider og bytte tema.
