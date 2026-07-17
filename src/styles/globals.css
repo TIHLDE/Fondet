@@ -130,6 +130,26 @@ body {
   }
 }
 
+/* Dashboard cards lift a touch on hover for tactile feedback. */
+.card-hover {
+  transition:
+    transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.25s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px -12px rgba(0, 0, 0, 0.35);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card-hover,
+  .card-hover:hover {
+    transform: none;
+    transition: none;
+  }
+}
+
 /* Freshness dot: an expanding, fading ring behind a solid dot. */
 @keyframes freshness-ping {
   0% {

@@ -32,35 +32,35 @@ export default function Home() {
 
           {/* Performance of holdings vs. indexes, live from Nordnet */}
           <Reveal>
-            <div className="bg-cardBackground border border-cardBorder rounded-lg p-6 shadow-lg">
+            <div className="bg-cardBackground border border-cardBorder rounded-lg p-6 shadow-lg card-hover">
               <FundPerformanceChart />
             </div>
           </Reveal>
 
           {/* Return per fund, live from Nordnet */}
           <Reveal>
-            <div className="bg-cardBackground border border-cardBorder rounded-lg p-6 shadow-lg">
+            <div className="bg-cardBackground border border-cardBorder rounded-lg p-6 shadow-lg card-hover">
               <PerformanceBars />
             </div>
           </Reveal>
 
           {/* Published allocation from the newest report */}
           <Reveal>
-            <div className="bg-cardBackground border border-cardBorder rounded-lg p-6 shadow-lg">
+            <div className="bg-cardBackground border border-cardBorder rounded-lg p-6 shadow-lg card-hover">
               <AllocationDonut />
             </div>
           </Reveal>
 
           {/* Current holdings, live from Nordnet */}
           <Reveal>
-            <div className="bg-cardBackground border border-cardBorder rounded-lg p-6 shadow-lg">
+            <div className="bg-cardBackground border border-cardBorder rounded-lg p-6 shadow-lg card-hover">
               <HoldingsTable />
             </div>
           </Reveal>
 
           {/* Recent trades, live from Nordnet */}
           <Reveal>
-            <div className="bg-cardBackground border border-cardBorder rounded-lg p-6 shadow-lg">
+            <div className="bg-cardBackground border border-cardBorder rounded-lg p-6 shadow-lg card-hover">
               <TradesList />
             </div>
           </Reveal>
