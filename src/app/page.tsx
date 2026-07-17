@@ -2,6 +2,7 @@ import ContactBox from "../components/ContactBox";
 import NordnetProfileCard from "../components/NordnetProfileCard";
 import FundTicker from "../components/FundTicker";
 import DataFreshness from "../components/DataFreshness";
+import BackToTop from "../components/BackToTop";
 import KeyMetrics from "../components/KeyMetrics";
 import FundPerformanceChart from "../components/FundPerformanceChart";
 import PerformanceBars from "../components/PerformanceBars";
@@ -68,6 +69,7 @@ export default function Home() {
           <ContactBox />
         </div>
       </main>
+      <BackToTop />
     </div>
   );
 }
