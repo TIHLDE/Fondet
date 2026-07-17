@@ -1,10 +1,12 @@
-// Portfolio weights ("fordeling") are not exposed by any public Nordnet API.
-// The Forvaltningsgruppen publishes them each quarter in the report PDFs under
-// public/reports, one line per fund: "<Fund> - Porteføljevekt: NN,NN %". This
-// reads the newest report, extracts those weights, and matches them to the
-// funds Nordnet currently reports as held. A fund held but not in the report
-// (bought after it was written) has no published weight yet; a fund in the
-// report but no longer held (sold) simply never gets matched.
+// Per-fund facts that are not exposed by any public Nordnet API: the portfolio
+// weight, the management fee, and the benchmark index. The Forvaltningsgruppen
+// publishes all three each quarter in the report PDFs under public/reports, one
+// section per fund headed "<Fund> - Porteføljevekt: NN,NN %" followed by a
+// "Fakta om fondet" table with "Forvaltningshonorar" and "Referanseindeks".
+// This reads the newest report and matches each fund to the funds Nordnet
+// currently reports as held. A held fund missing from the report (bought after
+// it was written) has no published facts yet; a fund sold since the report
+// simply never gets matched.
 
 import fs from "fs";
 import path from "path";
@@ -12,9 +14,16 @@ import { getDocumentProxy, extractText } from "unpdf";
 
 const REPORTS_DIR = path.join(process.cwd(), "public", "reports");
 
-export interface ReportWeights {
+export interface ReportFund {
+  name: string;
+  weight: number;
+  feePercent: number | null;
+  benchmark: string | null;
+}
+
+export interface ReportData {
   period: string;
-  weights: { name: string; weight: number }[];
+  funds: ReportFund[];
 }
 
 interface ReportFile {
@@ -62,25 +71,48 @@ function reportFiles(): ReportFile[] {
   );
 }
 
-function parseWeights(text: string): { name: string; weight: number }[] {
-  // The fund name sits right before "- Porteføljevekt: NN %", anchored to the
-  // preceding sentence end so the description of the previous fund is not
-  // swept into the name.
-  const re =
-    /[.»]\s*([A-ZÆØÅÖ][^–]{2,50}?)\s*[–-]\s*Portef(?:ø|o)ljevekt:\s*(\d+[.,]\d+)\s*%/gi;
+// Each fund heading anchors to the preceding sentence end so the description of
+// the previous fund is not swept into the name.
+const HEADING =
+  /[.»]\s*([A-ZÆØÅÖ][^–]{2,50}?)\s*[–-]\s*Portef(?:ø|o)ljevekt:\s*(\d+[.,]\d+)\s*%/gi;
+
+function parseFunds(text: string): ReportFund[] {
+  const marks: { name: string; weight: number; start: number; end: number }[] =
+    [];
   const seen = new Set<string>();
-  const out: { name: string; weight: number }[] = [];
   let m: RegExpExecArray | null;
-  while ((m = re.exec(text))) {
+  while ((m = HEADING.exec(text))) {
     const name = m[1].trim().replace(/\s+/g, " ");
     if (seen.has(name)) continue;
     seen.add(name);
-    out.push({ name, weight: parseFloat(m[2].replace(",", ".")) });
+    marks.push({
+      name,
+      weight: parseFloat(m[2].replace(",", ".")),
+      start: m.index,
+      end: HEADING.lastIndex,
+    });
   }
-  return out;
+
+  return marks.map((mark, i) => {
+    // The Fakta table sits between this heading and the next one.
+    const block = text.slice(
+      mark.end,
+      i + 1 < marks.length ? marks[i + 1].start : mark.end + 1200,
+    );
+    const fee = block.match(/Forvaltningshonorar\s+(\d+[.,]\d+)\s*%/i);
+    const bench = block.match(
+      /Referanseindeks\s+(.+?)\s+(?:Forvaltningshonorar|Mandat|Fondstype|Periode)/i,
+    );
+    return {
+      name: mark.name,
+      weight: mark.weight,
+      feePercent: fee ? parseFloat(fee[1].replace(",", ".")) : null,
+      benchmark: bench ? bench[1].trim().replace(/\s+/g, " ") : null,
+    };
+  });
 }
 
-async function extractReport(file: string): Promise<ReportWeights | null> {
+async function extractReport(file: string): Promise<ReportFund[] | null> {
   let buf: Buffer;
   try {
     buf = await fs.promises.readFile(path.join(REPORTS_DIR, file));
@@ -89,29 +121,29 @@ async function extractReport(file: string): Promise<ReportWeights | null> {
   }
   const pdf = await getDocumentProxy(new Uint8Array(buf));
   const { text } = await extractText(pdf, { mergePages: true });
-  return { period: "", weights: parseWeights(text) };
+  return parseFunds(text);
 }
 
 // A report is only trusted if it yields a plausible full allocation: enough
 // funds and a total near 100 %. This filters out half-written drafts.
-function isValid(w: { weight: number }[]): boolean {
-  if (w.length < 4) return false;
-  const sum = w.reduce((s, x) => s + x.weight, 0);
+function isValid(funds: ReportFund[]): boolean {
+  if (funds.length < 4) return false;
+  const sum = funds.reduce((s, f) => s + f.weight, 0);
   return sum >= 80 && sum <= 120;
 }
 
-let cache: { key: string; value: ReportWeights | null } | null = null;
+let cache: { key: string; value: ReportData | null } | null = null;
 
-export async function getReportWeights(): Promise<ReportWeights | null> {
+export async function getReportData(): Promise<ReportData | null> {
   const candidates = reportFiles();
   const key = candidates.map((c) => c.file).join("|");
   if (cache && cache.key === key) return cache.value;
 
-  let value: ReportWeights | null = null;
+  let value: ReportData | null = null;
   for (const candidate of candidates) {
-    const report = await extractReport(candidate.file);
-    if (report && isValid(report.weights)) {
-      value = { period: candidate.label, weights: report.weights };
+    const funds = await extractReport(candidate.file);
+    if (funds && isValid(funds)) {
+      value = { period: candidate.label, funds };
       break;
     }
   }
@@ -126,18 +158,18 @@ function normalize(name: string): string {
     .replace(/[^a-zæøå0-9]/g, "");
 }
 
-// Weight for a held fund, matched by normalized name. Returns null when the
+// The report entry for a held fund, matched by normalized name. Null when the
 // fund is not in the newest report (typically bought after it was published).
-export function weightFor(
+export function reportFundFor(
   fundName: string,
-  report: ReportWeights | null,
-): number | null {
-  if (!report) return null;
+  data: ReportData | null,
+): ReportFund | null {
+  if (!data) return null;
   const target = normalize(fundName);
-  for (const w of report.weights) {
-    const source = normalize(w.name);
+  for (const f of data.funds) {
+    const source = normalize(f.name);
     if (source === target || source.includes(target) || target.includes(source)) {
-      return w.weight;
+      return f;
     }
   }
   return null;

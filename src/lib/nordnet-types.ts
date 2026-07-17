@@ -24,9 +24,14 @@ export interface Holding {
   performanceThisYear: number | null;
   performanceOneMonth: number | null;
   performanceThreeYears: number | null;
-  // Published portfolio weight in %, from the newest quarterly report. Null for
-  // funds held but not yet in a report (bought after it was published).
+  // Morningstar rating (1-5) and SFDR article (6/8/9), from Nordnet.
+  rating: number | null;
+  esgArticle: number | null;
+  // Published in the newest quarterly report. Null for funds held but not yet
+  // in a report (bought after it was published).
   weight: number | null;
+  feePercent: number | null;
+  benchmark: string | null;
 }
 
 export interface Trade {
