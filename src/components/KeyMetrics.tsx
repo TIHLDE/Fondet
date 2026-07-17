@@ -3,6 +3,7 @@
 import { Layers, Star, Leaf, TrendingUp, type LucideIcon } from "lucide-react";
 import { useNordnet } from "./NordnetProfileCard";
 import { useCountUp, useInView } from "@/lib/anim";
+import { Skeleton } from "@/components/ui/skeleton";
 
 function StatCard({
   icon: Icon,
@@ -54,8 +55,15 @@ export default function KeyMetrics() {
         {[0, 1, 2, 3].map((i) => (
           <div
             key={i}
-            className="h-32 rounded-lg bg-cardBackground border border-cardBorder animate-pulse"
-          />
+            className="rounded-lg border border-cardBorder bg-cardBackground p-5 shadow-lg"
+          >
+            <div className="flex items-start justify-between">
+              <Skeleton className="h-9 sm:h-10 w-20" />
+              <Skeleton className="w-5 h-5 rounded-full mt-1" />
+            </div>
+            <Skeleton className="mt-3 h-4 w-28 max-w-full" />
+            <Skeleton className="mt-2 h-3 w-20" />
+          </div>
         ))}
       </div>
     );

@@ -1,6 +1,7 @@
 "use client";
 
 import { useNordnet } from "./NordnetProfileCard";
+import { Skeleton } from "@/components/ui/skeleton";
 import type { Holding } from "@/lib/nordnet-types";
 
 const PERIODS: { key: keyof Holding; label: string }[] = [
@@ -19,7 +20,24 @@ export default function ReturnsMatrix() {
 
   if (isLoading) {
     return (
-      <div className="h-64 rounded-lg bg-cardBackground border border-cardBorder animate-pulse" />
+      <div className="w-full">
+        <Skeleton className="h-8 w-72 max-w-full mb-2" />
+        <Skeleton className="h-4 w-52 max-w-full mb-6" />
+        <Skeleton className="h-2 w-full rounded-full mb-6" />
+        {[0, 1, 2, 3, 4].map((i) => (
+          <div
+            key={i}
+            className="flex items-center justify-between gap-4 py-3 border-b border-cardBorder/50"
+          >
+            <Skeleton className="h-4 w-48 max-w-full" />
+            <div className="flex gap-6 shrink-0">
+              <Skeleton className="h-4 w-12" />
+              <Skeleton className="h-4 w-12" />
+              <Skeleton className="hidden sm:block h-4 w-12" />
+            </div>
+          </div>
+        ))}
+      </div>
     );
   }
 

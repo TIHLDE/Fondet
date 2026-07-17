@@ -87,7 +87,7 @@ export interface Trade {
 }
 
 const FEED_PAGE_SIZE = 50;
-const FEED_MAX_PAGES = 6;
+const FEED_MAX_PAGES = 30;
 
 export async function getTrades(): Promise<Trade[]> {
   const profile = await getProfile();
