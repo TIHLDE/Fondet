@@ -12,9 +12,19 @@ const RESPONSE = {
   message: "Hvis adressen er autorisert, er en innloggingslenke sendt.",
 };
 
+// The link base must come from config, not from the Host header: a forged
+// Host would otherwise end up in the mailed link and leak the login token to
+// whoever controls that domain (reset-link poisoning). The header-derived
+// origin is only a convenience fallback for local dev.
 function baseUrl(request: Request): string {
+  const configured = process.env.APP_BASE_URL;
+  if (configured) return configured.replace(/\/+$/, "");
+  if (process.env.NODE_ENV === "production") {
+    throw new Error("APP_BASE_URL is not set");
+  }
   const url = new URL(request.url);
-  const proto = request.headers.get("x-forwarded-proto") ?? url.protocol.replace(":", "");
+  const proto =
+    request.headers.get("x-forwarded-proto") ?? url.protocol.replace(":", "");
   return `${proto}://${url.host}`;
 }
 
