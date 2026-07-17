@@ -8,6 +8,7 @@ import {
   FaTwitter,
   FaDiscord,
   FaSnapchatGhost,
+  FaGithub,
 } from "react-icons/fa";
 import { SiNotion } from "react-icons/si";
 
@@ -67,6 +68,15 @@ const Footer = () => {
               </Link>
             ))}
           </div>
+          <a
+            href="https://github.com/TIHLDE/Fondet"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 text-sm text-foreground-secondary hover:text-accent transition-colors"
+          >
+            <FaGithub size={18} />
+            Vil du bidra? Se koden på GitHub
+          </a>
         </div>
 
         {/* Middle - Contact information */}

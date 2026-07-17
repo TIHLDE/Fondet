@@ -14,14 +14,6 @@ function fmt(v: number): string {
   return `${v >= 0 ? "+" : ""}${v.toFixed(1).replace(".", ",")} %`;
 }
 
-// Subtle heatmap tint. Text always stays the primary color for contrast; the
-// background only hints at magnitude, capped so it never overpowers the text.
-function tint(v: number): string {
-  const alpha = Math.min(Math.abs(v) / 20, 1) * 0.3;
-  const rgb = v >= 0 ? "16, 163, 74" : "220, 38, 38";
-  return `rgba(${rgb}, ${alpha})`;
-}
-
 export default function ReturnsMatrix() {
   const { data, isLoading } = useNordnet();
 
@@ -44,8 +36,7 @@ export default function ReturnsMatrix() {
         Avkastning per periode
       </h2>
       <p className="text-sm text-foreground-secondary mb-5">
-        Fondenes egne tall fra Nordnet. Farge viser styrke, grønn opp og rød
-        ned.
+        Fondenes egne tall fra Nordnet.
       </p>
 
       {ytd.length > 0 && (
@@ -113,14 +104,15 @@ export default function ReturnsMatrix() {
                   return (
                     <td
                       key={p.label}
-                      className="py-2 px-3 text-right tabular-nums text-foreground-primary"
-                      style={v !== null ? { background: tint(v) } : undefined}
+                      className={`py-2 px-3 text-right tabular-nums ${
+                        v === null
+                          ? "text-foreground-secondary"
+                          : v >= 0
+                            ? "text-success"
+                            : "text-red-600 dark:text-red-400"
+                      }`}
                     >
-                      {v !== null ? (
-                        fmt(v)
-                      ) : (
-                        <span className="text-foreground-secondary">–</span>
-                      )}
+                      {v !== null ? fmt(v) : "–"}
                     </td>
                   );
                 })}
