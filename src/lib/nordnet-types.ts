@@ -24,6 +24,9 @@ export interface Holding {
   performanceThisYear: number | null;
   performanceOneMonth: number | null;
   performanceThreeYears: number | null;
+  // Published portfolio weight in %, from the newest quarterly report. Null for
+  // funds held but not yet in a report (bought after it was published).
+  weight: number | null;
 }
 
 export interface Trade {
@@ -41,6 +44,9 @@ export interface NordnetData {
   profile: NordnetProfile | null;
   holdings: Holding[];
   trades: Trade[];
+  // Report period the holding weights come from, e.g. "Q4 2025". Null if no
+  // report could be read.
+  weightAsOf: string | null;
 }
 
 export interface SeriesPoint {

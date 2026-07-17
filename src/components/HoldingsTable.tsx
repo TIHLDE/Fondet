@@ -14,6 +14,21 @@ function Pct({ value }: { value: number | null }) {
   );
 }
 
+function Weight({ value }: { value: number | null }) {
+  if (value === null) {
+    return (
+      <span className="inline-block rounded bg-cardBorder/50 px-2 py-0.5 text-xs font-medium text-foreground-secondary">
+        Ny
+      </span>
+    );
+  }
+  return (
+    <span className="text-foreground-primary">
+      {value.toFixed(2).replace(".", ",")} %
+    </span>
+  );
+}
+
 export default function HoldingsTable() {
   const { data, isLoading } = useNordnet();
 
@@ -24,6 +39,7 @@ export default function HoldingsTable() {
   }
 
   const holdings = data?.holdings ?? [];
+  const weightAsOf = data?.weightAsOf ?? null;
   if (holdings.length === 0) {
     return (
       <p className="text-foreground-secondary">
@@ -44,6 +60,9 @@ export default function HoldingsTable() {
             <tr className="border-b border-cardBorder">
               <th className="text-left py-3 px-4 text-foreground-primary font-semibold">
                 Fond
+              </th>
+              <th className="text-right py-3 px-4 text-foreground-primary font-semibold">
+                Andel
               </th>
               <th className="text-right py-3 px-4 text-foreground-primary font-semibold">
                 Kurs (NAV)
@@ -79,6 +98,9 @@ export default function HoldingsTable() {
                     <span>{h.name}</span>
                   </div>
                 </td>
+                <td className="py-3 px-4 text-right whitespace-nowrap">
+                  <Weight value={h.weight} />
+                </td>
                 <td className="py-3 px-4 text-right text-foreground-secondary whitespace-nowrap">
                   {h.nav !== null
                     ? h.nav.toLocaleString("nb-NO", {
@@ -101,6 +123,13 @@ export default function HoldingsTable() {
           </tbody>
         </table>
       </div>
+
+      {weightAsOf && (
+        <p className="mt-4 text-sm text-foreground-secondary">
+          Andel er publisert porteføljevekt fra rapporten for {weightAsOf}. Fond
+          merket «Ny» er kjøpt etter rapporten og har ingen publisert vekt ennå.
+        </p>
+      )}
     </div>
   );
 }
