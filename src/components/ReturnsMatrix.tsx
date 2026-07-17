@@ -34,6 +34,10 @@ export default function ReturnsMatrix() {
   const holdings = data?.holdings ?? [];
   if (holdings.length === 0) return null;
 
+  const ytd = holdings.filter((h) => h.performanceThisYear !== null);
+  const up = ytd.filter((h) => h.performanceThisYear! >= 0).length;
+  const upPct = ytd.length ? (100 * up) / ytd.length : 0;
+
   return (
     <div className="w-full">
       <h2 className="text-2xl font-semibold text-foreground-primary mb-1">
@@ -43,6 +47,33 @@ export default function ReturnsMatrix() {
         Fondenes egne tall fra Nordnet. Farge viser styrke, grønn opp og rød
         ned.
       </p>
+
+      {ytd.length > 0 && (
+        <div className="mb-6">
+          <div className="flex items-center justify-between text-sm mb-1.5">
+            <span className="text-foreground-primary">
+              {up} av {ytd.length} fond i pluss hittil i år
+            </span>
+            <span className="text-foreground-secondary tabular-nums">
+              {Math.round(upPct)} %
+            </span>
+          </div>
+          <div
+            className="flex h-2 overflow-hidden rounded-full bg-cardBorder"
+            role="img"
+            aria-label={`${up} av ${ytd.length} fond er i pluss hittil i år`}
+          >
+            <div
+              className="h-full bg-success"
+              style={{ width: `${upPct}%` }}
+            />
+            <div
+              className="h-full bg-red-500 dark:bg-red-400"
+              style={{ width: `${100 - upPct}%` }}
+            />
+          </div>
+        </div>
+      )}
 
       <div className="overflow-x-auto">
         <table className="w-full border-collapse text-sm">
