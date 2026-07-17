@@ -3,6 +3,7 @@
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import { useNordnet } from "./NordnetProfileCard";
 import { useTheme } from "@/components/providers/ThemeProvider";
+import { Skeleton } from "@/components/ui/skeleton";
 import type { FordelingFund } from "@/lib/nordnet-types";
 
 // Mid-tone hues that stay legible against both the light and dark card
@@ -57,7 +58,24 @@ export default function AllocationDonut() {
 
   if (isLoading) {
     return (
-      <div className="h-64 rounded-lg bg-cardBackground border border-cardBorder animate-pulse" />
+      <div className="w-full">
+        <Skeleton className="h-8 w-64 max-w-full mb-2" />
+        <Skeleton className="h-4 w-72 max-w-full mb-6" />
+        <div className="flex flex-col md:flex-row md:items-center gap-6">
+          <div className="h-64 w-full md:w-64 shrink-0 flex items-center justify-center">
+            <Skeleton className="h-56 w-56 rounded-full" />
+          </div>
+          <div className="flex-1 space-y-3">
+            {[0, 1, 2, 3, 4].map((i) => (
+              <div key={i} className="flex items-center gap-3">
+                <Skeleton className="w-3 h-3 rounded-sm shrink-0" />
+                <Skeleton className="h-4 flex-1 max-w-64" />
+                <Skeleton className="h-4 w-12" />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
     );
   }
 

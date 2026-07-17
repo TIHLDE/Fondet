@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useQuery } from "@tanstack/react-query";
 import { ExternalLink } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 import type { NordnetData } from "@/lib/nordnet-types";
 
 const NORDNET_PROFILE_URL =
@@ -21,7 +22,15 @@ export default function NordnetProfileCard() {
 
   if (isLoading) {
     return (
-      <div className="h-24 rounded-lg bg-cardBackground border border-cardBorder animate-pulse" />
+      <div className="bg-cardBackground border border-cardBorder rounded-lg p-6 shadow-lg">
+        <div className="flex items-center gap-4">
+          <Skeleton className="w-16 h-16 rounded-full shrink-0" />
+          <div className="min-w-0 flex-1 space-y-2">
+            <Skeleton className="h-6 w-48 max-w-full" />
+            <Skeleton className="h-4 w-32" />
+          </div>
+        </div>
+      </div>
     );
   }
 

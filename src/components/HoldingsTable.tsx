@@ -11,6 +11,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { useNordnet } from "./NordnetProfileCard";
+import { Skeleton } from "@/components/ui/skeleton";
 import type { Holding } from "@/lib/nordnet-types";
 
 type SortKey = "name" | "weight" | "fee" | "nav" | "year" | "three";
@@ -164,7 +165,34 @@ export default function HoldingsTable() {
 
   if (isLoading) {
     return (
-      <div className="h-64 rounded-lg bg-cardBackground border border-cardBorder animate-pulse" />
+      <div className="w-full">
+        <Skeleton className="h-8 w-64 max-w-full mb-6" />
+        <div className="border-b border-cardBorder pb-3 mb-1 flex justify-between gap-4">
+          <Skeleton className="h-4 w-24" />
+          <div className="hidden sm:flex gap-8">
+            <Skeleton className="h-4 w-16" />
+            <Skeleton className="h-4 w-16" />
+            <Skeleton className="h-4 w-16" />
+          </div>
+        </div>
+        {[0, 1, 2, 3, 4, 5].map((i) => (
+          <div
+            key={i}
+            className="flex items-center gap-3 py-4 border-b border-cardBorder/50"
+          >
+            <Skeleton className="w-6 h-6 rounded shrink-0" />
+            <div className="min-w-0 flex-1 space-y-1.5">
+              <Skeleton className="h-4 w-56 max-w-full" />
+              <Skeleton className="h-3 w-36 max-w-full" />
+            </div>
+            <div className="hidden sm:flex gap-8">
+              <Skeleton className="h-4 w-12" />
+              <Skeleton className="h-4 w-12" />
+              <Skeleton className="h-4 w-12" />
+            </div>
+          </div>
+        ))}
+      </div>
     );
   }
 

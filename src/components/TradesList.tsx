@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { useNordnet } from "./NordnetProfileCard";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const PAGE_SIZE = 10;
 
@@ -20,7 +21,22 @@ export default function TradesList() {
 
   if (isLoading) {
     return (
-      <div className="h-48 rounded-lg bg-cardBackground border border-cardBorder animate-pulse" />
+      <div className="w-full">
+        <Skeleton className="h-8 w-48 max-w-full mb-6" />
+        <ul className="divide-y divide-cardBorder">
+          {[0, 1, 2, 3, 4].map((i) => (
+            <li key={i} className="py-3">
+              <div className="flex items-center gap-3">
+                <Skeleton className="w-6 h-6 rounded shrink-0" />
+                <Skeleton className="h-4 flex-1 max-w-72" />
+                <Skeleton className="h-4 w-10" />
+                <Skeleton className="hidden sm:block h-4 w-20" />
+                <Skeleton className="h-4 w-20" />
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
     );
   }
 
