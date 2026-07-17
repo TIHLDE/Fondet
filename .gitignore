@@ -24,6 +24,21 @@
 .playwright-mcp/
 CLAUDE.md
 .claude/
+.mcp.json
+
+# editors
+.idea
+.vscode
+
+# stray shell/env dotfiles that leak into the workdir from the sandbox mount
+.bashrc
+.zshrc
+.bash_profile
+.zprofile
+.profile
+.gitconfig
+.gitmodules
+.ripgreprc
 
 # debug
 npm-debug.log*
