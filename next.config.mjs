@@ -10,6 +10,9 @@ const nextConfig = {
     outputFileTracingIncludes: {
       "/group": ["./public/members/**/*"],
       "/group/tidligere": ["./public/members/**/*"],
+      // The holdings endpoint reads the quarterly report PDFs at runtime to pull
+      // published portfolio weights, so they must be traced into the function.
+      "/api/nordnet": ["./public/reports/**/*"],
     },
   },
   images: {
