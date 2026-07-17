@@ -8,7 +8,7 @@ Dette dokumentet er skrevet for utviklere som skal videreutvikle eller drifte
 siden. Det forklarer ikke bare hva som er bygget, men hvorfor det er bygget
 slik, og hvilke avveininger som ligger bak.
 
-Stack: Next.js 14 (App Router), TypeScript, Tailwind CSS v4, React Query,
+Stack: Next.js 15 (App Router), TypeScript, Tailwind CSS v4, React Query,
 lightweight-charts (TradingView) og Recharts.
 
 ## Idéen bak arkitekturen
