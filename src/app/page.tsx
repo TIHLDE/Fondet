@@ -1,10 +1,12 @@
 import ContactBox from "../components/ContactBox";
 import NordnetProfileCard from "../components/NordnetProfileCard";
+import KeyMetrics from "../components/KeyMetrics";
 import FundPerformanceChart from "../components/FundPerformanceChart";
 import PerformanceBars from "../components/PerformanceBars";
 import AllocationDonut from "../components/AllocationDonut";
 import HoldingsTable from "../components/HoldingsTable";
 import TradesList from "../components/TradesList";
+import Reveal from "../components/Reveal";
 
 export default function Home() {
   return (
@@ -17,30 +19,43 @@ export default function Home() {
         <div className="w-full max-w-6xl mx-auto space-y-6 px-0 sm:px-0">
           <NordnetProfileCard />
 
+          {/* At-a-glance metrics derived from the live holdings */}
+          <KeyMetrics />
+
           {/* Performance of holdings vs. indexes, live from Nordnet */}
-          <div className="bg-cardBackground border border-cardBorder rounded-lg p-6 shadow-lg">
-            <FundPerformanceChart />
-          </div>
+          <Reveal>
+            <div className="bg-cardBackground border border-cardBorder rounded-lg p-6 shadow-lg">
+              <FundPerformanceChart />
+            </div>
+          </Reveal>
 
           {/* Return per fund, live from Nordnet */}
-          <div className="bg-cardBackground border border-cardBorder rounded-lg p-6 shadow-lg">
-            <PerformanceBars />
-          </div>
+          <Reveal>
+            <div className="bg-cardBackground border border-cardBorder rounded-lg p-6 shadow-lg">
+              <PerformanceBars />
+            </div>
+          </Reveal>
 
           {/* Published allocation from the newest report */}
-          <div className="bg-cardBackground border border-cardBorder rounded-lg p-6 shadow-lg">
-            <AllocationDonut />
-          </div>
+          <Reveal>
+            <div className="bg-cardBackground border border-cardBorder rounded-lg p-6 shadow-lg">
+              <AllocationDonut />
+            </div>
+          </Reveal>
 
           {/* Current holdings, live from Nordnet */}
-          <div className="bg-cardBackground border border-cardBorder rounded-lg p-6 shadow-lg">
-            <HoldingsTable />
-          </div>
+          <Reveal>
+            <div className="bg-cardBackground border border-cardBorder rounded-lg p-6 shadow-lg">
+              <HoldingsTable />
+            </div>
+          </Reveal>
 
           {/* Recent trades, live from Nordnet */}
-          <div className="bg-cardBackground border border-cardBorder rounded-lg p-6 shadow-lg">
-            <TradesList />
-          </div>
+          <Reveal>
+            <div className="bg-cardBackground border border-cardBorder rounded-lg p-6 shadow-lg">
+              <TradesList />
+            </div>
+          </Reveal>
 
           <ContactBox />
         </div>
