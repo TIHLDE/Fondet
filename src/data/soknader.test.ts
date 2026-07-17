@@ -1,5 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { SOKNADER, PAGE_SIZE } from "./soknader";
+import { PAGE_SIZE, type Soknad } from "./soknader";
+import { readJson } from "@/lib/data-store";
+
+const SOKNADER = readJson<Soknad[]>("soknader");
 
 function toDate(dato: string): number {
   const [d, m, y] = dato.split(".").map(Number);

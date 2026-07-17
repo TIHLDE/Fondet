@@ -56,3 +56,6 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+
+# local volume dir (prod uses DATA_DIR mount; never commit runtime data)
+/data
