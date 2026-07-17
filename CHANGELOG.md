@@ -14,6 +14,11 @@
 
 ## Neste versjon
 
+## Versjon 2026.07.18
+- 🎨 **Skjelettlasting**. Plassholderne under lasting speiler nå layouten til innholdet de venter på (profilkort, nøkkeltall, tabeller, donut), så siden ikke hopper når dataene kommer.
+- ⚡ **Handelshistorikk**. Aktivitetsfeeden leses nå 30 sider dypt i stedet for 6, slik at fond kjøpt langt tilbake ikke faller ut av porteføljen.
+- 🦟 **Avhengigheter**. Sikkerhetsoppdatert next, resend, js-yaml og verktøykjeden; 14 av 16 Dependabot-varsler lukket uten major-oppgradering.
+
 ## Versjon 2026.07.17
 - ⚡ **Hurtigsøk**. Søket (⌘K / Ctrl+K) bruker nå fuzzy-matching med rangering og utheving av treff, grupperer sider og temavalg, og har et ugjennomsiktig panel som ikke lenger lekker sideinnholdet bak seg.
 - ✨ **Kommandopalett**. Åpne søk med ⌘K / Ctrl+K for å hoppe mellom sider og bytte tema.
