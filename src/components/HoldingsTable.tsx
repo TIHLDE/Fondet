@@ -1,13 +1,14 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import {
   ExternalLink,
   ArrowUpRight,
   ArrowDownRight,
   ChevronUp,
   ChevronDown,
+  ChevronRight,
 } from "lucide-react";
 import { useNordnet } from "./NordnetProfileCard";
 import type { Holding } from "@/lib/nordnet-types";
@@ -132,10 +133,34 @@ const COLUMNS: { key: SortKey; label: string; defaultDir: SortDir }[] = [
   { key: "three", label: "3 år", defaultDir: "desc" },
 ];
 
+function pct(v: number | null): string {
+  if (v === null) return "-";
+  return `${v >= 0 ? "+" : ""}${v.toFixed(2).replace(".", ",")} %`;
+}
+
+function DetailField({ label, value }: { label: string; value: string }) {
+  return (
+    <div>
+      <dt className="text-xs text-foreground-secondary">{label}</dt>
+      <dd className="text-sm text-foreground-primary">{value}</dd>
+    </div>
+  );
+}
+
 export default function HoldingsTable() {
   const { data, isLoading } = useNordnet();
   const [sortKey, setSortKey] = useState<SortKey>("name");
   const [sortDir, setSortDir] = useState<SortDir>("asc");
+  const [expanded, setExpanded] = useState<Set<number>>(new Set());
+
+  function toggleRow(id: number) {
+    setExpanded((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }
 
   if (isLoading) {
     return (
@@ -211,13 +236,28 @@ export default function HoldingsTable() {
             </tr>
           </thead>
           <tbody>
-            {holdings.map((h) => (
-              <tr
-                key={h.legacyInstrumentId}
-                className="border-b border-cardBorder last:border-b-0"
-              >
+            {holdings.map((h) => {
+              const isOpen = expanded.has(h.legacyInstrumentId);
+              return (
+              <Fragment key={h.legacyInstrumentId}>
+              <tr className="border-b border-cardBorder last:border-b-0">
                 <td className="py-3 px-4 text-foreground-primary">
                   <div className="flex items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={() => toggleRow(h.legacyInstrumentId)}
+                      aria-expanded={isOpen}
+                      aria-controls={`detail-${h.legacyInstrumentId}`}
+                      aria-label={
+                        isOpen ? `Skjul detaljer for ${h.name}` : `Vis detaljer for ${h.name}`
+                      }
+                      className="shrink-0 rounded p-0.5 text-foreground-secondary hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground-primary"
+                    >
+                      <ChevronRight
+                        className={`w-4 h-4 transition-transform ${isOpen ? "rotate-90" : ""}`}
+                        aria-hidden
+                      />
+                    </button>
                     {h.logoUrl && (
                       <Image
                         src={h.logoUrl}
@@ -271,7 +311,26 @@ export default function HoldingsTable() {
                   <Pct value={h.performanceThreeYears} />
                 </td>
               </tr>
-            ))}
+              {isOpen && (
+                <tr id={`detail-${h.legacyInstrumentId}`} className="border-b border-cardBorder last:border-b-0">
+                  <td colSpan={COLUMNS.length} className="px-4 pb-4 pt-0">
+                    <dl className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 rounded-lg bg-secondary/60 p-4">
+                      <DetailField label="Avkastning 1 md" value={pct(h.performanceOneMonth)} />
+                      <DetailField label="Avkastning 5 år" value={pct(h.performanceFiveYears)} />
+                      <DetailField label="Referanseindeks" value={h.benchmark ?? "-"} />
+                      <DetailField label="Kategori" value={h.category ?? "-"} />
+                      <DetailField label="ISIN" value={h.isin ?? "-"} />
+                      <DetailField
+                        label="Sist handlet"
+                        value={new Date(h.lastTradeDate).toLocaleDateString("nb-NO")}
+                      />
+                    </dl>
+                  </td>
+                </tr>
+              )}
+              </Fragment>
+              );
+            })}
           </tbody>
         </table>
       </div>
