@@ -11,8 +11,9 @@ ExecStart=/usr/bin/docker run --rm \
     --pull=always \
     -p 127.0.0.1:3005:3000 \
     --env-file %h/srv/Fondet/.env \
+    -e DATA_DIR=/app/data \
     -e MEMBERS_IMAGE_DIR=/app/data/members \
-    -v %h/srv/Fondet/data/members:/app/data/members \
+    -v %h/srv/Fondet/data:/app/data \
     ghcr.io/tihlde/fondet:dev
 ExecStop=/usr/bin/docker stop fondet
 Restart=always

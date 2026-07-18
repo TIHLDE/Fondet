@@ -17,19 +17,20 @@ Prosjektet er en drift-minimal side som skal overleve at styret og
 forvaltningsgruppen skiftes ut hvert år. Det har formet tre valg som resten av
 koden henger på.
 
-### 1. Ingen egen database og ingen innlogging
+### 1. Ingen egen database
 
-Alt innhold er enten offentlig data fra Nordnet eller filer i repoet
-(medlemmer, rapporter, søknader). Det er ikke fordi en database hadde vært
-vanskelig, men fordi en database er noe som må driftes, sikkerhetsoppdateres,
-migreres og backes opp av folk som byttes ut årlig. En fil i git har full
-historikk gratis, kan reviewes i en pull request, og kan ikke gå ned uten at
-hele appen gjør det.
+Alt innhold er enten offentlig data fra Nordnet eller filer: JSON og bilder som
+leses fra et montert volum først, med kopiene i repoet som reserve. Det er ikke
+fordi en database hadde vært vanskelig, men fordi en database er noe som må
+driftes, sikkerhetsoppdateres, migreres og backes opp av folk som byttes ut
+årlig. Filer har full historikk i git, kan reviewes i en pull request, og kan
+ikke gå ned uten at hele appen gjør det.
 
-Avveiningen: skriveoperasjoner (nye medlemmer, nye rapporter) blir git-commits
-i stedet for et admin-panel. Det er tregere for redaktøren, men det fjerner et
-helt lag med autentisering, roller og angrepsflate. For en side som endres noen
-ganger i semesteret er det en god byttehandel.
+Skriveoperasjoner går via adminområdet på `/admin`: forvaltere logger inn med
+en engangslenke på e-post (kun @tihlde.org-adresser som står i adminlisten) og
+redigerer medlemmer, bilder, rapporter og søknader direkte. Endringene skrives
+til volumet, aldri til repoet. De committede filene er utgangspunktet og
+reserven, ikke sannheten i produksjon.
 
 ### 2. Serveren er eneste vei til Nordnet
 
@@ -155,16 +156,30 @@ fondet.tritacle.no. Serveren kjører `systemd/fondet.service` som en
 brukertjeneste. `RESEND_API_KEY` ligger i `.env` på serveren, aldri i imaget
 eller i repoet.
 
-Prod kan settes opp likt med `:latest`-taggen, eller på Vercel (importer repoet,
-sett `RESEND_API_KEY`, ferdig) om TIHLDE heller vil slippe serverdrift.
+Prod kan settes opp likt med `:latest`-taggen. Vil TIHLDE slippe serverdrift,
+er Railway nærmeste alternativ: deploy imaget fra ghcr.io, monter et volum på
+`/app/data` og sett miljøvariablene fra `.env.example`. Vercel og Netlify
+fungerer ikke, de mangler vedvarende filsystem og adminområdet skriver til
+disk.
+
+Volumet (`~/srv/Fondet/data` på serveren, montert som `/app/data`) ser slik ut:
+
+- `members/` - portretter og gruppebilder lastet opp via adminområdet
+- `reports/` - opplastede PDF-er, servert via `/api/reports/<fil>`
+- `admins.json` - adminlisten, en JSON-liste med e-postadresser
+- `members.json`, `content.json`, `soknader.json` - overstyrer kopiene i
+  `src/data/` når de finnes
 
 ## Vedlikehold av medlemmer
 
-Alt styres med filer, ingen admin-innlogging (se prinsipp 1 over):
+Den vanlige veien er adminområdet: logg inn på `/admin`, rediger medlemmer og
+last opp portretter og gruppebilder der. Endringene lagres på volumet og vises
+umiddelbart. Git-veien under fungerer fortsatt og er reserven når adminområdet
+ikke er tilgjengelig:
 
 ```mermaid
 flowchart TD
-    A[Nytt medlem] --> B[Legg til oppføring i src/data/members.ts]
+    A[Nytt medlem] --> B[Legg til oppføring i src/data/members.json]
     B --> C[Legg bilde i public/members/ navngitt som id, f.eks. sigurd-evensen.jpg]
     C --> D[Commit + push, CI bygger og deployer]
     E[Medlem slutter] --> F[Flytt oppføringen til previousMembers og sett endYear]
@@ -185,17 +200,14 @@ flowchart TD
 
 ## Miljøvariabler
 
-Begge er valgfrie. Opprett `.env.local` i rotmappen:
+Alle er beskrevet i `.env.example`. Lokalt: kopier til `.env.local` og fyll ut
+det du trenger. Alt er valgfritt i utvikling; uten `RESEND_API_KEY` logges
+innloggingslenken til serverkonsollen i stedet for å sendes.
 
-```
-# Resend-nøkkel for søknadsskjemaet (gratis: 100 e-poster/dag).
-# Uten nøkkel svarer skjemaet med en tydelig feilmelding.
-RESEND_API_KEY=
-
-# Mappe med medlems- og gruppebilder, servert via /api/members/<fil>.
-# Settes i produksjon til et montert volum. Uten verdi brukes public/members.
-MEMBERS_IMAGE_DIR=
-```
+I produksjon kreves `AUTH_SECRET` (signerer innloggingstokens, generer med
+`openssl rand -hex 32`), `APP_BASE_URL` (basis for innloggingslenkene i
+e-post) og en adminliste: `ADMIN_EMAILS` eller `admins.json` i `DATA_DIR`
+(filen vinner over variabelen).
 
 Merk: Resend sender fra `onboarding@resend.dev` til domenet er verifisert.
 Verifiser tihlde.org i Resend-dashbordet for å levere til fondet@tihlde.org.

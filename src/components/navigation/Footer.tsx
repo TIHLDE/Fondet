@@ -75,7 +75,7 @@ const Footer = () => {
             className="inline-flex items-center gap-2 text-sm text-foreground-secondary hover:text-accent transition-colors"
           >
             <FaGithub size={18} />
-            Vil du bidra? Se koden på GitHub
+            Vil du bidra? Send inn PR da vel!
           </a>
         </div>
 
