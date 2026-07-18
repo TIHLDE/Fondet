@@ -13,6 +13,7 @@
 ---
 
 ## Neste versjon
+- 🦟 **Porteføljen viser alle fond**. Beholdningen tar nå utgangspunkt i fondlisten fra nyeste rapport og justeres med handelsloggen, i stedet for å gjette ut fra siste handel per fond. Delsalg tolkes ikke lenger som at fondet er solgt, så alle ni fond vises. Fond som faktisk er solgt helt ut, fjernes via en egen liste som forvalterne kan redigere uten deploy.
 
 ## Versjon 2026.07.18
 - ✨ **Adminpanel**. Forvaltere kan nå logge inn med engangslenke på e-post (kun @tihlde.org-adresser på adminlisten) og redigere medlemmer, portretter, gruppebilder, rapporter og søknadsoversikten direkte på siden, uten å gå via GitHub.
