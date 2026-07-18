@@ -32,14 +32,11 @@ const TopBar: React.FC = () => {
     setMenuOpen(false);
   }, [pathname]);
 
+  // Toggle between the two visible themes; "system" is still reachable via
+  // the command palette. Cycling light -> dark -> system here made the button
+  // appear dead when the system preference matched the state it landed on.
   const toggleTheme = () => {
-    if (theme === "light") {
-      setTheme("dark");
-    } else if (theme === "dark") {
-      setTheme("system");
-    } else {
-      setTheme("light");
-    }
+    setTheme(resolvedTheme === "dark" ? "light" : "dark");
   };
 
   // Use resolvedTheme directly - this will always be 'light' or 'dark'
