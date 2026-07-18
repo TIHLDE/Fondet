@@ -1,6 +1,8 @@
 // Server-side integration against Nordnet's public (unauthenticated) APIs.
-// Holdings weights are not public, so composition is derived from the public
-// trade feed: a fund counts as held when its most recent trade is a buy.
+// Holdings weights are not public, so composition is derived from the newest
+// report's fund list plus the public trade feed (see deriveHeldTrades).
+
+import { namesMatch } from "./fordeling";
 
 const PROFILE_SLUG = "tihlde-forvaltningsgruppen";
 const SHAREVILLE = "https://api.prod.nntech.io/shareville";
@@ -156,15 +158,37 @@ export interface Holding {
   prospectusUrl: string | null;
 }
 
-export async function getHoldings(trades: Trade[]): Promise<Holding[]> {
+// Membership: a fund is held when its latest trade is a buy, or when the
+// newest report lists it (a sell after the report is usually a partial sell,
+// not an exit; the feed has no volumes so the two are indistinguishable).
+// Funds the Forvaltningsgruppen has confirmed fully sold are removed via the
+// soldOut list in content.json. A report fund whose trades have scrolled off
+// the feed window cannot be enriched and is skipped; the next report upload
+// refreshes membership anyway.
+export function deriveHeldTrades(
+  trades: Trade[],
+  reportFundNames: string[],
+  soldOut: string[],
+): Trade[] {
   // trades arrive newest first; the first trade seen per instrument is the latest
   const latest = new Map<number, Trade>();
   for (const t of trades) {
     if (!latest.has(t.legacyInstrumentId)) latest.set(t.legacyInstrumentId, t);
   }
-  const held = Array.from(latest.values()).filter(
-    (t) => t.tradeType === "BUY",
+  return Array.from(latest.values()).filter(
+    (t) =>
+      (t.tradeType === "BUY" ||
+        reportFundNames.some((r) => namesMatch(r, t.name))) &&
+      !soldOut.some((s) => namesMatch(s, t.name)),
   );
+}
+
+export async function getHoldings(
+  trades: Trade[],
+  reportFundNames: string[],
+  soldOut: string[],
+): Promise<Holding[]> {
+  const held = deriveHeldTrades(trades, reportFundNames, soldOut);
 
   const enriched = await Promise.all(
     held.map(async (t) => {

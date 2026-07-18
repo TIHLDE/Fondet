@@ -151,11 +151,23 @@ export async function getReportData(): Promise<ReportData | null> {
   return value;
 }
 
+// A trailing single letter is a share class (A/B/N/P...). Nordnet and the
+// reports sometimes disagree on it for the same fund, so it is stripped
+// before comparison, along with the NOK currency suffix.
 function normalize(name: string): string {
   return name
     .toLowerCase()
     .replace(/\bnok\b/g, "")
+    .replace(/\s+[a-zæøåö]\s*$/, "")
     .replace(/[^a-zæøå0-9]/g, "");
+}
+
+// Same fund under two spellings of its name (share class, currency suffix,
+// one name embedding the other).
+export function namesMatch(left: string, right: string): boolean {
+  const l = normalize(left);
+  const r = normalize(right);
+  return l === r || l.includes(r) || r.includes(l);
 }
 
 // The report entry for a held fund, matched by normalized name. Null when the
@@ -165,12 +177,8 @@ export function reportFundFor(
   data: ReportData | null,
 ): ReportFund | null {
   if (!data) return null;
-  const target = normalize(fundName);
   for (const f of data.funds) {
-    const source = normalize(f.name);
-    if (source === target || source.includes(target) || target.includes(source)) {
-      return f;
-    }
+    if (namesMatch(f.name, fundName)) return f;
   }
   return null;
 }
