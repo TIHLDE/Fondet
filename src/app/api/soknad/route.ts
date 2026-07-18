@@ -90,7 +90,7 @@ ${tillegg || "Ingen"}
 
   try {
     await resend.emails.send({
-      from: "TIHLDE-Fondet Søknad <onboarding@resend.dev>",
+      from: "TIHLDE-Fondet Søknad <fondet@tihlde.org>",
       to: "fondet@tihlde.org",
       replyTo: epost,
       subject: `Søknad om støtte fra ${sokerNavn}: ${Number(onsketSum).toLocaleString("nb-NO")} kr`,
