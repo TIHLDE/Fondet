@@ -350,7 +350,10 @@ export default function HoldingsTable() {
               {isOpen && (
                 <tr id={`detail-${h.legacyInstrumentId}`} className="border-b border-cardBorder last:border-b-0">
                   <td colSpan={COLUMNS.length} className="px-4 pb-4 pt-0">
-                    <dl className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 rounded-lg bg-secondary/60 p-4">
+                    {/* w-0 + min-w-full keeps the colspan cell out of the
+                        auto table layout so opening a row never resizes
+                        the columns above it. */}
+                    <dl className="w-0 min-w-full grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 rounded-lg bg-secondary/60 p-4">
                       <DetailField label="Avkastning 1 md" value={pct(h.performanceOneMonth)} />
                       <DetailField label="Avkastning 5 år" value={pct(h.performanceFiveYears)} />
                       <DetailField label="Referanseindeks" value={h.benchmark ?? "-"} />
