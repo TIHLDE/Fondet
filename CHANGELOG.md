@@ -13,11 +13,11 @@
 ---
 
 ## Neste versjon
+
+## Versjon 2026.07.18
 - ✨ **Adminpanel**. Forvaltere kan nå logge inn med engangslenke på e-post (kun @tihlde.org-adresser på adminlisten) og redigere medlemmer, portretter, gruppebilder, rapporter og søknadsoversikten direkte på siden, uten å gå via GitHub.
 - ✨ **Filopplasting**. Portretter og gruppebilder komprimeres automatisk ved opplasting, og rapport-PDF-er lastes opp og serveres fra serverens datalager.
 - ⚡ **Innhold uten deploy**. Endringer gjort i adminpanelet lagres på serverens datavolum og vises umiddelbart, uten ny bygging eller utrulling av siden.
-
-## Versjon 2026.07.18
 - 🦟 **Rammeverk**. Oppgradert til Next.js 15 og React 19. Lukker alle gjenværende sikkerhetsvarsler, inkludert flere alvorlige DoS-sårbarheter som aldri får patch i Next.js 14.
 - ⚡ **Søknadsskjema**. Skjemaet varsler nå når ønsket sum overstiger 100 000 kr, siden slike beløp må vedtas av generalforsamlingen. Søknaden kan fortsatt sendes inn.
 - ⚡ **Tomme tilstander**. Avkastning per fond og siste handler viser nå en kort melding i stedet for å forsvinne når data mangler, og beholdningstabellen har fått en prøv igjen-knapp når Nordnet-data ikke kan hentes.
