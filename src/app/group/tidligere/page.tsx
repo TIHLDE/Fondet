@@ -43,7 +43,7 @@ export default function PreviousMembers() {
 
         <div className="w-full max-w-6xl mx-auto px-4 sm:px-0 mb-6">
           <div className="bg-cardBackground border border-cardBorder rounded-lg p-6 sm:p-8 shadow-lg">
-            <PaginatedMemberGrid members={previousMembers} />
+            <PaginatedMemberGrid members={previousMembers} filterable />
           </div>
         </div>
 
