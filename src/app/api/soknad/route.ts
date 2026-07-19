@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { Resend } from "resend";
+import { mailConfigured, sendMail } from "@/lib/send-email";
 import { validateSoknad } from "@/lib/soknad-validation";
 
 export async function POST(request: NextRequest) {
@@ -23,10 +23,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: validationError }, { status: 400 });
   }
 
-  if (!process.env.RESEND_API_KEY) {
+  if (!mailConfigured()) {
     return NextResponse.json({ error: "E-postutsending er ikke konfigurert" }, { status: 503 });
   }
-  const resend = new Resend(process.env.RESEND_API_KEY);
 
   const budsjettLines = (budsjett as { utgift: string; sum: string }[])
     .filter((b) => b.utgift && b.sum)
@@ -89,8 +88,7 @@ ${tillegg || "Ingen"}
 `;
 
   try {
-    await resend.emails.send({
-      from: "TIHLDE-Fondet Søknad <fondet@tihlde.org>",
+    await sendMail({
       to: "fondet@tihlde.org",
       replyTo: epost,
       subject: `Søknad om støtte fra ${sokerNavn}: ${Number(onsketSum).toLocaleString("nb-NO")} kr`,
