@@ -49,12 +49,54 @@ function normalize(name: string): string {
     .replace(/[^a-zæøå0-9]/g, "");
 }
 
-// Green for a fund up this year, red for down, slate when we have no live
-// return for it. Deep shades: white labels sit at 6.5-7.6:1 on these,
-// well past WCAG AA; the brighter 500/600 shades washed the text out.
+// Graded Finviz-style scale: stronger move this year = brighter shade, so the
+// map shows magnitude, not only direction. Slate when we have no live return.
+// Every fill keeps white labels at 6.2:1 or better; brighter shades than
+// these washed the text out even when they technically passed 4.5:1.
+const SCALE_DOWN = ["#b91c1c", "#991b1b", "#6b2020"]; // <= -8, -8..-3, -3..0
+const SCALE_UP = ["#1d4a2f", "#166534", "#12703a"]; // 0..3, 3..8, >= 8
+const NO_DATA_COLOR = "#475569";
+
 function perfColor(perf: number | null): string {
-  if (perf === null) return "#475569";
-  return perf >= 0 ? "#166534" : "#b91c1c";
+  if (perf === null) return NO_DATA_COLOR;
+  if (perf >= 8) return SCALE_UP[2];
+  if (perf >= 3) return SCALE_UP[1];
+  if (perf >= 0) return SCALE_UP[0];
+  if (perf > -3) return SCALE_DOWN[2];
+  if (perf > -8) return SCALE_DOWN[1];
+  return SCALE_DOWN[0];
+}
+
+// Break a fund name into at most two lines that fit the tile, splitting on
+// spaces. Ellipsis only when a line still cannot fit, so "Fondsfinans
+// Utbytte" wraps instead of becoming "Fondsfinans Utb…".
+function wrapName(name: string, maxChars: number): string[] {
+  if (name.length <= maxChars) return [name];
+  const words = name.split(" ");
+  const lines: string[] = [];
+  let cur = "";
+  let i = 0;
+  while (i < words.length && lines.length < 2) {
+    const next = cur ? `${cur} ${words[i]}` : words[i];
+    if (next.length <= maxChars) {
+      cur = next;
+      i++;
+    } else if (cur) {
+      lines.push(cur);
+      cur = "";
+    } else {
+      cur = words[i];
+      i++;
+      break;
+    }
+  }
+  if (cur && lines.length < 2) lines.push(cur);
+  if (i < words.length || cur.length > maxChars) {
+    const last = lines[lines.length - 1];
+    lines[lines.length - 1] =
+      last.length >= maxChars ? `${last.slice(0, maxChars - 1)}…` : `${last}…`;
+  }
+  return lines;
 }
 
 type TileDatum = FordelingFund & { perf: number | null };
@@ -81,11 +123,9 @@ function DonutTooltip({
     >
       <div className="font-medium">{fund.name}</div>
       <div>{fmt(fund.weight)}</div>
-      {fund.perf !== null && (
-        <div className="text-xs mt-0.5" style={{ opacity: 0.8 }}>
-          {fmtPerf(fund.perf)} i år
-        </div>
-      )}
+      <div className="text-xs mt-0.5" style={{ opacity: 0.8 }}>
+        {fund.perf !== null ? `${fmtPerf(fund.perf)} i år` : "Ingen live kursdata"}
+      </div>
     </div>
   );
 }
@@ -112,13 +152,24 @@ function TreemapTile(props: {
     perf = null,
     cardBg = "#ffffff",
   } = props;
-  // Truncate to what actually fits the tile (~8px per char at 14px bold)
-  // so labels never spill past the tile or the chart edge.
+  // Fit to what the tile can actually hold (~8px per char at 14px bold): the
+  // name wraps onto a second line before it truncates, and every line stays
+  // inside the tile so nothing spills past the chart edge.
   const maxChars = Math.floor((width - 16) / 8);
   const showLabel = !!name && maxChars >= 4 && height > 40;
-  const showSecondLine = height > 56;
-  const label =
-    name && name.length > maxChars ? `${name.slice(0, maxChars - 1)}…` : name;
+  const nameLines = showLabel ? wrapName(name, maxChars) : [];
+  const twoNameLines = nameLines.length > 1 && height > 62;
+  const shownNameLines = twoNameLines ? nameLines : nameLines.slice(0, 1);
+  if (!twoNameLines && nameLines.length > 1 && shownNameLines[0]) {
+    const first = shownNameLines[0];
+    shownNameLines[0] = first.endsWith("…")
+      ? first
+      : first.length >= maxChars
+        ? `${first.slice(0, maxChars - 1)}…`
+        : `${first}…`;
+  }
+  const detailY = twoNameLines ? 57 : 40;
+  const showDetail = height > detailY + 16;
   const detail =
     weight !== undefined
       ? `${fmt(weight)}${perf !== null ? ` · ${fmtPerf(perf)}` : ""}`
@@ -137,22 +188,25 @@ function TreemapTile(props: {
       />
       {showLabel && (
         <>
-          <text
-            x={x + 8}
-            y={y + 21}
-            fill="#ffffff"
-            fontSize={14}
-            fontWeight={700}
-          >
-            {label}
-          </text>
-          {showSecondLine && detail.length <= maxDetailChars && (
+          {shownNameLines.map((line, i) => (
+            <text
+              key={i}
+              x={x + 8}
+              y={y + 21 + i * 17}
+              fill="#ffffff"
+              fontSize={14}
+              fontWeight={700}
+            >
+              {line}
+            </text>
+          ))}
+          {showDetail && detail.length <= maxDetailChars && (
             <text
               x={x + 8}
-              y={y + 40}
+              y={y + detailY}
               fill="#ffffff"
               fontSize={12.5}
-              fontWeight={500}
+              fontWeight={600}
             >
               {detail}
             </text>
@@ -233,7 +287,7 @@ export default function AllocationDonut() {
 
   return (
     <div className="w-full">
-      <div className="flex items-start justify-between gap-3 mb-1">
+      <div className="flex flex-wrap items-start justify-between gap-3 mb-1">
         <div>
           <h2 className="text-2xl font-semibold text-foreground-primary">
             Porteføljefordeling
@@ -323,27 +377,25 @@ export default function AllocationDonut() {
               </Treemap>
             </ResponsiveContainer>
           </div>
-          <div className="mt-4 flex flex-wrap items-center gap-4 text-xs text-foreground-secondary">
-            <span className="inline-flex items-center gap-1.5">
-              <span
-                className="w-3 h-3 rounded-sm"
-                style={{ background: "#166534" }}
-                aria-hidden
-              />
-              Opp i år
+          <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-foreground-secondary">
+            <span className="inline-flex items-center gap-2">
+              <span className="inline-flex" aria-hidden>
+                {[...SCALE_DOWN, ...SCALE_UP].map((c) => (
+                  <span
+                    key={c}
+                    className="h-3 w-4 first:rounded-l-sm last:rounded-r-sm"
+                    style={{ background: c }}
+                  />
+                ))}
+              </span>
+              <span>
+                Avkastning i år, fra under -8 % (venstre) til over +8 % (høyre)
+              </span>
             </span>
             <span className="inline-flex items-center gap-1.5">
               <span
                 className="w-3 h-3 rounded-sm"
-                style={{ background: "#b91c1c" }}
-                aria-hidden
-              />
-              Ned i år
-            </span>
-            <span className="inline-flex items-center gap-1.5">
-              <span
-                className="w-3 h-3 rounded-sm"
-                style={{ background: "#475569" }}
+                style={{ background: NO_DATA_COLOR }}
                 aria-hidden
               />
               Ingen live kurs
