@@ -50,11 +50,11 @@ function normalize(name: string): string {
 }
 
 // Green for a fund up this year, red for down, slate when we have no live
-// return for it. All three keep white label text above 4.5:1 (WCAG AA);
-// green-600 did not, hence green-700.
+// return for it. Deep shades: white labels sit at 6.5-7.6:1 on these,
+// well past WCAG AA; the brighter 500/600 shades washed the text out.
 function perfColor(perf: number | null): string {
-  if (perf === null) return "#64748b";
-  return perf >= 0 ? "#15803d" : "#dc2626";
+  if (perf === null) return "#475569";
+  return perf >= 0 ? "#166534" : "#b91c1c";
 }
 
 type TileDatum = FordelingFund & { perf: number | null };
@@ -112,9 +112,9 @@ function TreemapTile(props: {
     perf = null,
     cardBg = "#ffffff",
   } = props;
-  // Truncate to what actually fits the tile (~7.5px per char at 13px
-  // semibold) so labels never spill past the tile or the chart edge.
-  const maxChars = Math.floor((width - 16) / 7.5);
+  // Truncate to what actually fits the tile (~8px per char at 14px bold)
+  // so labels never spill past the tile or the chart edge.
+  const maxChars = Math.floor((width - 16) / 8);
   const showLabel = !!name && maxChars >= 4 && height > 40;
   const showSecondLine = height > 56;
   const label =
@@ -123,7 +123,7 @@ function TreemapTile(props: {
     weight !== undefined
       ? `${fmt(weight)}${perf !== null ? ` · ${fmtPerf(perf)}` : ""}`
       : "";
-  const maxDetailChars = Math.floor((width - 16) / 6.8);
+  const maxDetailChars = Math.floor((width - 16) / 7);
   return (
     <g>
       <rect
@@ -139,20 +139,20 @@ function TreemapTile(props: {
         <>
           <text
             x={x + 8}
-            y={y + 20}
+            y={y + 21}
             fill="#ffffff"
-            fontSize={13}
-            fontWeight={600}
+            fontSize={14}
+            fontWeight={700}
           >
             {label}
           </text>
           {showSecondLine && detail.length <= maxDetailChars && (
             <text
               x={x + 8}
-              y={y + 38}
+              y={y + 40}
               fill="#ffffff"
-              fontSize={12}
-              opacity={0.9}
+              fontSize={12.5}
+              fontWeight={500}
             >
               {detail}
             </text>
@@ -327,7 +327,7 @@ export default function AllocationDonut() {
             <span className="inline-flex items-center gap-1.5">
               <span
                 className="w-3 h-3 rounded-sm"
-                style={{ background: "#15803d" }}
+                style={{ background: "#166534" }}
                 aria-hidden
               />
               Opp i år
@@ -335,7 +335,7 @@ export default function AllocationDonut() {
             <span className="inline-flex items-center gap-1.5">
               <span
                 className="w-3 h-3 rounded-sm"
-                style={{ background: "#dc2626" }}
+                style={{ background: "#b91c1c" }}
                 aria-hidden
               />
               Ned i år
@@ -343,7 +343,7 @@ export default function AllocationDonut() {
             <span className="inline-flex items-center gap-1.5">
               <span
                 className="w-3 h-3 rounded-sm"
-                style={{ background: "#64748b" }}
+                style={{ background: "#475569" }}
                 aria-hidden
               />
               Ingen live kurs
