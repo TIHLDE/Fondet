@@ -227,7 +227,7 @@ function Legend({ funds }: { funds: TileDatum[] }) {
             style={{ background: COLORS[i % COLORS.length] }}
             aria-hidden
           />
-          <span className="flex-1 min-w-0 truncate text-foreground-primary">
+          <span className="flex-1 min-w-0 break-words text-foreground-primary">
             {f.name}
           </span>
           <span className="text-foreground-secondary tabular-nums">
