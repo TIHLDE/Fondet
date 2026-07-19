@@ -50,10 +50,11 @@ function normalize(name: string): string {
 }
 
 // Green for a fund up this year, red for down, slate when we have no live
-// return for it.
+// return for it. All three keep white label text above 4.5:1 (WCAG AA);
+// green-600 did not, hence green-700.
 function perfColor(perf: number | null): string {
   if (perf === null) return "#64748b";
-  return perf >= 0 ? "#16a34a" : "#dc2626";
+  return perf >= 0 ? "#15803d" : "#dc2626";
 }
 
 type TileDatum = FordelingFund & { perf: number | null };
@@ -111,7 +112,18 @@ function TreemapTile(props: {
     perf = null,
     cardBg = "#ffffff",
   } = props;
-  const showLabel = width > 66 && height > 40;
+  // Truncate to what actually fits the tile (~7.5px per char at 13px
+  // semibold) so labels never spill past the tile or the chart edge.
+  const maxChars = Math.floor((width - 16) / 7.5);
+  const showLabel = !!name && maxChars >= 4 && height > 40;
+  const showSecondLine = height > 56;
+  const label =
+    name && name.length > maxChars ? `${name.slice(0, maxChars - 1)}…` : name;
+  const detail =
+    weight !== undefined
+      ? `${fmt(weight)}${perf !== null ? ` · ${fmtPerf(perf)}` : ""}`
+      : "";
+  const maxDetailChars = Math.floor((width - 16) / 6.8);
   return (
     <g>
       <rect
@@ -123,7 +135,7 @@ function TreemapTile(props: {
         stroke={cardBg}
         strokeWidth={2}
       />
-      {showLabel && name && (
+      {showLabel && (
         <>
           <text
             x={x + 8}
@@ -132,12 +144,19 @@ function TreemapTile(props: {
             fontSize={13}
             fontWeight={600}
           >
-            {name.length > 22 ? `${name.slice(0, 21)}…` : name}
+            {label}
           </text>
-          <text x={x + 8} y={y + 38} fill="#ffffff" fontSize={12} opacity={0.9}>
-            {weight !== undefined ? fmt(weight) : ""}
-            {perf !== null ? `  ·  ${fmtPerf(perf)}` : ""}
-          </text>
+          {showSecondLine && detail.length <= maxDetailChars && (
+            <text
+              x={x + 8}
+              y={y + 38}
+              fill="#ffffff"
+              fontSize={12}
+              opacity={0.9}
+            >
+              {detail}
+            </text>
+          )}
         </>
       )}
     </g>
@@ -295,6 +314,7 @@ export default function AllocationDonut() {
                 // recharts wants an index-signature row shape; our typed rows carry the same fields.
                 data={funds as unknown as Record<string, unknown>[]}
                 dataKey="weight"
+                aspectRatio={4 / 3}
                 stroke={cardBg}
                 isAnimationActive={false}
                 content={<TreemapTile cardBg={cardBg} />}
@@ -307,7 +327,7 @@ export default function AllocationDonut() {
             <span className="inline-flex items-center gap-1.5">
               <span
                 className="w-3 h-3 rounded-sm"
-                style={{ background: "#16a34a" }}
+                style={{ background: "#15803d" }}
                 aria-hidden
               />
               Opp i år
@@ -329,6 +349,16 @@ export default function AllocationDonut() {
               Ingen live kurs
             </span>
           </div>
+          {/* Small tiles drop their visual label, so give screen readers the
+              full list the chart itself cannot. */}
+          <ul className="sr-only">
+            {funds.map((f) => (
+              <li key={f.name}>
+                {f.name}: {fmt(f.weight)}
+                {f.perf !== null ? `, ${fmtPerf(f.perf)} i år` : ""}
+              </li>
+            ))}
+          </ul>
         </div>
       )}
     </div>
