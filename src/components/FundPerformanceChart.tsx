@@ -352,6 +352,7 @@ export default function FundPerformanceChart() {
   const [fullscreen, setFullscreen] = useState(false);
   const [activeTool, setActiveTool] = useState<ToolKey | null>(null);
   const [drawings, setDrawings] = useState<Drawing[]>([]);
+  const [pendingPlaced, setPendingPlaced] = useState(false);
 
   const wrapperRef = useRef<HTMLDivElement>(null);
   const menusRef = useRef<HTMLDivElement>(null);
@@ -369,9 +370,18 @@ export default function FundPerformanceChart() {
   const idRef = useRef(0);
   const reenterFullscreenRef = useRef(false);
 
+  // Any tool change (activate, switch, cancel) discards the in-progress
+  // drawing: a stale first click must not complete under the new tool, and
+  // the dotted preview series would otherwise stay on the chart forever,
+  // immune to the clear-drawings button.
   useEffect(() => {
     activeToolRef.current = activeTool;
-    if (!activeTool) pendingRef.current = null;
+    pendingRef.current = null;
+    setPendingPlaced(false);
+    if (previewRef.current && chartRef.current) {
+      chartRef.current.removeSeries(previewRef.current);
+      previewRef.current = null;
+    }
   }, [activeTool]);
 
   const fundsParam = useMemo(() => {
@@ -528,10 +538,12 @@ export default function FundPerformanceChart() {
       }
       if (!pendingRef.current) {
         pendingRef.current = p;
+        setPendingPlaced(true);
         return;
       }
       const p1 = pendingRef.current;
       pendingRef.current = null;
+      setPendingPlaced(false);
       removePreview();
       setDrawings((prev) => [
         ...prev,
@@ -1051,6 +1063,7 @@ export default function FundPerformanceChart() {
                     role="menuitem"
                     onClick={() => {
                       setDrawings([]);
+                      setActiveTool(null);
                       setOpenMenu(null);
                     }}
                     className={menuItemClass}
@@ -1100,7 +1113,9 @@ export default function FundPerformanceChart() {
         <p className="text-xs text-foreground-secondary mt-2" role="status">
           {activeTool === "hline"
             ? "Klikk i grafen for å plassere linjen."
-            : "Klikk to punkter i grafen."}{" "}
+            : pendingPlaced
+              ? "Punkt 1 er satt. Klikk punkt 2 for å fullføre tegningen."
+              : "Klikk to punkter i grafen for å tegne."}{" "}
           Esc avbryter.
         </p>
       )}

@@ -113,7 +113,7 @@ export default function ReturnsMatrix() {
               <tr key={h.legacyInstrumentId} className="border-b border-cardBorder/50">
                 <th
                   scope="row"
-                  className="py-2 pr-4 text-left font-normal text-foreground-primary max-w-[16rem] truncate"
+                  className="py-2 pr-4 text-left font-normal text-foreground-primary max-w-[16rem] break-words"
                 >
                   {h.name}
                 </th>
@@ -122,7 +122,7 @@ export default function ReturnsMatrix() {
                   return (
                     <td
                       key={p.label}
-                      className={`py-2 px-3 text-right tabular-nums ${
+                      className={`py-2 px-3 text-right tabular-nums whitespace-nowrap ${
                         v === null
                           ? "text-foreground-secondary"
                           : v >= 0

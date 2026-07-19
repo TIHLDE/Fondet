@@ -51,8 +51,8 @@ export default function NordnetProfileCard() {
             className="w-16 h-16 rounded-full object-cover border border-cardBorder"
           />
         )}
-        <div className="min-w-0 flex-1">
-          <h2 className="text-xl font-semibold text-foreground-primary truncate">
+        <div className="flex-1 min-w-[10rem]">
+          <h2 className="text-xl font-semibold text-foreground-primary break-words">
             {profile.username}
           </h2>
           <p className="text-sm text-foreground-secondary">
