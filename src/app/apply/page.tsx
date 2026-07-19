@@ -101,7 +101,7 @@ export default function Apply() {
               <div className="flex justify-center pt-4">
                 <Link
                   href="/apply/skjema"
-                  className="inline-flex items-center px-8 py-3 bg-blue-600 hover:bg-blue-500 text-foreground-primary font-semibold rounded-lg transition-colors text-lg"
+                  className="inline-flex items-center px-8 py-3 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-lg transition-colors text-lg"
                 >
                   Søk støtte
                 </Link>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   TIHLDE_GROUPS,
   validateSoknad,
@@ -17,6 +17,33 @@ import {
 interface BudsjettPost {
   utgift: string;
   sum: string;
+}
+
+// Draft persists across accidental navigation within the tab; cleared on
+// successful submit. sessionStorage, not localStorage, so drafts do not
+// linger on shared machines.
+const DRAFT_KEY = "soknad-draft";
+
+interface Draft {
+  sokerNavn: string;
+  kontaktperson: string;
+  telefon: string;
+  epost: string;
+  onsketSum: string;
+  hvaStotte: string;
+  begrunnelse: string;
+  konsekvenser: string;
+  budsjett: BudsjettPost[];
+  tillegg: string;
+}
+
+function readDraft(): Draft | null {
+  try {
+    const raw = sessionStorage.getItem(DRAFT_KEY);
+    return raw ? (JSON.parse(raw) as Draft) : null;
+  } catch {
+    return null;
+  }
 }
 
 export default function SoknadSkjema() {
@@ -38,6 +65,53 @@ export default function SoknadSkjema() {
     msg: string;
   } | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+
+  // Restore any draft after mount; sessionStorage is unavailable during SSR.
+  useEffect(() => {
+    const draft = readDraft();
+    if (!draft) return;
+    setSokerNavn(draft.sokerNavn ?? "");
+    setKontaktperson(draft.kontaktperson ?? "");
+    setTelefon(draft.telefon ?? "");
+    setEpost(draft.epost ?? "");
+    setOnsketSum(draft.onsketSum ?? "");
+    setHvaStotte(draft.hvaStotte ?? "");
+    setBegrunnelse(draft.begrunnelse ?? "");
+    setKonsekvenser(draft.konsekvenser ?? "");
+    if (draft.budsjett?.length) setBudsjett(draft.budsjett);
+    setTillegg(draft.tillegg ?? "");
+  }, []);
+
+  useEffect(() => {
+    const draft: Draft = {
+      sokerNavn,
+      kontaktperson,
+      telefon,
+      epost,
+      onsketSum,
+      hvaStotte,
+      begrunnelse,
+      konsekvenser,
+      budsjett,
+      tillegg,
+    };
+    try {
+      sessionStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+    } catch {
+      // Storage full or blocked; the form still works without drafts.
+    }
+  }, [
+    sokerNavn,
+    kontaktperson,
+    telefon,
+    epost,
+    onsketSum,
+    hvaStotte,
+    begrunnelse,
+    konsekvenser,
+    budsjett,
+    tillegg,
+  ]);
 
   function checkField(name: string, value: string) {
     let err = "";
@@ -133,22 +207,33 @@ export default function SoknadSkjema() {
 
     setSending(true);
 
-    const res = await fetch("/api/soknad", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...soknad, tillegg }),
-    });
-
-    if (res.ok) {
-      setResult({
-        ok: true,
-        msg: "Søknaden er sendt! Du vil høre fra oss.",
+    try {
+      const res = await fetch("/api/soknad", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...soknad, tillegg }),
       });
-    } else {
-      const data = await res.json();
-      setResult({ ok: false, msg: data.error || "Noe gikk galt" });
+
+      if (res.ok) {
+        try {
+          sessionStorage.removeItem(DRAFT_KEY);
+        } catch {}
+        setResult({
+          ok: true,
+          msg: "Søknaden er sendt! Du vil høre fra oss.",
+        });
+      } else {
+        const data = await res.json().catch(() => null);
+        setResult({ ok: false, msg: data?.error || "Noe gikk galt" });
+      }
+    } catch {
+      setResult({
+        ok: false,
+        msg: "Fikk ikke kontakt med serveren. Sjekk nettforbindelsen og prøv igjen. Utfyllingen din er ikke mistet.",
+      });
+    } finally {
+      setSending(false);
     }
-    setSending(false);
   }
 
   const inputClass =
@@ -407,7 +492,7 @@ export default function SoknadSkjema() {
           <button
             type="button"
             onClick={addBudsjettPost}
-            className="text-sm text-blue-400 hover:text-blue-300 font-medium min-h-11 inline-flex items-center px-2 -mx-2 rounded-lg transition-colors"
+            className="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium min-h-11 inline-flex items-center px-2 -mx-2 rounded-lg transition-colors"
           >
             + Legg til utgift
           </button>
@@ -438,6 +523,7 @@ export default function SoknadSkjema() {
         {/* Result */}
         {result && (
           <div
+            role={result.ok ? "status" : "alert"}
             className={`p-4 rounded-lg text-sm font-medium ${
               result.ok
                 ? "bg-green-100 border border-green-700 text-green-800 dark:bg-green-900/30 dark:text-green-300"
