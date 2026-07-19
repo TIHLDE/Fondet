@@ -75,7 +75,7 @@ export default function TradesList() {
                   className="w-6 h-6 rounded object-contain"
                 />
               )}
-              <span className="flex-1 min-w-0 truncate text-foreground-primary">
+              <span className="flex-1 min-w-0 break-words text-foreground-primary">
                 {t.name}
               </span>
               <span

@@ -67,7 +67,7 @@ function DocRow({ doc }: { doc: Document }) {
       rel="noopener noreferrer"
       className="group flex items-center gap-3 py-3 px-2 -mx-2 rounded hover:bg-cardBorder/20 transition-colors"
     >
-      <span className="flex-1 min-w-0 truncate text-foreground-primary text-sm font-medium">
+      <span className="flex-1 min-w-0 break-words text-foreground-primary text-sm font-medium">
         {doc.title}
       </span>
       <ExternalLink

@@ -13,7 +13,7 @@ const InfoCard = ({header, description, imgSrc, type}: InfoCardProps): JSX.Eleme
     return (
         <Card className={`flex flex-col gap-8 md:flex-row-reverse min-h-0 ${type === "rightAlignImage" ? "md:flex-row" : ""}`}>
             <div className="w-full md:w-1/2 flex-col flex gap-4 justify-center">
-                <h2 className="text-2xl sm:text-3xl sm:truncate md:text-4xl font-bold text-pretty">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-pretty">
                     {header}
                 </h2>
                 <p className="text-foreground-secondary text-base sm:text-lg leading-relaxed">
