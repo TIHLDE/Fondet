@@ -13,6 +13,7 @@
 ---
 
 ## Neste versjon
+- 🦟 **Porteføljekart på små skjermer**. Etikettene i kartet kuttes nå etter flatens faktiske bredde i stedet for et fast antall tegn, så tekst ikke lenger renner utenfor kartet. Grønnfargen er justert for bedre kontrast mot hvit tekst, og skjermlesere får hele fondslisten selv når flatene er for små til synlig tekst.
 - ✨ **Porteføljekart**. Fordelingsseksjonen har fått tilbake Ring/Kart-valget: kartet viser fondene som flater der størrelsen følger vekten fra rapporten og fargen viser avkastning i år.
 - 🎨 **Nøkkeltallsraden fjernet**. De fire tallkortene øverst på dashbordet er tatt bort; tallene finnes i beholdningstabellen og grafene.
 - 🦟 **Porteføljen viser alle fond**. Beholdningen tar nå utgangspunkt i fondlisten fra nyeste rapport og justeres med handelsloggen, i stedet for å gjette ut fra siste handel per fond. Delsalg tolkes ikke lenger som at fondet er solgt, så alle ni fond vises. Fond som faktisk er solgt helt ut, fjernes via en egen liste som forvalterne kan redigere uten deploy.

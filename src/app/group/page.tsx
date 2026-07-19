@@ -45,7 +45,7 @@ export default function Group() {
         <div className="w-full max-w-6xl mx-auto px-4 sm:px-0 mb-6">
           <Link
             href="/group/tidligere"
-            className="block bg-cardBackground border border-cardBorder rounded-lg p-6 shadow-lg hover:border-gray-500 transition-colors text-center"
+            className="block bg-cardBackground border border-cardBorder rounded-lg p-6 shadow-lg hover:border-foreground-secondary transition-colors text-center"
           >
             <span className="text-foreground-secondary font-medium">
               Se tidligere medlemmer &rarr;
