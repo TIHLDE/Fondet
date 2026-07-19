@@ -23,7 +23,7 @@ jobs:
         id: meta
         with:
           images: ghcr.io/${{ github.repository }}
-          tags: type=raw,value=latest
+          tags: type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
       - uses: docker/build-push-action@v7
         with:
           context: .
