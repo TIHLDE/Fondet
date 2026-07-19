@@ -97,7 +97,7 @@ export default function About() {
         <div className="w-full max-w-6xl mx-auto px-0 sm:px-0 mb-6">
           <Link
             href="/reports"
-            className="block bg-cardBackground border border-cardBorder rounded-lg p-6 shadow-lg hover:border-gray-500 transition-colors text-center"
+            className="block bg-cardBackground border border-cardBorder rounded-lg p-6 shadow-lg hover:border-foreground-secondary transition-colors text-center"
           >
             <span className="text-foreground-secondary font-medium">
               Årsrapporter, strategi og vedtekter finner du under Rapporter &rarr;
