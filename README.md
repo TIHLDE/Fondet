@@ -132,9 +132,8 @@ Alt hentes uten innlogging. Integrasjonen ligger i `src/lib/nordnet.ts`.
 ## Hosting og deploy
 
 Appen bygges som et Docker-image (`output: "standalone"`) og publiseres til
-GitHub Container Registry av GitHub Actions. Push til `dev` gir tag `:dev`, push
-til `main` gir `:latest`. CI (lint, typesjekk, tester, build) kjører på alle
-pusher og pull requests.
+GitHub Container Registry av GitHub Actions. Push til `main` gir tag `:latest`.
+CI (lint, typesjekk, tester, build) kjører på alle pusher og pull requests.
 
 ```mermaid
 flowchart LR
