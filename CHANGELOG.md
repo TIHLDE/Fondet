@@ -15,6 +15,10 @@
 ## Neste versjon
 
 ## Versjon 2026.07.18
+- ✨ **Filter for tidligere medlemmer**. Listen over tidligere medlemmer kan nå filtreres på rolle og periode.
+- ⚡ **Medlemsrekkefølge**. Fondsforvalter vises først, deretter eldste, og resten etter hvor lenge de har vært med.
+- 🦟 **Temaknapp**. Knappen byttet tidligere innom systemtema, som gjorde at den måtte trykkes to ganger når systemtemaet var likt det aktive. Nå bytter den synlig tema på første trykk; systemtema velges via kommandopaletten.
+- 🦟 **Søknadsmail**. Søknader ble sendt fra Resends testavsender og kom aldri frem; de sendes nå fra fondets egen adresse.
 - ✨ **Adminpanel**. Forvaltere kan nå logge inn med engangslenke på e-post (kun @tihlde.org-adresser på adminlisten) og redigere medlemmer, portretter, gruppebilder, rapporter og søknadsoversikten direkte på siden, uten å gå via GitHub.
 - ✨ **Filopplasting**. Portretter og gruppebilder komprimeres automatisk ved opplasting, og rapport-PDF-er lastes opp og serveres fra serverens datalager.
 - ⚡ **Innhold uten deploy**. Endringer gjort i adminpanelet lagres på serverens datavolum og vises umiddelbart, uten ny bygging eller utrulling av siden.
