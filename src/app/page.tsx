@@ -2,7 +2,6 @@ import ContactBox from "../components/ContactBox";
 import NordnetProfileCard from "../components/NordnetProfileCard";
 import FundTicker from "../components/FundTicker";
 import BackToTop from "../components/BackToTop";
-import KeyMetrics from "../components/KeyMetrics";
 import FundPerformanceChart from "../components/FundPerformanceChart";
 import PerformanceBars from "../components/PerformanceBars";
 import AllocationDonut from "../components/AllocationDonut";
@@ -26,9 +25,6 @@ export default function Home() {
 
         <div className="w-full max-w-6xl mx-auto space-y-6 px-0 sm:px-0">
           <NordnetProfileCard />
-
-          {/* At-a-glance metrics derived from the live holdings */}
-          <KeyMetrics />
 
           {/* Performance of holdings vs. indexes, live from Nordnet */}
           <Reveal>

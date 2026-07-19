@@ -37,9 +37,9 @@ export interface Holding {
   prospectusUrl: string | null;
 }
 
-// One fund's line in the newest quarterly report allocation. Unlike Holding,
-// this is the full published portfolio (including funds sold since), so the
-// weights sum to ~100 and can drive an allocation chart.
+// One fund's line in the newest quarterly report allocation, minus funds
+// confirmed fully sold since the report. Weights are the published ones, so
+// they sum to ~100 while nothing has been sold out since.
 export interface FordelingFund {
   name: string;
   weight: number;
