@@ -1,5 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { mailConfigured, sendMail } from "@/lib/send-email";
+import {
+  mailConfigured,
+  sendMail,
+  textBlocks,
+  type EmailContentBlock,
+} from "@/lib/send-email";
 import { validateSoknad } from "@/lib/soknad-validation";
 
 export async function POST(request: NextRequest) {
@@ -38,61 +43,34 @@ export async function POST(request: NextRequest) {
     year: "2-digit",
   });
 
-  const emailBody = `Fra:
-${sokerNavn}
+  const sum = Number(onsketSum).toLocaleString("nb-NO");
 
-Kontaktperson: ${kontaktperson}
-Telefon: ${telefon}
-Epost: ${epost}
-Dato: ${dato}
-
-Til:
-TIHLDE-Fondet
-Epost: fondet@tihlde.org
-
-
-═══════════════════════════════════════
-  SØKNADSSKJEMA FOR STØTTE FRA TIHLDE-FONDET
-═══════════════════════════════════════
-
-
-FORMÅL
-──────
-
-Hvem søker?
-${sokerNavn}
-
-Ønsket sum:
-${Number(onsketSum).toLocaleString("nb-NO")} kr
-
-Hva søkes det om støtte til?
-${hvaStotte}
-
-Begrunnelse for støtte:
-${begrunnelse}
-
-Konsekvenser dersom støtte ikke tildeles:
-${konsekvenser}
-
-
-BUDSJETT
-────────
-${budsjettLines || "  Ingen poster oppgitt"}
-
-  Total sum: ${Number(onsketSum).toLocaleString("nb-NO")} kr
-
-
-TILLEGGSINFORMASJON
-───────────────────
-${tillegg || "Ingen"}
-`;
+  const content: EmailContentBlock[] = [
+    { type: "title", content: "Søknad om støtte fra TIHLDE-Fondet" },
+    { type: "text", content: `Fra: ${sokerNavn}` },
+    { type: "text", content: `Kontaktperson: ${kontaktperson}` },
+    { type: "text", content: `Telefon: ${telefon} — E-post: ${epost}` },
+    { type: "text", content: `Dato: ${dato}` },
+    { type: "title", content: "Formål" },
+    { type: "text", content: `Ønsket sum: ${sum} kr` },
+    { type: "text", content: "Hva søkes det om støtte til?" },
+    ...textBlocks(hvaStotte),
+    { type: "text", content: "Begrunnelse for støtte:" },
+    ...textBlocks(begrunnelse),
+    { type: "text", content: "Konsekvenser dersom støtte ikke tildeles:" },
+    ...textBlocks(konsekvenser),
+    { type: "title", content: "Budsjett" },
+    ...textBlocks(budsjettLines || "Ingen poster oppgitt"),
+    { type: "text", content: `Total sum: ${sum} kr` },
+    { type: "title", content: "Tilleggsinformasjon" },
+    ...textBlocks(tillegg || "Ingen"),
+  ];
 
   try {
     await sendMail({
       to: "fondet@tihlde.org",
-      replyTo: epost,
-      subject: `Søknad om støtte fra ${sokerNavn}: ${Number(onsketSum).toLocaleString("nb-NO")} kr`,
-      text: emailBody,
+      subject: `Søknad om støtte fra ${sokerNavn}: ${sum} kr`,
+      content,
     });
 
     return NextResponse.json({ success: true });

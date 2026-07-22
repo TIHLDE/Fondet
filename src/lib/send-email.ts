@@ -1,67 +1,53 @@
-import { Resend } from "resend";
-import nodemailer from "nodemailer";
+// E-post sendes via Photon sitt e-post-API (POST /api/email/send), samme
+// infrastruktur som resten av TIHLDE. Photon eier avsenderadresse, mal og
+// SMTP-oppsett; Fondet trenger bare URL + API-nøkkel.
+
+// Innholdsblokker slik Photon sitt CustomEmail-skjema definerer dem.
+export type EmailContentBlock =
+  | { type: "title"; content: string }
+  | { type: "text"; content: string }
+  | { type: "button"; text: string; url: string };
 
 interface Mail {
   to: string;
   subject: string;
-  text: string;
-  replyTo?: string;
-}
-
-// True when an SMTP server is configured. SMTP takes precedence over Resend
-// so the site can send mail without a Resend-verified domain (issue #133).
-export function smtpConfigured(): boolean {
-  return !!process.env.SMTP_HOST;
+  content: EmailContentBlock[];
 }
 
 export function mailConfigured(): boolean {
-  return smtpConfigured() || !!process.env.RESEND_API_KEY;
+  return !!process.env.PHOTON_API_URL && !!process.env.PHOTON_EMAIL_API_KEY;
 }
 
-function fromAddress(): string {
-  return process.env.MAIL_FROM || "TIHLDE Fondet <fondet@tihlde.org>";
+// Photon rendrer hver text-blokk som ett HTML-avsnitt, så linjeskift inni en
+// blokk kollapser. Del derfor flerlinjetekst opp i én blokk per linje.
+export function textBlocks(text: string): EmailContentBlock[] {
+  return text
+    .split(/\n+/)
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map((line) => ({ type: "text" as const, content: line }));
 }
 
-async function sendViaSmtp(mail: Mail): Promise<void> {
-  const port = Number(process.env.SMTP_PORT || 587);
-  const transport = nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port,
-    // Port 465 is implicit TLS; 587/25 start plain and upgrade via STARTTLS.
-    secure: port === 465,
-    auth: process.env.SMTP_USER
-      ? { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS }
-      : undefined,
-  });
-  await transport.sendMail({
-    from: fromAddress(),
-    to: mail.to,
-    replyTo: mail.replyTo,
-    subject: mail.subject,
-    text: mail.text,
-  });
-}
-
-async function sendViaResend(mail: Mail): Promise<void> {
-  const resend = new Resend(process.env.RESEND_API_KEY);
-  const { error } = await resend.emails.send({
-    from: fromAddress(),
-    to: mail.to,
-    replyTo: mail.replyTo,
-    subject: mail.subject,
-    text: mail.text,
-  });
-  if (error) throw new Error(error.message);
-}
-
-// Sends through SMTP when configured, otherwise Resend. Callers should check
-// mailConfigured() first if they want to fail with a clear error instead.
+// Sender via Photon. Callers bør sjekke mailConfigured() først hvis de vil
+// feile med en tydelig melding i stedet.
 export async function sendMail(mail: Mail): Promise<void> {
-  if (smtpConfigured()) {
-    await sendViaSmtp(mail);
-    return;
+  const base = (process.env.PHOTON_API_URL || "").replace(/\/+$/, "");
+  const res = await fetch(`${base}/api/email/send`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${process.env.PHOTON_EMAIL_API_KEY}`,
+    },
+    body: JSON.stringify({
+      to: mail.to,
+      subject: mail.subject,
+      content: mail.content,
+    }),
+  });
+  if (!res.ok) {
+    const body = await res.text().catch(() => "");
+    throw new Error(`Photon email API svarte ${res.status}: ${body}`);
   }
-  await sendViaResend(mail);
 }
 
 // Sends the magic link. With no mail transport configured the link is printed
@@ -70,7 +56,9 @@ export async function sendMail(mail: Mail): Promise<void> {
 export async function sendLoginEmail(email: string, url: string): Promise<void> {
   if (!mailConfigured()) {
     if (process.env.NODE_ENV === "production") {
-      throw new Error("No mail transport configured: set SMTP_HOST or RESEND_API_KEY");
+      throw new Error(
+        "No mail transport configured: set PHOTON_API_URL and PHOTON_EMAIL_API_KEY",
+      );
     }
     console.log(`[auth] innloggingslenke for ${email}: ${url}`);
     return;
@@ -78,14 +66,18 @@ export async function sendLoginEmail(email: string, url: string): Promise<void> 
   await sendMail({
     to: email,
     subject: "Innlogging til TIHLDE Fondet",
-    text: [
-      "Hei,",
-      "",
-      "Bruk denne lenken for å logge inn på TIHLDE Fondet. Den er gyldig i 15 minutter:",
-      "",
-      url,
-      "",
-      "Hvis du ikke ba om denne e-posten, kan du se bort fra den.",
-    ].join("\n"),
+    content: [
+      { type: "title", content: "Innlogging til TIHLDE Fondet" },
+      {
+        type: "text",
+        content:
+          "Bruk knappen under for å logge inn på TIHLDE Fondet. Lenken er gyldig i 15 minutter.",
+      },
+      { type: "button", text: "Logg inn", url },
+      {
+        type: "text",
+        content: "Hvis du ikke ba om denne e-posten, kan du se bort fra den.",
+      },
+    ],
   });
 }
