@@ -1,6 +1,15 @@
 import Image from "next/image";
-import { UserRound, Linkedin } from "lucide-react";
+import { Linkedin } from "lucide-react";
 import type { Member } from "@/data/members";
+
+function initials(name: string) {
+  return name
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((w) => w[0].toUpperCase())
+    .join("");
+}
 
 export default function MemberCard({ member }: { member: Member }) {
   const hasImage =
@@ -25,10 +34,11 @@ export default function MemberCard({ member }: { member: Member }) {
             className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
           />
         ) : (
-          <UserRound
-            className="w-14 h-14 text-muted-foreground"
-            aria-hidden
-          />
+          <div className="w-full h-full flex items-center justify-center bg-muted-foreground">
+            <span className="text-buttonForeground text-3xl font-bold tracking-wide select-none">
+              {initials(member.name)}
+            </span>
+          </div>
         )}
       </div>
 
