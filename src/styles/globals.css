@@ -116,6 +116,12 @@ body {
   }
 }
 
+/* Fund ticker band: always dark regardless of page theme. */
+.ticker-band {
+  background-color: #0a0e17;
+  border-color: #2a2e39;
+}
+
 /* Fund ticker: two stacked copies scroll left, looping at -50%. Pauses on
    hover or keyboard focus so a value can be read. */
 @keyframes ticker {
