@@ -33,6 +33,7 @@ interface Draft {
   hvaStotte: string;
   begrunnelse: string;
   konsekvenser: string;
+  andreSoknader: string;
   budsjett: BudsjettPost[];
   tillegg: string;
 }
@@ -55,6 +56,7 @@ export default function SoknadSkjema() {
   const [hvaStotte, setHvaStotte] = useState("");
   const [begrunnelse, setBegrunnelse] = useState("");
   const [konsekvenser, setKonsekvenser] = useState("");
+  const [andreSoknader, setAndreSoknader] = useState("");
   const [budsjett, setBudsjett] = useState<BudsjettPost[]>([
     { utgift: "", sum: "" },
   ]);
@@ -78,6 +80,7 @@ export default function SoknadSkjema() {
     setHvaStotte(draft.hvaStotte ?? "");
     setBegrunnelse(draft.begrunnelse ?? "");
     setKonsekvenser(draft.konsekvenser ?? "");
+    setAndreSoknader(draft.andreSoknader ?? "");
     if (draft.budsjett?.length) setBudsjett(draft.budsjett);
     setTillegg(draft.tillegg ?? "");
   }, []);
@@ -92,6 +95,7 @@ export default function SoknadSkjema() {
       hvaStotte,
       begrunnelse,
       konsekvenser,
+      andreSoknader,
       budsjett,
       tillegg,
     };
@@ -109,6 +113,7 @@ export default function SoknadSkjema() {
     hvaStotte,
     begrunnelse,
     konsekvenser,
+    andreSoknader,
     budsjett,
     tillegg,
   ]);
@@ -211,7 +216,7 @@ export default function SoknadSkjema() {
       const res = await fetch("/api/soknad", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...soknad, tillegg }),
+        body: JSON.stringify({ ...soknad, andreSoknader, tillegg }),
       });
 
       if (res.ok) {
@@ -434,6 +439,20 @@ export default function SoknadSkjema() {
               placeholder="Hva skjer hvis søknaden ikke innvilges?"
             />
             {fieldError("konsekvenser")}
+          </div>
+
+          <div>
+            <label htmlFor="andre-soknader" className={labelClass}>
+              Hvilke andre støtteordninger har dere søkt, og hva var svaret?
+            </label>
+            <textarea
+              id="andre-soknader"
+              rows={3}
+              className={inputClass}
+              value={andreSoknader}
+              onChange={(e) => setAndreSoknader(e.target.value)}
+              placeholder="Dere må søke hos andre støtteordninger før dere søker om støtte her..."
+            />
           </div>
         </div>
 
