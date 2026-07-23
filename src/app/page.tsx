@@ -13,7 +13,7 @@ import Reveal from "../components/Reveal";
 export default function Home() {
   return (
     <div className="w-full min-h-screen bg-gradient-primary overflow-x-hidden">
-      <main className="flex flex-col items-center justify-center sm:px-8 sm:pb-8 pt-24">
+      <main className="flex flex-col items-center justify-center sm:px-8 sm:pb-8 pt-20">
         {/* Full-width terminal ticker: YTD return per fund, live from Nordnet */}
         <FundTicker />
 

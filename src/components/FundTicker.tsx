@@ -45,9 +45,11 @@ export default function FundTicker() {
   const label = "Avkastning hittil i år per fond";
 
   // Full-bleed terminal bar: a fixed dark band, edge to edge, that carries the
-  // funds regardless of the page theme.
+  // funds regardless of the page theme. ticker-band is defined in globals.css
+  // with hardcoded hex values so Tailwind v4 arbitrary-class issues can't cause
+  // it to appear transparent/white in light mode.
   const band =
-    "w-screen ml-[calc(50%-50vw)] mr-[calc(50%-50vw)] border-y border-[#2a2e39] bg-[#0a0e17]";
+    "ticker-band w-screen ml-[calc(50%-50vw)] mr-[calc(50%-50vw)] border-y";
 
   if (reduce) {
     return (
