@@ -116,10 +116,10 @@ body {
   }
 }
 
-/* Fund ticker band: always dark regardless of page theme. */
+/* Fund ticker band: follows the card surface so it matches the page theme. */
 .ticker-band {
-  background-color: #0a0e17;
-  border-color: #2a2e39;
+  background-color: var(--card-background);
+  border-color: var(--card-border);
 }
 
 /* Fund ticker: two stacked copies scroll left, looping at -50%. Pauses on
