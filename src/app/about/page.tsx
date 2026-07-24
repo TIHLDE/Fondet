@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { Mail } from "lucide-react";
+import { FaInstagram } from "react-icons/fa";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -30,6 +32,25 @@ export default function About() {
                 som tas. Midlene skal komme medlemmene til gode gjennom
                 investeringer som ikke dekkes av TIHLDEs ordinære budsjett.
               </p>
+
+              <div className="flex flex-col sm:flex-row gap-4">
+                <a
+                  href="mailto:forvalter@tihlde.org"
+                  className="flex items-center gap-3 text-foreground-secondary hover:text-foreground-primary transition-colors"
+                >
+                  <Mail className="w-5 h-5 shrink-0" />
+                  <span>forvalter@tihlde.org</span>
+                </a>
+                <a
+                  href="https://www.instagram.com/tihlde_fondet/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-3 text-foreground-secondary hover:text-foreground-primary transition-colors"
+                >
+                  <FaInstagram className="w-5 h-5 shrink-0" />
+                  <span>@tihlde_fondet</span>
+                </a>
+              </div>
 
               <div>
                 <h3 className="text-xl font-semibold text-foreground-primary mb-3">

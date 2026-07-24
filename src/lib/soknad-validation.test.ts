@@ -9,6 +9,7 @@ import {
   ALL_GROUPS,
   MIN_WORDS,
   MIN_SUM,
+  MAX_SUM,
 } from "./soknad-validation";
 
 const longText = Array.from({ length: MIN_WORDS }, (_, i) => `ord${i}`).join(
@@ -105,8 +106,34 @@ describe("validateSoknad", () => {
     );
   });
 
-  it("accepts the exact minimum sum", () => {
-    expect(validateSoknad({ ...valid, onsketSum: String(MIN_SUM) })).toBeNull();
+  it("accepts the exact minimum sum when budget matches", () => {
+    expect(
+      validateSoknad({
+        ...valid,
+        onsketSum: String(MIN_SUM),
+        budsjett: [{ utgift: "Leie av lokale", sum: String(MIN_SUM) }],
+      }),
+    ).toBeNull();
+  });
+
+  it("rejects sums above the maximum", () => {
+    expect(
+      validateSoknad({
+        ...valid,
+        onsketSum: String(MAX_SUM + 1),
+        budsjett: [{ utgift: "Leie av lokale", sum: String(MAX_SUM + 1) }],
+      }),
+    ).toMatch(/Maksimum/);
+  });
+
+  it("rejects when budget total does not match ønsket sum", () => {
+    expect(
+      validateSoknad({
+        ...valid,
+        onsketSum: "8000",
+        budsjett: [{ utgift: "Leie av lokale", sum: "6000" }],
+      }),
+    ).toMatch(/stemme overens/);
   });
 
   it("rejects descriptions under the word minimum", () => {

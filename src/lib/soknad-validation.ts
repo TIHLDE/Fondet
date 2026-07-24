@@ -1,6 +1,4 @@
 export const MIN_SUM = 5000;
-// Soft ceiling: amounts above this must be decided by generalforsamlingen,
-// so the form warns but does not block.
 export const MAX_SUM = 100000;
 export const MIN_WORDS = 20;
 export const MIN_WORDS_KONSEKVENSER = 5;
@@ -150,6 +148,18 @@ export function validateSoknad(body: SoknadBody): string | null {
   const sum = Number(onsketSum);
   if (!Number.isFinite(sum) || sum < MIN_SUM) {
     return `Minimum søknadssum er ${MIN_SUM.toLocaleString("nb-NO")} kr`;
+  }
+
+  if (sum > MAX_SUM) {
+    return `Maksimum søknadssum er ${MAX_SUM.toLocaleString("nb-NO")} kr`;
+  }
+
+  const budsjettTotal = (budsjett ?? []).reduce(
+    (acc, b) => acc + (Number(b.sum) || 0),
+    0
+  );
+  if (budsjettTotal !== sum) {
+    return `Totalsum i budsjettet (${budsjettTotal.toLocaleString("nb-NO")} kr) må stemme overens med ønsket sum (${sum.toLocaleString("nb-NO")} kr)`;
   }
 
   if (wordCount(hvaStotte) < MIN_WORDS || wordCount(begrunnelse) < MIN_WORDS) {
