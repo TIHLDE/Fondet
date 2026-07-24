@@ -133,10 +133,14 @@ export default function SoknadSkjema() {
         case "epost":
           if (!validEpost(value)) err = "Ugyldig e-postadresse";
           break;
-        case "onsketSum":
-          if (!(Number(value) >= MIN_SUM))
-            err = "Minimum søknadssum er 5 000 kr";
+        case "onsketSum": {
+          const n = Number(value);
+          if (n < MIN_SUM)
+            err = `Minimum søknadssum er ${MIN_SUM.toLocaleString("nb-NO")} kr`;
+          else if (n > MAX_SUM)
+            err = `Maksimum søknadssum er ${MAX_SUM.toLocaleString("nb-NO")} kr`;
           break;
+        }
         case "hvaStotte":
         case "begrunnelse":
           if (wordCount(value) < MIN_WORDS)
@@ -187,6 +191,13 @@ export default function SoknadSkjema() {
     (acc, b) => acc + (Number(b.sum) || 0),
     0
   );
+
+  const onsketSumNum = Number(onsketSum) || 0;
+  const sumOutOfRange =
+    onsketSumNum > 0 && (onsketSumNum < MIN_SUM || onsketSumNum > MAX_SUM);
+  const budgetMismatch =
+    onsketSumNum > 0 && totalBudsjett > 0 && totalBudsjett !== onsketSumNum;
+  const canSubmit = !sending && !sumOutOfRange && !budgetMismatch;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -355,7 +366,8 @@ export default function SoknadSkjema() {
               id="onsket-sum"
               required
               type="number"
-              min={5000}
+              min={MIN_SUM}
+              max={MAX_SUM}
               className={inputWithError("onsketSum")}
               value={onsketSum}
               onChange={(e) => setOnsketSum(e.target.value)}
@@ -364,18 +376,9 @@ export default function SoknadSkjema() {
               aria-describedby={
                 fieldErrors["onsketSum"] ? "onsketSum-error" : undefined
               }
-              placeholder="Minimum 5 000 kr"
+              placeholder={`${MIN_SUM.toLocaleString("nb-NO")} – ${MAX_SUM.toLocaleString("nb-NO")} kr`}
             />
             {fieldError("onsketSum")}
-            {Number(onsketSum) > MAX_SUM && (
-              <p
-                id="onsketSum-warning"
-                className="mt-1 text-sm text-amber-700 dark:text-amber-400"
-              >
-                Beløp over {MAX_SUM.toLocaleString("nb-NO")} kr må vedtas av
-                generalforsamlingen. Du kan fortsatt sende inn søknaden.
-              </p>
-            )}
           </div>
 
           <div>
@@ -518,10 +521,15 @@ export default function SoknadSkjema() {
 
           <div className="flex justify-between items-center pt-3 border-t border-cardBorder">
             <span className="font-semibold text-foreground-primary">Total sum</span>
-            <span className="font-semibold text-foreground-primary">
+            <span className={`font-semibold ${budgetMismatch ? "text-red-600 dark:text-red-400" : "text-foreground-primary"}`}>
               {totalBudsjett.toLocaleString("nb-NO")} kr
             </span>
           </div>
+          {budgetMismatch && (
+            <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+              Totalsum i budsjettet ({totalBudsjett.toLocaleString("nb-NO")} kr) stemmer ikke med ønsket sum ({onsketSumNum.toLocaleString("nb-NO")} kr). Juster budsjettet eller ønsket sum.
+            </p>
+          )}
         </div>
 
         {/* Tillegg */}
@@ -556,8 +564,8 @@ export default function SoknadSkjema() {
         {/* Submit */}
         <button
           type="submit"
-          disabled={sending}
-          className="w-full py-4 rounded-lg bg-blue-600 text-white font-semibold text-lg hover:bg-blue-700 transition disabled:opacity-50"
+          disabled={!canSubmit}
+          className="w-full py-4 rounded-lg bg-blue-600 text-white font-semibold text-lg hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {sending ? "Sender søknad..." : "Send inn søknad"}
         </button>
