@@ -32,6 +32,51 @@ redigerer medlemmer, bilder, rapporter og søknader direkte. Endringene skrives
 til volumet, aldri til repoet. De committede filene er utgangspunktet og
 reserven, ikke sannheten i produksjon.
 
+Innloggingen er et kapabilitetsbasert engangslenke-skjema uten passord og uten
+lagret sesjonstilstand på serveren: begge tokens er signerte, selvbærende
+JWT-er, og et typefelt i payloaden skiller lenketoken fra sesjonstoken slik at
+det ene aldri kan spilles av som det andre.
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor F as Forvalter
+    participant S as Server (tilstandsløs)
+    participant E as E-post (out-of-band-kanal)
+    F->>S: be om innlogging (adresse)
+    S->>S: normaliser adresse, oppslag i adminliste
+    S->>S: nedkjølingsvindu per adresse (60 s)
+    alt adressen er autorisert
+        S->>S: signer engangstoken (HS256, bruk=login, TTL 15 min)
+        S-->>E: kapabilitets-URL, basis fra konfig og aldri fra Host-header
+        E-->>F: innloggingslenke
+    end
+    Note over F,S: svaret er identisk uansett utfall, hindrer adresse-enumerasjon
+    F->>S: callback med token
+    S->>S: verifiser signatur, utløp og bruksfelt
+    S->>S: utsted sesjonstoken (bruk=session, TTL 7 dager)
+    S-->>F: HttpOnly-cookie
+```
+
+Lagringen følger overlay-semantikk, som en union-montering med to lag: et
+muterbart øvre lag (volumet) og et uforanderlig nedre lag (repo-kopiene).
+Skriv går alltid til øverste lag; les faller gjennom til nederste når øverste
+mangler filen.
+
+```mermaid
+flowchart TD
+    R[Leseforespørsel] --> V{Finnes filen i øvre lag?}
+    subgraph L1 [Øvre lag: volum, muterbart i drift]
+        VOL[Kjøretidstilstand, skygger repoet]
+    end
+    subgraph L2 [Nedre lag: repo, uforanderlig i drift]
+        REPO[Committet reserve med git-historikk]
+    end
+    V -->|ja| VOL
+    V -->|nei| REPO
+    W[Skriv fra adminområdet] --> VOL
+```
+
 ### 2. Serveren er eneste vei til Nordnet
 
 Nordnets API-er krever spesielle headere (`client-id`, `Referer`) og tåler ikke
@@ -50,31 +95,40 @@ Et tomt felt er et gyldig utfall; en oppdiktet verdi er det ikke. Dette er en
 bevisst regel fordi siden viser et ekte fond med ekte penger, og en pen men
 feil graf er verre enn ingen graf.
 
+Arkitekturen er lagdelt med en enveis avhengighetsretning: hvert lag kjenner
+bare laget under seg, og API-grensen fungerer som antikorrupsjonslag mellom
+våre interne typer og Nordnets eksterne kontrakt.
+
 ```mermaid
-flowchart LR
-    subgraph Klient [Nettleser]
-        RQ[React Query<br/>30 min cache] --> C1[Utviklingsgraf]
-        RQ --> C2[Avkastning per fond]
-        RQ --> C3[Sammensetning + handler]
+flowchart TB
+    subgraph P [Presentasjonslag]
+        UI[Komponenter: graf, avkastning, sammensetning, handler]
     end
-
-    subgraph Server [Next.js API-ruter, ISR 30 min]
-        N["/api/nordnet"]
-        S["/api/nordnet/series"]
-        K["/api/soknad"]
+    subgraph K [Klientcache]
+        RQ[React Query: memoisering per spørrenøkkel, TTL 30 min]
     end
-
-    subgraph Nordnet [Nordnets offentlige API-er]
-        P[Shareville profil + handler]
-        I[Instrumentinfo, NAV]
-        T[Kursserier + indekser]
+    subgraph G [API-grense: antikorrupsjonslag]
+        API[Henting, normalisering, typeprojeksjon til interne DTO-er]
+        ISR[Servercache: ISR, TTL 30 min]
     end
-
-    RQ --> N & S
-    N --> P & I
-    S --> T
-    K --> R[Resend, e-post til fondet@tihlde.org]
+    subgraph I [Integrasjonslag]
+        NC[Nordnet-klient: headerkrav, paginering, indeksoppslag ved kjøretid]
+        EC[E-postklient: Photon-API]
+    end
+    subgraph T [Tredjepart: kontrakter utenfor vår kontroll]
+        NN[Nordnets offentlige API-er]
+        PH[Photon e-posttjeneste]
+    end
+    UI -->|deklarative spørringer| RQ
+    RQ -->|HTTP, kun interne typer| API
+    API --- ISR
+    API --> NC -->|autentiserende headere| NN
+    API -->|sideeffekt: søknad og innlogging| EC --> PH
 ```
+
+Invarianten er at presentasjonslaget er transitivt avhengig av bare interne
+typer: en endring i Nordnets kontrakt kan aldri propagere forbi
+integrasjonslaget uten at typeprojeksjonen i grensen endres eksplisitt.
 
 ### Hvorfor to cachelag med samme levetid
 
@@ -119,6 +173,42 @@ Alt hentes uten innlogging. Integrasjonen ligger i `src/lib/nordnet.ts`.
   bruker ikke rapportvektene, fordi vektene bare finnes kvartalsvis mens grafen
   er daglig, og en interpolert vektkurve hadde vært en gjetning vi ikke vil vise.
 
+Porteføljen er altså avledet tilstand, ikke lagret tilstand: en fold over
+handelshistorikken (event sourcing i miniatyr) etterfulgt av to
+sammenføyninger og en aggregering. Ingenting av dette persisteres; det
+beregnes på nytt innenfor cache-vinduet.
+
+```mermaid
+flowchart LR
+    subgraph H [Hendelseslogg]
+        F[Aktivitetsfeed: kronologiske kjøp og salg, paginert]
+    end
+    subgraph U [Avledning]
+        FOLD[Fold over handelshendelser per fond]
+        PRED{Siste hendelse er kjøp?}
+        HS[Beholdningsmengde]
+        X[Utenfor porteføljen]
+    end
+    subgraph B [Berikelse: sammenføyning per fond]
+        J1[Instrumentdata: NAV, kategori, avkastning]
+        J2[Rapportvekter: kvartalsvise, godtas kun når vektsummen er nær 100 prosent]
+    end
+    subgraph A [Aggregering]
+        KOMP[Likevektet kompositt: aritmetisk snitt av daglige avkastningsserier]
+    end
+    F --> FOLD --> PRED
+    PRED -->|ja| HS
+    PRED -->|nei| X
+    HS --> J1
+    HS --> J2
+    HS --> KOMP
+```
+
+Merk asymmetrien i feilhåndteringen: manglende berikelse degraderer feltvis
+(fondet vises uten vekt eller honorar), mens en manglende hendelseslogg
+skjuler hele seksjonen. Det følger av regel 3: utledede tall vises bare når
+premissene deres holder.
+
 ## Sider
 
 | Rute | Innhold |
@@ -135,14 +225,40 @@ Appen bygges som et Docker-image (`output: "standalone"`) og publiseres til
 GitHub Container Registry av GitHub Actions. Push til `main` gir tag `:latest`.
 CI (lint, typesjekk, tester, build) kjører på alle pusher og pull requests.
 
+Leveransekjeden er delt i tillitssoner med enveis flyt: artefakter beveger seg
+bare fremover gjennom kvalitetsporter, og kjøretidssonen har ingen åpne
+innkommende porter; den henter selv, både image fra registeret og trafikk via
+tunnelens utgående tilkobling.
+
 ```mermaid
 flowchart LR
-    Dev[git push] --> GH[GitHub]
-    GH -->|Actions: CI + docker build| R[ghcr.io/tihlde/fondet]
-    R -->|pull=always| S[Server: docker + systemd]
-    S -->|Cloudflare Tunnel| B[Besøkende]
-    S -->|ISR, 30 min| NN[Nordnet API-er]
+    subgraph S1 [Utviklersone]
+        DEV[git push]
+    end
+    subgraph S2 [CI-sone: kvalitetsporter]
+        GATE[Lint, typesjekk, tester, bygg]
+        IMG[Uforanderlig image]
+    end
+    subgraph S3 [Distribusjon]
+        REG[Containerregister]
+    end
+    subgraph S4 [Kjøretidssone: ingen åpne porter inn]
+        SVC[systemd-brukertjeneste]
+        CT[Container]
+        VOL[(Montert volum: muterbar tilstand)]
+    end
+    DEV --> GATE
+    GATE -->|kun ved grønn CI| IMG --> REG
+    SVC -->|pull ved omstart: omstart er hele deployen| REG
+    SVC --> CT --- VOL
+    CT -->|utgående tunnel| CF[Cloudflare edge]
+    B[Besøkende] --> CF
+    CT -->|ISR, 30 min| NN[Nordnet API-er]
 ```
+
+At omstart er deploy-mekanismen betyr at utrulling og tilbakerulling er samme
+operasjon: tjenesten starter alltid nyeste image i registeret, så en
+tilbakerulling er å publisere forrige image på nytt, ikke en egen kodesti.
 
 Standalone-bygg er valgt fordi det gir et lite image uten `node_modules`, som
 starter raskt og ikke trenger en kjørende Node-verktøykjede på serveren.
