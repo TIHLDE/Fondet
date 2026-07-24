@@ -17,33 +17,6 @@ export default function About() {
           <h1 className="text-4xl font-bold text-foreground-primary mb-8">Om fondet</h1>
         </div>
 
-        {/* Contact */}
-        <div className="w-full max-w-6xl mx-auto px-0 sm:px-0 mb-6">
-          <div className="bg-cardBackground border border-cardBorder rounded-lg p-6 sm:p-8 shadow-lg">
-            <h2 className="text-xl font-semibold text-foreground-primary mb-4">
-              Kontakt
-            </h2>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <a
-                href="mailto:forvalter@tihlde.org"
-                className="flex items-center gap-3 text-foreground-secondary hover:text-foreground-primary transition-colors"
-              >
-                <Mail className="w-5 h-5 shrink-0" />
-                <span>forvalter@tihlde.org</span>
-              </a>
-              <a
-                href="https://www.instagram.com/tihlde_fondet/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-3 text-foreground-secondary hover:text-foreground-primary transition-colors"
-              >
-                <FaInstagram className="w-5 h-5 shrink-0" />
-                <span>@tihlde_fondet</span>
-              </a>
-            </div>
-          </div>
-        </div>
-
         {/* Large top box */}
         <div className="w-full max-w-6xl mx-auto px-0 sm:px-0 mb-6">
           <div className="bg-cardBackground border border-cardBorder rounded-lg p-6 sm:p-8 shadow-lg">
@@ -59,6 +32,25 @@ export default function About() {
                 som tas. Midlene skal komme medlemmene til gode gjennom
                 investeringer som ikke dekkes av TIHLDEs ordinære budsjett.
               </p>
+
+              <div className="flex flex-col sm:flex-row gap-4">
+                <a
+                  href="mailto:forvalter@tihlde.org"
+                  className="flex items-center gap-3 text-foreground-secondary hover:text-foreground-primary transition-colors"
+                >
+                  <Mail className="w-5 h-5 shrink-0" />
+                  <span>forvalter@tihlde.org</span>
+                </a>
+                <a
+                  href="https://www.instagram.com/tihlde_fondet/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-3 text-foreground-secondary hover:text-foreground-primary transition-colors"
+                >
+                  <FaInstagram className="w-5 h-5 shrink-0" />
+                  <span>@tihlde_fondet</span>
+                </a>
+              </div>
 
               <div>
                 <h3 className="text-xl font-semibold text-foreground-primary mb-3">
