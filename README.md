@@ -40,22 +40,26 @@ det ene aldri kan spilles av som det andre.
 ```mermaid
 sequenceDiagram
     autonumber
-    actor F as Forvalter
-    participant S as Server (tilstandsløs)
-    participant E as E-post (out-of-band-kanal)
-    F->>S: be om innlogging (adresse)
-    S->>S: normaliser adresse, oppslag i adminliste
-    S->>S: nedkjølingsvindu per adresse (60 s)
-    alt adressen er autorisert
-        S->>S: signer engangstoken (HS256, bruk=login, TTL 15 min)
-        S-->>E: kapabilitets-URL, basis fra konfig og aldri fra Host-header
-        E-->>F: innloggingslenke
+    actor F as Fund manager
+    participant S as Server (stateless)
+    participant E as Email (out-of-band channel)
+    rect rgba(59,130,246,0.12)
+        F->>S: request login (address)
+        S->>S: normalize address, look up in admin allowlist
+        S->>S: cooldown window per address (60 s)
+        alt address is authorized
+            S->>S: sign one-time token (HS256, use=login, TTL 15 min)
+            S-->>E: capability URL, base from config and never from the Host header
+            E-->>F: login link
+        end
+        Note over F,S: identical response either way, prevents address enumeration
     end
-    Note over F,S: svaret er identisk uansett utfall, hindrer adresse-enumerasjon
-    F->>S: callback med token
-    S->>S: verifiser signatur, utløp og bruksfelt
-    S->>S: utsted sesjonstoken (bruk=session, TTL 7 dager)
-    S-->>F: HttpOnly-cookie
+    rect rgba(34,197,94,0.12)
+        F->>S: callback with token
+        S->>S: verify signature, expiry and use claim
+        S->>S: issue session token (use=session, TTL 7 days)
+        S-->>F: HttpOnly cookie
+    end
 ```
 
 Lagringen følger overlay-semantikk, som en union-montering med to lag: et
@@ -65,16 +69,22 @@ mangler filen.
 
 ```mermaid
 flowchart TD
-    R[Leseforespørsel] --> V{Finnes filen i øvre lag?}
-    subgraph L1 [Øvre lag: volum, muterbart i drift]
-        VOL[Kjøretidstilstand, skygger repoet]
+    R[Read request] --> V{File present in upper layer?}
+    subgraph L1 [Upper layer: volume, mutable at runtime]
+        VOL[Runtime state, shadows the repo]
     end
-    subgraph L2 [Nedre lag: repo, uforanderlig i drift]
-        REPO[Committet reserve med git-historikk]
+    subgraph L2 [Lower layer: repo, immutable at runtime]
+        REPO[Committed fallback with git history]
     end
-    V -->|ja| VOL
-    V -->|nei| REPO
-    W[Skriv fra adminområdet] --> VOL
+    V -->|yes| VOL
+    V -->|no| REPO
+    W[Write from the admin area] --> VOL
+    classDef upper fill:#f59e0b40,stroke:#f59e0b
+    classDef lower fill:#3b82f640,stroke:#3b82f6
+    classDef write fill:#22c55e40,stroke:#22c55e
+    class L1 upper
+    class L2 lower
+    class W write
 ```
 
 ### 2. Serveren er eneste vei til Nordnet
@@ -101,29 +111,39 @@ våre interne typer og Nordnets eksterne kontrakt.
 
 ```mermaid
 flowchart TB
-    subgraph P [Presentasjonslag]
-        UI[Komponenter: graf, avkastning, sammensetning, handler]
+    subgraph P [Presentation layer]
+        UI[Components: chart, returns, allocation, trades]
     end
-    subgraph K [Klientcache]
-        RQ[React Query: memoisering per spørrenøkkel, TTL 30 min]
+    subgraph K [Client cache]
+        RQ[React Query: memoization per query key, TTL 30 min]
     end
-    subgraph G [API-grense: antikorrupsjonslag]
-        API[Henting, normalisering, typeprojeksjon til interne DTO-er]
-        ISR[Servercache: ISR, TTL 30 min]
+    subgraph G [API boundary: anti-corruption layer]
+        API[Fetching, normalization, type projection to internal DTOs]
+        ISR[Server cache: ISR, TTL 30 min]
     end
-    subgraph I [Integrasjonslag]
-        NC[Nordnet-klient: headerkrav, paginering, indeksoppslag ved kjøretid]
-        EC[E-postklient: Photon-API]
+    subgraph I [Integration layer]
+        NC[Nordnet client: header requirements, pagination, runtime index lookup]
+        EC[Email client: Photon API]
     end
-    subgraph T [Tredjepart: kontrakter utenfor vår kontroll]
-        NN[Nordnets offentlige API-er]
-        PH[Photon e-posttjeneste]
+    subgraph T [Third parties: contracts outside our control]
+        NN[Nordnet public APIs]
+        PH[Photon email service]
     end
-    UI -->|deklarative spørringer| RQ
-    RQ -->|HTTP, kun interne typer| API
+    UI -->|declarative queries| RQ
+    RQ -->|HTTP, internal types only| API
     API --- ISR
-    API --> NC -->|autentiserende headere| NN
-    API -->|sideeffekt: søknad og innlogging| EC --> PH
+    API --> NC -->|authenticating headers| NN
+    API -->|side effect: application and login email| EC --> PH
+    classDef pres fill:#3b82f640,stroke:#3b82f6
+    classDef cache fill:#f59e0b40,stroke:#f59e0b
+    classDef boundary fill:#a855f740,stroke:#a855f7
+    classDef integ fill:#22c55e40,stroke:#22c55e
+    classDef third fill:#6b728040,stroke:#6b7280
+    class P pres
+    class K cache
+    class G boundary
+    class I integ
+    class T third
 ```
 
 Invarianten er at presentasjonslaget er transitivt avhengig av bare interne
@@ -180,28 +200,38 @@ beregnes på nytt innenfor cache-vinduet.
 
 ```mermaid
 flowchart LR
-    subgraph H [Hendelseslogg]
-        F[Aktivitetsfeed: kronologiske kjøp og salg, paginert]
+    subgraph H [Event log]
+        F[Activity feed: chronological buys and sells, paginated]
     end
-    subgraph U [Avledning]
-        FOLD[Fold over handelshendelser per fond]
-        PRED{Siste hendelse er kjøp?}
-        HS[Beholdningsmengde]
-        X[Utenfor porteføljen]
+    subgraph U [Derivation]
+        FOLD[Fold over trade events per fund]
+        PRED{Latest event is a buy?}
+        HS[Holdings set]
+        X[Outside the portfolio]
     end
-    subgraph B [Berikelse: sammenføyning per fond]
-        J1[Instrumentdata: NAV, kategori, avkastning]
-        J2[Rapportvekter: kvartalsvise, godtas kun når vektsummen er nær 100 prosent]
+    subgraph B [Enrichment: join per fund]
+        J1[Instrument data: NAV, category, returns]
+        J2[Report weights: quarterly, accepted only when weights sum to near 100 percent]
     end
-    subgraph A [Aggregering]
-        KOMP[Likevektet kompositt: aritmetisk snitt av daglige avkastningsserier]
+    subgraph A [Aggregation]
+        KOMP[Equal-weight composite: arithmetic mean of daily return series]
     end
     F --> FOLD --> PRED
-    PRED -->|ja| HS
-    PRED -->|nei| X
+    PRED -->|yes| HS
+    PRED -->|no| X
     HS --> J1
     HS --> J2
     HS --> KOMP
+    classDef log fill:#3b82f640,stroke:#3b82f6
+    classDef derive fill:#a855f740,stroke:#a855f7
+    classDef enrich fill:#22c55e40,stroke:#22c55e
+    classDef agg fill:#f59e0b40,stroke:#f59e0b
+    classDef out fill:#6b728040,stroke:#6b7280
+    class H log
+    class U derive
+    class B enrich
+    class A agg
+    class X out
 ```
 
 Merk asymmetrien i feilhåndteringen: manglende berikelse degraderer feltvis
@@ -232,28 +262,38 @@ tunnelens utgående tilkobling.
 
 ```mermaid
 flowchart LR
-    subgraph S1 [Utviklersone]
+    subgraph S1 [Developer zone]
         DEV[git push]
     end
-    subgraph S2 [CI-sone: kvalitetsporter]
-        GATE[Lint, typesjekk, tester, bygg]
-        IMG[Uforanderlig image]
+    subgraph S2 [CI zone: quality gates]
+        GATE[Lint, typecheck, tests, build]
+        IMG[Immutable image]
     end
-    subgraph S3 [Distribusjon]
-        REG[Containerregister]
+    subgraph S3 [Distribution]
+        REG[Container registry]
     end
-    subgraph S4 [Kjøretidssone: ingen åpne porter inn]
-        SVC[systemd-brukertjeneste]
+    subgraph S4 [Runtime zone: no open inbound ports]
+        SVC[systemd user service]
         CT[Container]
-        VOL[(Montert volum: muterbar tilstand)]
+        VOL[(Mounted volume: mutable state)]
     end
     DEV --> GATE
-    GATE -->|kun ved grønn CI| IMG --> REG
-    SVC -->|pull ved omstart: omstart er hele deployen| REG
+    GATE -->|only on green CI| IMG --> REG
+    SVC -->|pull on restart: restarting is the whole deploy| REG
     SVC --> CT --- VOL
-    CT -->|utgående tunnel| CF[Cloudflare edge]
-    B[Besøkende] --> CF
-    CT -->|ISR, 30 min| NN[Nordnet API-er]
+    CT -->|outbound tunnel| CF[Cloudflare edge]
+    B[Visitors] --> CF
+    CT -->|ISR, 30 min| NN[Nordnet APIs]
+    classDef devzone fill:#6b728040,stroke:#6b7280
+    classDef cizone fill:#3b82f640,stroke:#3b82f6
+    classDef dist fill:#a855f740,stroke:#a855f7
+    classDef runtime fill:#22c55e40,stroke:#22c55e
+    classDef ext fill:#f59e0b40,stroke:#f59e0b
+    class S1 devzone
+    class S2 cizone
+    class S3 dist
+    class S4 runtime
+    class CF,B,NN ext
 ```
 
 At omstart er deploy-mekanismen betyr at utrulling og tilbakerulling er samme
@@ -294,11 +334,17 @@ ikke er tilgjengelig:
 
 ```mermaid
 flowchart TD
-    A[Nytt medlem] --> B[Legg til oppføring i src/data/members.json]
-    B --> C[Legg bilde i public/members/ navngitt som id, f.eks. sigurd-evensen.jpg]
-    C --> D[Commit + push, CI bygger og deployer]
-    E[Medlem slutter] --> F[Flytt oppføringen til previousMembers og sett endYear]
+    A[New member] --> B[Add an entry in src/data/members.json]
+    B --> C[Add the photo in public/members/ named by id, e.g. sigurd-evensen.jpg]
+    C --> D[Commit + push, CI builds and deploys]
+    E[Member leaves] --> F[Move the entry to previousMembers and set endYear]
     F --> D
+    classDef add fill:#22c55e40,stroke:#22c55e
+    classDef remove fill:#ef444440,stroke:#ef4444
+    classDef ship fill:#3b82f640,stroke:#3b82f6
+    class A,B,C add
+    class E,F remove
+    class D ship
 ```
 
 - Støttede bildeformater: jpg, jpeg, png, webp. Anbefalt stående 3:4,
