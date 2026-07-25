@@ -15,15 +15,20 @@ export default function About() {
   // når gruppen endrer seg.
   const members = getCurrentMembers();
   const antallMedlemmer = members.length;
-  const antallOrdinaere = members.filter(
-    (m) => m.role !== "Fondsforvalter" && m.role !== "Eldste",
+  const antallForvaltere = members.filter(
+    (m) => m.role === "Fondsforvalter",
   ).length;
+  const antallEldste = members.filter((m) => m.role === "Eldste").length;
+  // Resten regnes som ordinære, slik at punktlisten alltid summerer til totalen.
+  const antallOrdinaere = antallMedlemmer - antallForvaltere - antallEldste;
 
   return (
     <div className="w-full min-h-screen bg-gradient-primary">
       <main className="flex flex-col items-center justify-center sm:px-8 sm:pb-8 pt-24">
         <div className="text-center mb-8 px-4 sm:px-0 pt-8 sm:pt-8">
-          <h1 className="text-4xl font-bold text-foreground-primary mb-8">Om fondet</h1>
+          <h1 className="text-4xl font-bold text-foreground-primary mb-8">
+            Om fondet
+          </h1>
         </div>
 
         {/* Large top box */}
@@ -78,12 +83,10 @@ export default function About() {
                 <h3 className="text-xl font-semibold text-foreground-primary mb-3">
                   Sammensetning
                 </h3>
-                <p className="mb-3">
-                  Fondet har {antallMedlemmer} medlemmer:
-                </p>
+                <p className="mb-3">Fondet har {antallMedlemmer} medlemmer:</p>
                 <ul className="list-disc list-inside space-y-1 ml-4">
-                  <li>1 fondsforvalter</li>
-                  <li>1 fra De Eldstes Raad</li>
+                  <li>{antallForvaltere} fondsforvalter</li>
+                  <li>{antallEldste} fra De Eldstes Raad</li>
                   <li>{antallOrdinaere} ordinære medlemmer</li>
                 </ul>
               </div>
@@ -118,9 +121,8 @@ export default function About() {
                 </h3>
                 <p>
                   De {antallOrdinaere} ordinære medlemmene står for selve
-                  forvaltningen. De
-                  følger markedet, vurderer fondene og velger investeringer som
-                  linjeforeningen kan tjene på over tid.
+                  forvaltningen. De følger markedet, vurderer fondene og velger
+                  investeringer som linjeforeningen kan tjene på over tid.
                 </p>
               </div>
             </div>
@@ -133,11 +135,11 @@ export default function About() {
             className="block bg-cardBackground border border-cardBorder rounded-lg p-6 shadow-lg hover:border-foreground-secondary transition-colors text-center"
           >
             <span className="text-foreground-secondary font-medium">
-              Årsrapporter, strategi og vedtekter finner du under Rapporter &rarr;
+              Årsrapporter, strategi og vedtekter finner du under Rapporter
+              &rarr;
             </span>
           </Link>
         </div>
-
       </main>
     </div>
   );
