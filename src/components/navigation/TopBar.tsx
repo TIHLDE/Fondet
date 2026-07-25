@@ -53,15 +53,15 @@ const TopBar: React.FC = () => {
             : "bg-background/95 dark:bg-background/80"
       )}
     >
-      <nav className="flex items-center justify-between gap-4 py-3 px-4 sm:px-8 w-full">
+      <nav className="grid grid-cols-[auto_1fr_auto] items-center gap-4 py-3 px-4 sm:px-8 w-full">
         <Link
           href="/"
           aria-label="Til forsiden"
-          className="text-logo font-bold text-2xl flex items-center gap-2 shrink-0"
+          className="text-logo font-bold text-2xl flex items-center gap-2"
         >
           <TihldeLogo size="large" className="w-32 sm:w-40 h-auto" />
         </Link>
-        <div className="hidden lg:flex gap-8 whitespace-nowrap">
+        <div className="hidden lg:flex justify-center gap-8 whitespace-nowrap">
           {navigationItems.map((item) => (
             <Link
               key={item.id}
@@ -77,7 +77,7 @@ const TopBar: React.FC = () => {
             </Link>
           ))}
         </div>
-        <div className="flex gap-4 items-center shrink-0">
+        <div className="flex gap-4 items-center justify-end">
           <a
             href="https://tihlde.org"
             target="_blank"
