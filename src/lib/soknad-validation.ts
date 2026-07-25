@@ -1,5 +1,7 @@
 export const MIN_SUM = 5000;
-export const MAX_SUM = 100000;
+// Hardt tak: søknader over dette avvises av både skjema og API, og må tas
+// utenom nettsiden (vedtas av generalforsamlingen).
+export const MAX_SUM = 150000;
 export const MIN_WORDS = 20;
 export const MIN_WORDS_KONSEKVENSER = 5;
 
@@ -69,6 +71,9 @@ export interface SoknadBody {
   hvaStotte?: string;
   begrunnelse?: string;
   konsekvenser?: string;
+  // Valgfrie felt: følger med i e-posten, men blokkerer ikke innsending.
+  andreSoknader?: string;
+  tillegg?: string;
   budsjett?: BudsjettPost[];
 }
 
@@ -154,14 +159,6 @@ export function validateSoknad(body: SoknadBody): string | null {
     return `Maksimum søknadssum er ${MAX_SUM.toLocaleString("nb-NO")} kr`;
   }
 
-  const budsjettTotal = (budsjett ?? []).reduce(
-    (acc, b) => acc + (Number(b.sum) || 0),
-    0
-  );
-  if (budsjettTotal !== sum) {
-    return `Totalsum i budsjettet (${budsjettTotal.toLocaleString("nb-NO")} kr) må stemme overens med ønsket sum (${sum.toLocaleString("nb-NO")} kr)`;
-  }
-
   if (wordCount(hvaStotte) < MIN_WORDS || wordCount(begrunnelse) < MIN_WORDS) {
     return `Beskrivelsen og begrunnelsen må være på minst ${MIN_WORDS} ord hver`;
   }
@@ -172,6 +169,16 @@ export function validateSoknad(body: SoknadBody): string | null {
 
   if (!budsjett.every(validBudsjettPost)) {
     return "Alle budsjettposter må ha et beskrivende navn og en sum større enn 0";
+  }
+
+  // Etter postsjekken, slik at et tomt budsjett gir den tydelige meldingen
+  // over i stedet for "totalsummen er 0 kr".
+  const budsjettTotal = budsjett.reduce(
+    (acc, b) => acc + (Number(b.sum) || 0),
+    0
+  );
+  if (budsjettTotal !== sum) {
+    return `Totalsum i budsjettet (${budsjettTotal.toLocaleString("nb-NO")} kr) må stemme overens med ønsket sum (${sum.toLocaleString("nb-NO")} kr)`;
   }
 
   return null;

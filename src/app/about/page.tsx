@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Mail } from "lucide-react";
 import { FaInstagram } from "react-icons/fa";
 import type { Metadata } from "next";
+import { getCurrentMembers } from "@/data/members";
 
 export const metadata: Metadata = {
   title: "Om fondet",
@@ -10,6 +11,14 @@ export const metadata: Metadata = {
 };
 
 export default function About() {
+  // Antallene leses fra medlemsdataene, slik at teksten ikke kan bli utdatert
+  // når gruppen endrer seg.
+  const members = getCurrentMembers();
+  const antallMedlemmer = members.length;
+  const antallOrdinaere = members.filter(
+    (m) => m.role !== "Fondsforvalter" && m.role !== "Eldste",
+  ).length;
+
   return (
     <div className="w-full min-h-screen bg-gradient-primary">
       <main className="flex flex-col items-center justify-center sm:px-8 sm:pb-8 pt-24">
@@ -69,11 +78,13 @@ export default function About() {
                 <h3 className="text-xl font-semibold text-foreground-primary mb-3">
                   Sammensetning
                 </h3>
-                <p className="mb-3">Fondet har 16 medlemmer:</p>
+                <p className="mb-3">
+                  Fondet har {antallMedlemmer} medlemmer:
+                </p>
                 <ul className="list-disc list-inside space-y-1 ml-4">
                   <li>1 fondsforvalter</li>
                   <li>1 fra De Eldstes Raad</li>
-                  <li>14 ordinære medlemmer</li>
+                  <li>{antallOrdinaere} ordinære medlemmer</li>
                 </ul>
               </div>
 
@@ -106,7 +117,8 @@ export default function About() {
                   Medlemmer
                 </h3>
                 <p>
-                  De 14 ordinære medlemmene står for selve forvaltningen. De
+                  De {antallOrdinaere} ordinære medlemmene står for selve
+                  forvaltningen. De
                   følger markedet, vurderer fondene og velger investeringer som
                   linjeforeningen kan tjene på over tid.
                 </p>

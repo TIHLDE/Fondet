@@ -28,22 +28,39 @@ export function textBlocks(text: string): EmailContentBlock[] {
     .map((line) => ({ type: "text" as const, content: line }));
 }
 
+// Photon svarer normalt på under et sekund; uten tak kan en treg eller hengende
+// Photon holde API-ruten åpen til plattformens egen grense slår inn.
+const TIMEOUT_MS = 10_000;
+
 // Sender via Photon. Callers bør sjekke mailConfigured() først hvis de vil
 // feile med en tydelig melding i stedet.
+//
+// Merk: vi sender ikke reply-to. Feltet finnes ikke i CustomEmail-skjemaet vi
+// bygger på, og et ukjent felt kan bli avvist av Photon. Søkerens e-post står
+// derfor som egen linje i søknads-e-posten. Tar Photon senere imot reply-to,
+// kan det legges inn i body-en under.
 export async function sendMail(mail: Mail): Promise<void> {
   const base = (process.env.PHOTON_API_URL || "").replace(/\/+$/, "");
-  const res = await fetch(`${base}/api/email/send`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${process.env.PHOTON_EMAIL_API_KEY}`,
-    },
-    body: JSON.stringify({
-      to: mail.to,
-      subject: mail.subject,
-      content: mail.content,
-    }),
-  });
+  let res: Response;
+  try {
+    res = await fetch(`${base}/api/email/send`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.PHOTON_EMAIL_API_KEY}`,
+      },
+      body: JSON.stringify({
+        to: mail.to,
+        subject: mail.subject,
+        content: mail.content,
+      }),
+      signal: AbortSignal.timeout(TIMEOUT_MS),
+    });
+  } catch (err) {
+    throw new Error(
+      `Photon email API svarte ikke innen ${TIMEOUT_MS} ms: ${String(err)}`,
+    );
+  }
   if (!res.ok) {
     const body = await res.text().catch(() => "");
     throw new Error(`Photon email API svarte ${res.status}: ${body}`);

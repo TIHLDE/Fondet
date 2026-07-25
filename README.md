@@ -245,7 +245,7 @@ premissene deres holder.
 |------|---------|
 | `/` | Profilkort, nøkkeltall, utviklingsgraf med indeks-sammenligning, avkastning per fond og periode, sammensetning, beholdninger og handler |
 | `/about` | Om fondet, vedtekter, årsrapporter |
-| `/apply` + `/apply/skjema` | Søknad om støtte, sendes som e-post via Resend |
+| `/apply` + `/apply/skjema` | Søknad om støtte, sendes som e-post via Photon |
 | `/group` + `/group/tidligere` | Forvaltningsgruppen, nåværende og tidligere |
 | `/reports` | Rapporter |
 
@@ -308,7 +308,7 @@ deploy-pipeline å vedlikeholde.
 
 Dev-miljøet kjører på en hjemmeserver bak Cloudflare Tunnel på
 fondet.tritacle.no. Serveren kjører `systemd/fondet.service` som en
-brukertjeneste. `RESEND_API_KEY` ligger i `.env` på serveren, aldri i imaget
+brukertjeneste. `PHOTON_EMAIL_API_KEY` ligger i `.env` på serveren, aldri i imaget
 eller i repoet.
 
 Prod kan settes opp likt med `:latest`-taggen. Vil TIHLDE slippe serverdrift,
@@ -362,7 +362,7 @@ flowchart TD
 ## Miljøvariabler
 
 Alle er beskrevet i `.env.example`. Lokalt: kopier til `.env.local` og fyll ut
-det du trenger. Alt er valgfritt i utvikling; uten `RESEND_API_KEY` logges
+det du trenger. Alt er valgfritt i utvikling; uten Photon-variablene logges
 innloggingslenken til serverkonsollen i stedet for å sendes.
 
 I produksjon kreves `AUTH_SECRET` (signerer innloggingstokens, generer med
@@ -370,8 +370,11 @@ I produksjon kreves `AUTH_SECRET` (signerer innloggingstokens, generer med
 e-post) og en adminliste: `ADMIN_EMAILS` eller `admins.json` i `DATA_DIR`
 (filen vinner over variabelen).
 
-Merk: Resend sender fra `onboarding@resend.dev` til domenet er verifisert.
-Verifiser tihlde.org i Resend-dashbordet for å levere til fondet@tihlde.org.
+Merk: e-post går via Photon sitt e-post-API (`POST {PHOTON_API_URL}/api/email/send`),
+samme infrastruktur som resten av TIHLDE. Photon eier avsenderadresse og mal;
+Fondet trenger bare `PHOTON_API_URL` og `PHOTON_EMAIL_API_KEY` (må matche
+`EMAIL_API_KEY` i Photon). Begge må være satt i produksjon, ellers svarer
+søknadsskjemaet 503 og innlogging via e-post feiler.
 
 ## Kom i gang
 
