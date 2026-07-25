@@ -195,8 +195,9 @@ export default function SoknadSkjema() {
   const onsketSumNum = Number(onsketSum) || 0;
   const sumOutOfRange =
     onsketSumNum > 0 && (onsketSumNum < MIN_SUM || onsketSumNum > MAX_SUM);
-  const budgetMismatch =
-    onsketSumNum > 0 && totalBudsjett > 0 && totalBudsjett !== onsketSumNum;
+  // Også når budsjettet er tomt: serveren krever at summene stemmer, så et
+  // tomt budsjett skal stoppes her framfor å gi en 400 etter innsending.
+  const budgetMismatch = onsketSumNum > 0 && totalBudsjett !== onsketSumNum;
   const canSubmit = !sending && !sumOutOfRange && !budgetMismatch;
 
   async function handleSubmit(e: React.FormEvent) {

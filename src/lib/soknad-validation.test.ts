@@ -126,6 +126,16 @@ describe("validateSoknad", () => {
     ).toMatch(/Maksimum/);
   });
 
+  it("names the empty budget post before comparing totals", () => {
+    expect(
+      validateSoknad({
+        ...valid,
+        onsketSum: "8000",
+        budsjett: [{ utgift: "", sum: "" }],
+      }),
+    ).toMatch(/budsjettposter/);
+  });
+
   it("rejects when budget total does not match ønsket sum", () => {
     expect(
       validateSoknad({

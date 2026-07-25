@@ -19,6 +19,7 @@ export async function POST(request: NextRequest) {
     hvaStotte,
     begrunnelse,
     konsekvenser,
+    andreSoknader,
     budsjett,
     tillegg,
   } = body;
@@ -59,6 +60,8 @@ export async function POST(request: NextRequest) {
     ...textBlocks(begrunnelse),
     { type: "text", content: "Konsekvenser dersom støtte ikke tildeles:" },
     ...textBlocks(konsekvenser),
+    { type: "text", content: "Andre støtteordninger det er søkt hos:" },
+    ...textBlocks(andreSoknader || "Ingen oppgitt"),
     { type: "title", content: "Budsjett" },
     ...textBlocks(budsjettLines || "Ingen poster oppgitt"),
     { type: "text", content: `Total sum: ${sum} kr` },
