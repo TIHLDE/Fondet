@@ -195,10 +195,12 @@ export default function SoknadSkjema() {
   const onsketSumNum = Number(onsketSum) || 0;
   const sumOutOfRange =
     onsketSumNum > 0 && (onsketSumNum < MIN_SUM || onsketSumNum > MAX_SUM);
-  // Også når budsjettet er tomt: serveren krever at summene stemmer, så et
-  // tomt budsjett skal stoppes her framfor å gi en 400 etter innsending.
-  const budgetMismatch = onsketSumNum > 0 && totalBudsjett !== onsketSumNum;
-  const canSubmit = !sending && !sumOutOfRange && !budgetMismatch;
+  // Delfinansiering er lov, så et budsjett større enn ønsket sum er helt greit.
+  // Å søke om mer enn hele budsjettet er derimot nesten alltid en tastefeil, så
+  // det får en merknad — men den blokkerer ikke innsending.
+  const soknadOverstigerBudsjett =
+    onsketSumNum > 0 && totalBudsjett > 0 && onsketSumNum > totalBudsjett;
+  const canSubmit = !sending && !sumOutOfRange;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -522,13 +524,16 @@ export default function SoknadSkjema() {
 
           <div className="flex justify-between items-center pt-3 border-t border-cardBorder">
             <span className="font-semibold text-foreground-primary">Total sum</span>
-            <span className={`font-semibold ${budgetMismatch ? "text-red-600 dark:text-red-400" : "text-foreground-primary"}`}>
+            <span className="font-semibold text-foreground-primary">
               {totalBudsjett.toLocaleString("nb-NO")} kr
             </span>
           </div>
-          {budgetMismatch && (
-            <p role="alert" className="text-sm text-red-600 dark:text-red-400">
-              Totalsum i budsjettet ({totalBudsjett.toLocaleString("nb-NO")} kr) stemmer ikke med ønsket sum ({onsketSumNum.toLocaleString("nb-NO")} kr). Juster budsjettet eller ønsket sum.
+          {soknadOverstigerBudsjett && (
+            <p className="text-sm text-warning">
+              Du søker om mer ({onsketSumNum.toLocaleString("nb-NO")} kr) enn
+              budsjettet ditt på {totalBudsjett.toLocaleString("nb-NO")} kr. Det
+              er lov, men dobbeltsjekk gjerne tallene. Søker dere om
+              delfinansiering av et større budsjett, skal budsjettet være størst.
             </p>
           )}
         </div>

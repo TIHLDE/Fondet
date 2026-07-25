@@ -106,7 +106,7 @@ describe("validateSoknad", () => {
     );
   });
 
-  it("accepts the exact minimum sum when budget matches", () => {
+  it("accepts the exact minimum sum", () => {
     expect(
       validateSoknad({
         ...valid,
@@ -126,7 +126,7 @@ describe("validateSoknad", () => {
     ).toMatch(/Maksimum/);
   });
 
-  it("names the empty budget post before comparing totals", () => {
+  it("names the empty budget post", () => {
     expect(
       validateSoknad({
         ...valid,
@@ -136,14 +136,22 @@ describe("validateSoknad", () => {
     ).toMatch(/budsjettposter/);
   });
 
-  it("rejects when budget total does not match ønsket sum", () => {
+  it("accepts a budget that differs from ønsket sum, in both directions", () => {
+    // Delfinansiering: budsjettet er større enn det gruppen søker om.
+    expect(
+      validateSoknad({
+        ...valid,
+        onsketSum: "8000",
+        budsjett: [{ utgift: "Leie av lokale", sum: "40000" }],
+      }),
+    ).toBeNull();
     expect(
       validateSoknad({
         ...valid,
         onsketSum: "8000",
         budsjett: [{ utgift: "Leie av lokale", sum: "6000" }],
       }),
-    ).toMatch(/stemme overens/);
+    ).toBeNull();
   });
 
   it("rejects descriptions under the word minimum", () => {

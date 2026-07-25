@@ -5,8 +5,10 @@ import { usePrefersReducedMotion } from "@/lib/anim";
 
 type Item = { name: string; perf: number };
 
-const UP = "#22c55e";
-const DOWN = "#f7525f";
+// Grønn og rød kommer fra temaet: bandet følger nå kortflaten, og de lyse
+// terminalfargene har for svak kontrast mot hvit bakgrunn i lyst tema.
+const UP = "var(--ticker-up)";
+const DOWN = "var(--ticker-down)";
 
 function Pill({ name, perf }: Item) {
   const up = perf >= 0;

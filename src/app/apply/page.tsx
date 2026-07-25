@@ -81,8 +81,16 @@ export default function Apply() {
                     <span>
                       <strong>Maksimumsbeløp:</strong>{" "}
                       {MAX_SUM.toLocaleString("nb-NO")} kr. Beløp som overstiger
-                      dette kan ikke behandles internt, og må vedtas av
-                      generalforsamlingen.
+                      dette kan ikke behandles internt og må vedtas av
+                      generalforsamlingen, så skjemaet tar dem ikke imot. Ta
+                      kontakt med{" "}
+                      <a
+                        href="mailto:forvalter@tihlde.org"
+                        className="text-accent hover:text-accent/80 underline"
+                      >
+                        forvalter@tihlde.org
+                      </a>{" "}
+                      hvis det gjelder dere.
                     </span>
                   </li>
                   <li className="flex items-start">

@@ -171,15 +171,8 @@ export function validateSoknad(body: SoknadBody): string | null {
     return "Alle budsjettposter må ha et beskrivende navn og en sum større enn 0";
   }
 
-  // Etter postsjekken, slik at et tomt budsjett gir den tydelige meldingen
-  // over i stedet for "totalsummen er 0 kr".
-  const budsjettTotal = budsjett.reduce(
-    (acc, b) => acc + (Number(b.sum) || 0),
-    0
-  );
-  if (budsjettTotal !== sum) {
-    return `Totalsum i budsjettet (${budsjettTotal.toLocaleString("nb-NO")} kr) må stemme overens med ønsket sum (${sum.toLocaleString("nb-NO")} kr)`;
-  }
+  // Budsjettet trenger ikke summere til ønsket sum: en gruppe kan søke om
+  // delfinansiering av et større budsjett. Beløpene vurderes av fondet.
 
   return null;
 }
