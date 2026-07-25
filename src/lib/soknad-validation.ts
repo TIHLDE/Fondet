@@ -1,5 +1,7 @@
 export const MIN_SUM = 5000;
-export const MAX_SUM = 100000;
+// Hardt tak: søknader over dette avvises av både skjema og API, og må tas
+// utenom nettsiden (vedtas av generalforsamlingen).
+export const MAX_SUM = 150000;
 export const MIN_WORDS = 20;
 export const MIN_WORDS_KONSEKVENSER = 5;
 

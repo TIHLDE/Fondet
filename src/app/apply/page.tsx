@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import SoknaderTable from "@/components/SoknaderTable";
+import { MIN_SUM, MAX_SUM } from "@/lib/soknad-validation";
 
 export const metadata: Metadata = {
   title: "Søk om støtte",
@@ -70,16 +71,18 @@ export default function Apply() {
                   <li className="flex items-start">
                     <span className="text-blue-400 mr-2">•</span>
                     <span>
-                      <strong>Minimumsbeløp:</strong> 5000 kr. For beløp som er
+                      <strong>Minimumsbeløp:</strong>{" "}
+                      {MIN_SUM.toLocaleString("nb-NO")} kr. For beløp som er
                       mindre enn dette kan du spørre hs@tihlde.org.
                     </span>
                   </li>
                   <li className="flex items-start">
                     <span className="text-blue-400 mr-2">•</span>
                     <span>
-                      <strong>Maksimumsbeløp:</strong> 100 000 kr. Beløp som
-                      overstiger dette kan ikke behandles internt, og må vedtas
-                      av generalforsamlingen.
+                      <strong>Maksimumsbeløp:</strong>{" "}
+                      {MAX_SUM.toLocaleString("nb-NO")} kr. Beløp som overstiger
+                      dette kan ikke behandles internt, og må vedtas av
+                      generalforsamlingen.
                     </span>
                   </li>
                   <li className="flex items-start">
