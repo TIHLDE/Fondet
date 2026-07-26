@@ -15,6 +15,10 @@ export class RateLimiter {
   constructor(
     private readonly limit: number,
     private readonly windowMs: number,
+    // Tak på antall samtidige nøkler. Nøkkelen er klientstyrt (x-forwarded-for
+    // kan spoofes), så uten et tak kan én flom med unike verdier blåse opp
+    // kartet selv om hver enkelt forespørsel avvises.
+    private readonly maxKeys: number = 10_000,
   ) {}
 
   // True when the caller is allowed through; false when it is over the limit.
@@ -23,6 +27,10 @@ export class RateLimiter {
     this.prune(now);
     const entry = this.hits.get(key);
     if (!entry || now >= entry.resetAt) {
+      // Fullt kart: slipp gjennom uten å registrere. Å avvise i stedet ville
+      // gjort kartet til et våpen — en angriper kunne fylt det og dermed
+      // stengt ute alle nye, legitime IP-er. Det globale taket er backstop.
+      if (this.hits.size >= this.maxKeys) return true;
       this.hits.set(key, { count: 1, resetAt: now + this.windowMs });
       return true;
     }

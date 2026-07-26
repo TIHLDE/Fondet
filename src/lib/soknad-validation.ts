@@ -161,8 +161,12 @@ export function validateSoknad(body: SoknadBody): string | null {
     andreSoknader ?? "",
     tillegg ?? "",
   ].some((f) => f.length > MAX_CHARS);
+  // Også sum: den havner rå i e-posten, og Number("000…0001") er endelig, så
+  // en 5 000-tegns "sum" ville ellers passert validBudsjettPost.
   const forLangeBudsjett = budsjett.some(
-    (b) => String(b.utgift ?? "").length > MAX_CHARS_SHORT,
+    (b) =>
+      String(b.utgift ?? "").length > MAX_CHARS_SHORT ||
+      String(b.sum ?? "").length > MAX_CHARS_SHORT,
   );
   if (forLangeKorte || forLange || forLangeBudsjett) {
     return "Et eller flere felt er for lange";

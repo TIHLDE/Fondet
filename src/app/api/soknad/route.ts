@@ -23,6 +23,11 @@ export async function POST(request: NextRequest) {
   } catch {
     return NextResponse.json({ error: "Ugyldig forespørsel" }, { status: 400 });
   }
+  // Gyldig JSON er ikke nødvendigvis et objekt: "null" parser fint, og
+  // destructuringen under ville da kastet og gitt 500 i stedet for 400.
+  if (typeof body !== "object" || body === null || Array.isArray(body)) {
+    return NextResponse.json({ error: "Ugyldig forespørsel" }, { status: 400 });
+  }
 
   const {
     sokerNavn,

@@ -126,3 +126,21 @@ describe("misbruksvern", () => {
     expect((await send()).status).toBe(429);
   });
 });
+
+describe("kropp som ikke er et objekt", () => {
+  const send = (raw: string) =>
+    POST(
+      new Request("http://localhost:3000/api/soknad", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: raw,
+      }) as NextRequest,
+    );
+
+  it("svarer 400 på gyldig JSON som ikke er et objekt", async () => {
+    expect((await send("null")).status).toBe(400);
+    expect((await send("123")).status).toBe(400);
+    expect((await send("[]")).status).toBe(400);
+  });
+});
+

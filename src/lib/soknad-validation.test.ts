@@ -215,3 +215,17 @@ describe("lengdegrenser", () => {
     ).toBeNull();
   });
 });
+
+describe("budsjettsum-lengde", () => {
+  it("avviser en sum-streng over kortgrensen selv om Number() er endelig", () => {
+    const langSum = "0".repeat(MAX_CHARS_SHORT) + "1";
+    expect(Number.isFinite(Number(langSum))).toBe(true);
+    expect(
+      validateSoknad({
+        ...valid,
+        budsjett: [{ utgift: "Leie av lokale", sum: langSum }],
+      }),
+    ).toMatch(/for lange/);
+  });
+});
+

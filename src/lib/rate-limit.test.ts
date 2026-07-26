@@ -48,3 +48,21 @@ describe("clientIp", () => {
     expect(clientIp(req({}))).toBe("unknown");
   });
 });
+
+describe("nøkkeltak", () => {
+  it("slutter å registrere nye nøkler når kartet er fullt", () => {
+    const rl = new RateLimiter(1, 1000, 5);
+    for (let i = 0; i < 50; i++) rl.check(`spoofed-${i}`, 0);
+    // @ts-expect-error leser det private kartet for å bekrefte taket
+    expect(rl.hits.size).toBe(5);
+  });
+
+  it("slipper gjennom i stedet for å avvise når kartet er fullt", () => {
+    const rl = new RateLimiter(1, 1000, 2);
+    rl.check("a", 0);
+    rl.check("b", 0);
+    // ny IP med fullt kart skal ikke bli stengt ute
+    expect(rl.check("legitim", 0)).toBe(true);
+  });
+});
+
