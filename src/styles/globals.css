@@ -57,6 +57,10 @@
   --info: #1e53e5;
   --muted-foreground: #666a74;
   --secondary: #f0f3fa;
+  /* Ticker: mørkere grønn/rød mot det lyse bandet, slik at tallene holder
+     WCAG AA (4,5:1). De lyse variantene under fungerer bare mot mørk flate. */
+  --ticker-up: #15803d;
+  --ticker-down: #be123c;
 }
 
 .dark {
@@ -79,6 +83,8 @@
   --info: #5e9eff;
   --muted-foreground: #8b8e98;
   --secondary: #262b38;
+  --ticker-up: #22c55e;
+  --ticker-down: #f7525f;
 }
 
 html {
@@ -114,6 +120,12 @@ body {
     transform: none;
     transition: none;
   }
+}
+
+/* Fund ticker band: follows the card surface so it matches the page theme. */
+.ticker-band {
+  background-color: var(--card-background);
+  border-color: var(--card-border);
 }
 
 /* Fund ticker: two stacked copies scroll left, looping at -50%. Pauses on

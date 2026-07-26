@@ -12,6 +12,8 @@ import {
   MAX_SUM,
   MIN_WORDS,
   MIN_WORDS_KONSEKVENSER,
+  MAX_CHARS,
+  MAX_CHARS_SHORT,
 } from "@/lib/soknad-validation";
 
 interface BudsjettPost {
@@ -33,6 +35,7 @@ interface Draft {
   hvaStotte: string;
   begrunnelse: string;
   konsekvenser: string;
+  andreSoknader: string;
   budsjett: BudsjettPost[];
   tillegg: string;
 }
@@ -55,6 +58,7 @@ export default function SoknadSkjema() {
   const [hvaStotte, setHvaStotte] = useState("");
   const [begrunnelse, setBegrunnelse] = useState("");
   const [konsekvenser, setKonsekvenser] = useState("");
+  const [andreSoknader, setAndreSoknader] = useState("");
   const [budsjett, setBudsjett] = useState<BudsjettPost[]>([
     { utgift: "", sum: "" },
   ]);
@@ -78,6 +82,7 @@ export default function SoknadSkjema() {
     setHvaStotte(draft.hvaStotte ?? "");
     setBegrunnelse(draft.begrunnelse ?? "");
     setKonsekvenser(draft.konsekvenser ?? "");
+    setAndreSoknader(draft.andreSoknader ?? "");
     if (draft.budsjett?.length) setBudsjett(draft.budsjett);
     setTillegg(draft.tillegg ?? "");
   }, []);
@@ -92,6 +97,7 @@ export default function SoknadSkjema() {
       hvaStotte,
       begrunnelse,
       konsekvenser,
+      andreSoknader,
       budsjett,
       tillegg,
     };
@@ -109,6 +115,7 @@ export default function SoknadSkjema() {
     hvaStotte,
     begrunnelse,
     konsekvenser,
+    andreSoknader,
     budsjett,
     tillegg,
   ]);
@@ -128,10 +135,14 @@ export default function SoknadSkjema() {
         case "epost":
           if (!validEpost(value)) err = "Ugyldig e-postadresse";
           break;
-        case "onsketSum":
-          if (!(Number(value) >= MIN_SUM))
-            err = "Minimum søknadssum er 5 000 kr";
+        case "onsketSum": {
+          const n = Number(value);
+          if (n < MIN_SUM)
+            err = `Minimum søknadssum er ${MIN_SUM.toLocaleString("nb-NO")} kr`;
+          else if (n > MAX_SUM)
+            err = `Maksimum søknadssum er ${MAX_SUM.toLocaleString("nb-NO")} kr`;
           break;
+        }
         case "hvaStotte":
         case "begrunnelse":
           if (wordCount(value) < MIN_WORDS)
@@ -183,6 +194,16 @@ export default function SoknadSkjema() {
     0
   );
 
+  const onsketSumNum = Number(onsketSum) || 0;
+  const sumOutOfRange =
+    onsketSumNum > 0 && (onsketSumNum < MIN_SUM || onsketSumNum > MAX_SUM);
+  // Delfinansiering er lov, så et budsjett større enn ønsket sum er helt greit.
+  // Å søke om mer enn hele budsjettet er derimot nesten alltid en tastefeil, så
+  // det får en merknad — men den blokkerer ikke innsending.
+  const soknadOverstigerBudsjett =
+    onsketSumNum > 0 && totalBudsjett > 0 && onsketSumNum > totalBudsjett;
+  const canSubmit = !sending && !sumOutOfRange;
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setResult(null);
@@ -197,6 +218,8 @@ export default function SoknadSkjema() {
       begrunnelse,
       konsekvenser,
       budsjett,
+      andreSoknader,
+      tillegg,
     };
 
     const feil = validateSoknad(soknad);
@@ -211,7 +234,7 @@ export default function SoknadSkjema() {
       const res = await fetch("/api/soknad", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...soknad, tillegg }),
+        body: JSON.stringify(soknad),
       });
 
       if (res.ok) {
@@ -284,6 +307,7 @@ export default function SoknadSkjema() {
               <input
                 id="kontaktperson"
                 required
+                maxLength={MAX_CHARS_SHORT}
                 className={inputWithError("kontaktperson")}
                 value={kontaktperson}
                 onChange={(e) => setKontaktperson(e.target.value)}
@@ -301,6 +325,7 @@ export default function SoknadSkjema() {
               <input
                 id="telefon"
                 required
+                maxLength={MAX_CHARS_SHORT}
                 type="tel"
                 inputMode="tel"
                 pattern="(\+47)?[0-9 ]{8,}"
@@ -322,6 +347,7 @@ export default function SoknadSkjema() {
             <input
               id="epost"
               required
+              maxLength={MAX_CHARS_SHORT}
               type="email"
               className={inputWithError("epost")}
               value={epost}
@@ -350,7 +376,8 @@ export default function SoknadSkjema() {
               id="onsket-sum"
               required
               type="number"
-              min={5000}
+              min={MIN_SUM}
+              max={MAX_SUM}
               className={inputWithError("onsketSum")}
               value={onsketSum}
               onChange={(e) => setOnsketSum(e.target.value)}
@@ -359,18 +386,9 @@ export default function SoknadSkjema() {
               aria-describedby={
                 fieldErrors["onsketSum"] ? "onsketSum-error" : undefined
               }
-              placeholder="Minimum 5 000 kr"
+              placeholder={`${MIN_SUM.toLocaleString("nb-NO")} – ${MAX_SUM.toLocaleString("nb-NO")} kr`}
             />
             {fieldError("onsketSum")}
-            {Number(onsketSum) > MAX_SUM && (
-              <p
-                id="onsketSum-warning"
-                className="mt-1 text-sm text-amber-700 dark:text-amber-400"
-              >
-                Beløp over {MAX_SUM.toLocaleString("nb-NO")} kr må vedtas av
-                generalforsamlingen. Du kan fortsatt sende inn søknaden.
-              </p>
-            )}
           </div>
 
           <div>
@@ -380,6 +398,7 @@ export default function SoknadSkjema() {
             <textarea
               id="hva-stotte"
               required
+              maxLength={MAX_CHARS}
               rows={4}
               className={inputWithError("hvaStotte")}
               value={hvaStotte}
@@ -401,6 +420,7 @@ export default function SoknadSkjema() {
             <textarea
               id="begrunnelse"
               required
+              maxLength={MAX_CHARS}
               rows={4}
               className={inputWithError("begrunnelse")}
               value={begrunnelse}
@@ -422,6 +442,7 @@ export default function SoknadSkjema() {
             <textarea
               id="konsekvenser"
               required
+              maxLength={MAX_CHARS}
               rows={3}
               className={inputWithError("konsekvenser")}
               value={konsekvenser}
@@ -434,6 +455,21 @@ export default function SoknadSkjema() {
               placeholder="Hva skjer hvis søknaden ikke innvilges?"
             />
             {fieldError("konsekvenser")}
+          </div>
+
+          <div>
+            <label htmlFor="andre-soknader" className={labelClass}>
+              Hvilke andre støtteordninger har dere søkt, og hva var svaret?
+            </label>
+            <textarea
+              id="andre-soknader"
+              rows={3}
+              maxLength={MAX_CHARS}
+              className={inputClass}
+              value={andreSoknader}
+              onChange={(e) => setAndreSoknader(e.target.value)}
+              placeholder="Dere må søke hos andre støtteordninger før dere søker om støtte her..."
+            />
           </div>
         </div>
 
@@ -452,6 +488,7 @@ export default function SoknadSkjema() {
                   required
                   className={inputClass}
                   placeholder="Utgift"
+                  maxLength={MAX_CHARS_SHORT}
                   aria-label={`Utgift ${i + 1}`}
                   value={post.utgift}
                   onChange={(e) =>
@@ -503,6 +540,14 @@ export default function SoknadSkjema() {
               {totalBudsjett.toLocaleString("nb-NO")} kr
             </span>
           </div>
+          {soknadOverstigerBudsjett && (
+            <p className="text-sm text-warning">
+              Du søker om mer ({onsketSumNum.toLocaleString("nb-NO")} kr) enn
+              budsjettet ditt på {totalBudsjett.toLocaleString("nb-NO")} kr. Det
+              er lov, men dobbeltsjekk gjerne tallene. Søker dere om
+              delfinansiering av et større budsjett, skal budsjettet være størst.
+            </p>
+          )}
         </div>
 
         {/* Tillegg */}
@@ -513,6 +558,7 @@ export default function SoknadSkjema() {
           <textarea
             aria-label="Tilleggsinformasjon"
             rows={4}
+            maxLength={MAX_CHARS}
             className={inputClass}
             value={tillegg}
             onChange={(e) => setTillegg(e.target.value)}
@@ -537,8 +583,8 @@ export default function SoknadSkjema() {
         {/* Submit */}
         <button
           type="submit"
-          disabled={sending}
-          className="w-full py-4 rounded-lg bg-blue-600 text-white font-semibold text-lg hover:bg-blue-700 transition disabled:opacity-50"
+          disabled={!canSubmit}
+          className="w-full py-4 rounded-lg bg-blue-600 text-white font-semibold text-lg hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {sending ? "Sender søknad..." : "Send inn søknad"}
         </button>

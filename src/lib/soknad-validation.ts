@@ -1,9 +1,17 @@
 export const MIN_SUM = 5000;
-// Soft ceiling: amounts above this must be decided by generalforsamlingen,
-// so the form warns but does not block.
-export const MAX_SUM = 100000;
+// Hardt tak: søknader over dette avvises av både skjema og API, og må tas
+// utenom nettsiden (vedtas av generalforsamlingen).
+export const MAX_SUM = 150000;
 export const MIN_WORDS = 20;
 export const MIN_WORDS_KONSEKVENSER = 5;
+
+// Hard ceilings på lengde. Endepunktet er offentlig og gjør kroppen direkte om
+// til en e-post, så hvert fritekstfelt trenger et tak: uten det kan én enkelt
+// forespørsel dytte megabyte med tekst inn i fondet@tihlde.org. Grensene ligger
+// langt over enhver ekte søknad, så de slår bare inn ved misbruk.
+export const MAX_CHARS = 5000;
+export const MAX_CHARS_SHORT = 200;
+export const MAX_BUDSJETT_POSTER = 50;
 
 // Groups from tihlde.org/grupper and tihlde.org/interessegrupper (2026-07).
 export const TIHLDE_GROUPS: Record<string, string[]> = {
@@ -71,6 +79,9 @@ export interface SoknadBody {
   hvaStotte?: string;
   begrunnelse?: string;
   konsekvenser?: string;
+  // Valgfrie felt: følger med i e-posten, men blokkerer ikke innsending.
+  andreSoknader?: string;
+  tillegg?: string;
   budsjett?: BudsjettPost[];
 }
 
@@ -114,6 +125,8 @@ export function validateSoknad(body: SoknadBody): string | null {
     begrunnelse,
     konsekvenser,
     budsjett,
+    andreSoknader,
+    tillegg,
   } = body;
 
   if (
@@ -129,6 +142,34 @@ export function validateSoknad(body: SoknadBody): string | null {
     budsjett.length === 0
   ) {
     return "Mangler påkrevde felt";
+  }
+
+  // Størrelsessjekk før alt annet: en overdimensjonert kropp skal avvises uten
+  // at vi bruker arbeid på den. Gjelder også de valgfrie feltene, som ellers
+  // ville gått uvalidert rett inn i e-posten.
+  if (budsjett.length > MAX_BUDSJETT_POSTER) {
+    return `Maks ${MAX_BUDSJETT_POSTER} budsjettposter`;
+  }
+
+  const forLangeKorte = [kontaktperson, telefon, epost].some(
+    (f) => f.length > MAX_CHARS_SHORT,
+  );
+  const forLange = [
+    hvaStotte,
+    begrunnelse,
+    konsekvenser,
+    andreSoknader ?? "",
+    tillegg ?? "",
+  ].some((f) => f.length > MAX_CHARS);
+  // Også sum: den havner rå i e-posten, og Number("000…0001") er endelig, så
+  // en 5 000-tegns "sum" ville ellers passert validBudsjettPost.
+  const forLangeBudsjett = budsjett.some(
+    (b) =>
+      String(b.utgift ?? "").length > MAX_CHARS_SHORT ||
+      String(b.sum ?? "").length > MAX_CHARS_SHORT,
+  );
+  if (forLangeKorte || forLange || forLangeBudsjett) {
+    return "Et eller flere felt er for lange";
   }
 
   if (!ALL_GROUPS.includes(sokerNavn)) {
@@ -152,6 +193,10 @@ export function validateSoknad(body: SoknadBody): string | null {
     return `Minimum søknadssum er ${MIN_SUM.toLocaleString("nb-NO")} kr`;
   }
 
+  if (sum > MAX_SUM) {
+    return `Maksimum søknadssum er ${MAX_SUM.toLocaleString("nb-NO")} kr`;
+  }
+
   if (wordCount(hvaStotte) < MIN_WORDS || wordCount(begrunnelse) < MIN_WORDS) {
     return `Beskrivelsen og begrunnelsen må være på minst ${MIN_WORDS} ord hver`;
   }
@@ -163,6 +208,9 @@ export function validateSoknad(body: SoknadBody): string | null {
   if (!budsjett.every(validBudsjettPost)) {
     return "Alle budsjettposter må ha et beskrivende navn og en sum større enn 0";
   }
+
+  // Budsjettet trenger ikke summere til ønsket sum: en gruppe kan søke om
+  // delfinansiering av et større budsjett. Beløpene vurderes av fondet.
 
   return null;
 }

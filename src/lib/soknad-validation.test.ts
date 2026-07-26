@@ -9,6 +9,10 @@ import {
   ALL_GROUPS,
   MIN_WORDS,
   MIN_SUM,
+  MAX_SUM,
+  MAX_CHARS,
+  MAX_CHARS_SHORT,
+  MAX_BUDSJETT_POSTER,
 } from "./soknad-validation";
 
 const longText = Array.from({ length: MIN_WORDS }, (_, i) => `ord${i}`).join(
@@ -106,7 +110,51 @@ describe("validateSoknad", () => {
   });
 
   it("accepts the exact minimum sum", () => {
-    expect(validateSoknad({ ...valid, onsketSum: String(MIN_SUM) })).toBeNull();
+    expect(
+      validateSoknad({
+        ...valid,
+        onsketSum: String(MIN_SUM),
+        budsjett: [{ utgift: "Leie av lokale", sum: String(MIN_SUM) }],
+      }),
+    ).toBeNull();
+  });
+
+  it("rejects sums above the maximum", () => {
+    expect(
+      validateSoknad({
+        ...valid,
+        onsketSum: String(MAX_SUM + 1),
+        budsjett: [{ utgift: "Leie av lokale", sum: String(MAX_SUM + 1) }],
+      }),
+    ).toMatch(/Maksimum/);
+  });
+
+  it("names the empty budget post", () => {
+    expect(
+      validateSoknad({
+        ...valid,
+        onsketSum: "8000",
+        budsjett: [{ utgift: "", sum: "" }],
+      }),
+    ).toMatch(/budsjettposter/);
+  });
+
+  it("accepts a budget that differs from ønsket sum, in both directions", () => {
+    // Delfinansiering: budsjettet er større enn det gruppen søker om.
+    expect(
+      validateSoknad({
+        ...valid,
+        onsketSum: "8000",
+        budsjett: [{ utgift: "Leie av lokale", sum: "40000" }],
+      }),
+    ).toBeNull();
+    expect(
+      validateSoknad({
+        ...valid,
+        onsketSum: "8000",
+        budsjett: [{ utgift: "Leie av lokale", sum: "6000" }],
+      }),
+    ).toBeNull();
   });
 
   it("rejects descriptions under the word minimum", () => {
@@ -133,3 +181,51 @@ describe("validateSoknad", () => {
     expect(validateSoknad({ ...valid, begrunnelse: padded })).toMatch(/ord/);
   });
 });
+
+describe("lengdegrenser", () => {
+  it("avviser fritekstfelt over tegngrensen", () => {
+    expect(
+      validateSoknad({ ...valid, begrunnelse: "a".repeat(MAX_CHARS + 1) }),
+    ).toMatch(/for lange/);
+    expect(
+      validateSoknad({ ...valid, tillegg: "a".repeat(MAX_CHARS + 1) }),
+    ).toMatch(/for lange/);
+    expect(
+      validateSoknad({ ...valid, andreSoknader: "a".repeat(MAX_CHARS + 1) }),
+    ).toMatch(/for lange/);
+  });
+
+  it("avviser korte felt over kortgrensen", () => {
+    expect(
+      validateSoknad({ ...valid, epost: "a".repeat(MAX_CHARS_SHORT) + "@b.no" }),
+    ).toMatch(/for lange/);
+  });
+
+  it("avviser for mange budsjettposter", () => {
+    const budsjett = Array.from({ length: MAX_BUDSJETT_POSTER + 1 }, () => ({
+      utgift: "Leie av lokale",
+      sum: "6000",
+    }));
+    expect(validateSoknad({ ...valid, budsjett })).toMatch(/budsjettposter/);
+  });
+
+  it("slipper gjennom en helt vanlig søknad", () => {
+    expect(
+      validateSoknad({ ...valid, tillegg: "Kort tillegg", andreSoknader: "Ingen" }),
+    ).toBeNull();
+  });
+});
+
+describe("budsjettsum-lengde", () => {
+  it("avviser en sum-streng over kortgrensen selv om Number() er endelig", () => {
+    const langSum = "0".repeat(MAX_CHARS_SHORT) + "1";
+    expect(Number.isFinite(Number(langSum))).toBe(true);
+    expect(
+      validateSoknad({
+        ...valid,
+        budsjett: [{ utgift: "Leie av lokale", sum: langSum }],
+      }),
+    ).toMatch(/for lange/);
+  });
+});
+

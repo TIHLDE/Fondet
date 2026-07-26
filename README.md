@@ -32,6 +32,61 @@ redigerer medlemmer, bilder, rapporter og søknader direkte. Endringene skrives
 til volumet, aldri til repoet. De committede filene er utgangspunktet og
 reserven, ikke sannheten i produksjon.
 
+Innloggingen er et kapabilitetsbasert engangslenke-skjema uten passord og uten
+lagret sesjonstilstand på serveren: begge tokens er signerte, selvbærende
+JWT-er, og et typefelt i payloaden skiller lenketoken fra sesjonstoken slik at
+det ene aldri kan spilles av som det andre.
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor F as Fund manager
+    participant S as Server (stateless)
+    participant E as Email (out-of-band channel)
+    rect rgba(59,130,246,0.12)
+        F->>S: request login (address)
+        S->>S: normalize address, look up in admin allowlist
+        S->>S: cooldown window per address (60 s)
+        alt address is authorized
+            S->>S: sign one-time token (HS256, use=login, TTL 15 min)
+            S-->>E: capability URL, base from config and never from the Host header
+            E-->>F: login link
+        end
+        Note over F,S: identical response either way, prevents address enumeration
+    end
+    rect rgba(34,197,94,0.12)
+        F->>S: callback with token
+        S->>S: verify signature, expiry and use claim
+        S->>S: issue session token (use=session, TTL 7 days)
+        S-->>F: HttpOnly cookie
+    end
+```
+
+Lagringen følger overlay-semantikk, som en union-montering med to lag: et
+muterbart øvre lag (volumet) og et uforanderlig nedre lag (repo-kopiene).
+Skriv går alltid til øverste lag; les faller gjennom til nederste når øverste
+mangler filen.
+
+```mermaid
+flowchart TD
+    R[Read request] --> V{File present in upper layer?}
+    subgraph L1 [Upper layer: volume, mutable at runtime]
+        VOL[Runtime state, shadows the repo]
+    end
+    subgraph L2 [Lower layer: repo, immutable at runtime]
+        REPO[Committed fallback with git history]
+    end
+    V -->|yes| VOL
+    V -->|no| REPO
+    W[Write from the admin area] --> VOL
+    classDef upper fill:#f59e0b40,stroke:#f59e0b
+    classDef lower fill:#3b82f640,stroke:#3b82f6
+    classDef write fill:#22c55e40,stroke:#22c55e
+    class L1 upper
+    class L2 lower
+    class W write
+```
+
 ### 2. Serveren er eneste vei til Nordnet
 
 Nordnets API-er krever spesielle headere (`client-id`, `Referer`) og tåler ikke
@@ -50,31 +105,50 @@ Et tomt felt er et gyldig utfall; en oppdiktet verdi er det ikke. Dette er en
 bevisst regel fordi siden viser et ekte fond med ekte penger, og en pen men
 feil graf er verre enn ingen graf.
 
+Arkitekturen er lagdelt med en enveis avhengighetsretning: hvert lag kjenner
+bare laget under seg, og API-grensen fungerer som antikorrupsjonslag mellom
+våre interne typer og Nordnets eksterne kontrakt.
+
 ```mermaid
-flowchart LR
-    subgraph Klient [Nettleser]
-        RQ[React Query<br/>30 min cache] --> C1[Utviklingsgraf]
-        RQ --> C2[Avkastning per fond]
-        RQ --> C3[Sammensetning + handler]
+flowchart TB
+    subgraph P [Presentation layer]
+        UI[Components: chart, returns, allocation, trades]
     end
-
-    subgraph Server [Next.js API-ruter, ISR 30 min]
-        N["/api/nordnet"]
-        S["/api/nordnet/series"]
-        K["/api/soknad"]
+    subgraph K [Client cache]
+        RQ[React Query: memoization per query key, TTL 30 min]
     end
-
-    subgraph Nordnet [Nordnets offentlige API-er]
-        P[Shareville profil + handler]
-        I[Instrumentinfo, NAV]
-        T[Kursserier + indekser]
+    subgraph G [API boundary: anti-corruption layer]
+        API[Fetching, normalization, type projection to internal DTOs]
+        ISR[Server cache: ISR, TTL 30 min]
     end
-
-    RQ --> N & S
-    N --> P & I
-    S --> T
-    K --> R[Resend, e-post til fondet@tihlde.org]
+    subgraph I [Integration layer]
+        NC[Nordnet client: header requirements, pagination, runtime index lookup]
+        EC[Email client: Photon API]
+    end
+    subgraph T [Third parties: contracts outside our control]
+        NN[Nordnet public APIs]
+        PH[Photon email service]
+    end
+    UI -->|declarative queries| RQ
+    RQ -->|HTTP, internal types only| API
+    API --- ISR
+    API --> NC -->|authenticating headers| NN
+    API -->|side effect: application and login email| EC --> PH
+    classDef pres fill:#3b82f640,stroke:#3b82f6
+    classDef cache fill:#f59e0b40,stroke:#f59e0b
+    classDef boundary fill:#a855f740,stroke:#a855f7
+    classDef integ fill:#22c55e40,stroke:#22c55e
+    classDef third fill:#6b728040,stroke:#6b7280
+    class P pres
+    class K cache
+    class G boundary
+    class I integ
+    class T third
 ```
+
+Invarianten er at presentasjonslaget er transitivt avhengig av bare interne
+typer: en endring i Nordnets kontrakt kan aldri propagere forbi
+integrasjonslaget uten at typeprojeksjonen i grensen endres eksplisitt.
 
 ### Hvorfor to cachelag med samme levetid
 
@@ -119,13 +193,59 @@ Alt hentes uten innlogging. Integrasjonen ligger i `src/lib/nordnet.ts`.
   bruker ikke rapportvektene, fordi vektene bare finnes kvartalsvis mens grafen
   er daglig, og en interpolert vektkurve hadde vært en gjetning vi ikke vil vise.
 
+Porteføljen er altså avledet tilstand, ikke lagret tilstand: en fold over
+handelshistorikken (event sourcing i miniatyr) etterfulgt av to
+sammenføyninger og en aggregering. Ingenting av dette persisteres; det
+beregnes på nytt innenfor cache-vinduet.
+
+```mermaid
+flowchart LR
+    subgraph H [Event log]
+        F[Activity feed: chronological buys and sells, paginated]
+    end
+    subgraph U [Derivation]
+        FOLD[Fold over trade events per fund]
+        PRED{Latest event is a buy?}
+        HS[Holdings set]
+        X[Outside the portfolio]
+    end
+    subgraph B [Enrichment: join per fund]
+        J1[Instrument data: NAV, category, returns]
+        J2[Report weights: quarterly, accepted only when weights sum to near 100 percent]
+    end
+    subgraph A [Aggregation]
+        KOMP[Equal-weight composite: arithmetic mean of daily return series]
+    end
+    F --> FOLD --> PRED
+    PRED -->|yes| HS
+    PRED -->|no| X
+    HS --> J1
+    HS --> J2
+    HS --> KOMP
+    classDef log fill:#3b82f640,stroke:#3b82f6
+    classDef derive fill:#a855f740,stroke:#a855f7
+    classDef enrich fill:#22c55e40,stroke:#22c55e
+    classDef agg fill:#f59e0b40,stroke:#f59e0b
+    classDef out fill:#6b728040,stroke:#6b7280
+    class H log
+    class U derive
+    class B enrich
+    class A agg
+    class X out
+```
+
+Merk asymmetrien i feilhåndteringen: manglende berikelse degraderer feltvis
+(fondet vises uten vekt eller honorar), mens en manglende hendelseslogg
+skjuler hele seksjonen. Det følger av regel 3: utledede tall vises bare når
+premissene deres holder.
+
 ## Sider
 
 | Rute | Innhold |
 |------|---------|
 | `/` | Profilkort, nøkkeltall, utviklingsgraf med indeks-sammenligning, avkastning per fond og periode, sammensetning, beholdninger og handler |
 | `/about` | Om fondet, vedtekter, årsrapporter |
-| `/apply` + `/apply/skjema` | Søknad om støtte, sendes som e-post via Resend |
+| `/apply` + `/apply/skjema` | Søknad om støtte, sendes som e-post via Photon |
 | `/group` + `/group/tidligere` | Forvaltningsgruppen, nåværende og tidligere |
 | `/reports` | Rapporter |
 
@@ -137,15 +257,50 @@ Push til `main` gir taggene `:latest` og commit-SHA. Etter et vellykket bygg
 varsles Adelie-mottakeren, som starter deploy av det nye imaget. CI (lint,
 typesjekk, tester, build) kjører på alle pusher og pull requests.
 
+Leveransekjeden er delt i tillitssoner med enveis flyt: artefakter beveger seg
+bare fremover gjennom kvalitetsporter, og kjøretidssonen har ingen åpne
+innkommende porter; den henter selv, både image fra registeret og trafikk via
+tunnelens utgående tilkobling.
+
 ```mermaid
 flowchart LR
-    Dev[git push] --> GH[GitHub]
-    GH -->|Actions: CI + reusable build| R[ghcr.io/tihlde/fondet]
-    R --> A[Adelie deploy receiver]
-    A -->|pull + restart| S[Server: docker + systemd]
-    S -->|Cloudflare Tunnel| B[Besøkende]
-    S -->|ISR, 30 min| NN[Nordnet API-er]
+    subgraph S1 [Developer zone]
+        DEV[git push]
+    end
+    subgraph S2 [CI zone: quality gates]
+        GATE[Lint, typecheck, tests, build]
+        IMG[Immutable image]
+    end
+    subgraph S3 [Distribution]
+        REG[Container registry]
+    end
+    subgraph S4 [Runtime zone: no open inbound ports]
+        SVC[systemd user service]
+        CT[Container]
+        VOL[(Mounted volume: mutable state)]
+    end
+    DEV --> GATE
+    GATE -->|only on green CI| IMG --> REG
+    SVC -->|pull on restart: restarting is the whole deploy| REG
+    SVC --> CT --- VOL
+    CT -->|outbound tunnel| CF[Cloudflare edge]
+    B[Visitors] --> CF
+    CT -->|ISR, 30 min| NN[Nordnet APIs]
+    classDef devzone fill:#6b728040,stroke:#6b7280
+    classDef cizone fill:#3b82f640,stroke:#3b82f6
+    classDef dist fill:#a855f740,stroke:#a855f7
+    classDef runtime fill:#22c55e40,stroke:#22c55e
+    classDef ext fill:#f59e0b40,stroke:#f59e0b
+    class S1 devzone
+    class S2 cizone
+    class S3 dist
+    class S4 runtime
+    class CF,B,NN ext
 ```
+
+At omstart er deploy-mekanismen betyr at utrulling og tilbakerulling er samme
+operasjon: tjenesten starter alltid nyeste image i registeret, så en
+tilbakerulling er å publisere forrige image på nytt, ikke en egen kodesti.
 
 Standalone-bygg er valgt fordi det gir et lite image uten `node_modules`, som
 starter raskt og ikke trenger en kjørende Node-verktøykjede på serveren.
@@ -155,7 +310,7 @@ imaget er publisert. Mottakeren trekker det nye imaget og restarter tjenesten;
 
 Dev-miljøet kjører på en hjemmeserver bak Cloudflare Tunnel på
 fondet.tritacle.no. Serveren kjører `systemd/fondet.service` som en
-brukertjeneste. `RESEND_API_KEY` ligger i `.env` på serveren, aldri i imaget
+brukertjeneste. `PHOTON_EMAIL_API_KEY` ligger i `.env` på serveren, aldri i imaget
 eller i repoet.
 
 Prod kan settes opp med `:latest`-taggen og registreres hos Adelie-mottakeren.
@@ -182,11 +337,17 @@ ikke er tilgjengelig:
 
 ```mermaid
 flowchart TD
-    A[Nytt medlem] --> B[Legg til oppføring i src/data/members.json]
-    B --> C[Legg bilde i public/members/ navngitt som id, f.eks. sigurd-evensen.jpg]
-    C --> D[Commit + push, CI bygger og deployer]
-    E[Medlem slutter] --> F[Flytt oppføringen til previousMembers og sett endYear]
+    A[New member] --> B[Add an entry in src/data/members.json]
+    B --> C[Add the photo in public/members/ named by id, e.g. sigurd-evensen.jpg]
+    C --> D[Commit + push, CI builds and deploys]
+    E[Member leaves] --> F[Move the entry to previousMembers and set endYear]
     F --> D
+    classDef add fill:#22c55e40,stroke:#22c55e
+    classDef remove fill:#ef444440,stroke:#ef4444
+    classDef ship fill:#3b82f640,stroke:#3b82f6
+    class A,B,C add
+    class E,F remove
+    class D ship
 ```
 
 - Støttede bildeformater: jpg, jpeg, png, webp. Anbefalt stående 3:4,
@@ -204,7 +365,7 @@ flowchart TD
 ## Miljøvariabler
 
 Alle er beskrevet i `.env.example`. Lokalt: kopier til `.env.local` og fyll ut
-det du trenger. Alt er valgfritt i utvikling; uten `RESEND_API_KEY` logges
+det du trenger. Alt er valgfritt i utvikling; uten Photon-variablene logges
 innloggingslenken til serverkonsollen i stedet for å sendes.
 
 I produksjon kreves `AUTH_SECRET` (signerer innloggingstokens, generer med
@@ -212,8 +373,11 @@ I produksjon kreves `AUTH_SECRET` (signerer innloggingstokens, generer med
 e-post) og en adminliste: `ADMIN_EMAILS` eller `admins.json` i `DATA_DIR`
 (filen vinner over variabelen).
 
-Merk: Resend sender fra `onboarding@resend.dev` til domenet er verifisert.
-Verifiser tihlde.org i Resend-dashbordet for å levere til fondet@tihlde.org.
+Merk: e-post går via Photon sitt e-post-API (`POST {PHOTON_API_URL}/api/email/send`),
+samme infrastruktur som resten av TIHLDE. Photon eier avsenderadresse og mal;
+Fondet trenger bare `PHOTON_API_URL` og `PHOTON_EMAIL_API_KEY` (må matche
+`EMAIL_API_KEY` i Photon). Begge må være satt i produksjon, ellers svarer
+søknadsskjemaet 503 og innlogging via e-post feiler.
 
 ## Kom i gang
 

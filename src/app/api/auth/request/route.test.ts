@@ -10,7 +10,8 @@ beforeEach(() => {
   tmp = fs.mkdtempSync(path.join(os.tmpdir(), "auth-request-"));
   process.env.DATA_DIR = tmp;
   process.env.AUTH_SECRET = "test-secret-for-vitest";
-  delete process.env.RESEND_API_KEY;
+  delete process.env.PHOTON_API_URL;
+  delete process.env.PHOTON_EMAIL_API_KEY;
 });
 
 afterEach(() => {
@@ -43,7 +44,7 @@ describe("POST /api/auth/request", () => {
     const badDomain = await (await post({ email: "kjent@gmail.com" })).json();
     expect(unknown).toEqual(allowed);
     expect(badDomain).toEqual(allowed);
-    // but only the allowed one got a link (console fallback without Resend)
+    // but only the allowed one got a link (console fallback without Photon-config)
     expect(log).toHaveBeenCalledTimes(1);
     expect(log.mock.calls[0].join(" ")).toContain("kjent@tihlde.org");
   });
