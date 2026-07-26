@@ -12,6 +12,8 @@ import {
   MAX_SUM,
   MIN_WORDS,
   MIN_WORDS_KONSEKVENSER,
+  MAX_CHARS,
+  MAX_CHARS_SHORT,
 } from "@/lib/soknad-validation";
 
 interface BudsjettPost {
@@ -216,6 +218,8 @@ export default function SoknadSkjema() {
       begrunnelse,
       konsekvenser,
       budsjett,
+      andreSoknader,
+      tillegg,
     };
 
     const feil = validateSoknad(soknad);
@@ -230,7 +234,7 @@ export default function SoknadSkjema() {
       const res = await fetch("/api/soknad", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...soknad, andreSoknader, tillegg }),
+        body: JSON.stringify(soknad),
       });
 
       if (res.ok) {
@@ -303,6 +307,7 @@ export default function SoknadSkjema() {
               <input
                 id="kontaktperson"
                 required
+                maxLength={MAX_CHARS_SHORT}
                 className={inputWithError("kontaktperson")}
                 value={kontaktperson}
                 onChange={(e) => setKontaktperson(e.target.value)}
@@ -320,6 +325,7 @@ export default function SoknadSkjema() {
               <input
                 id="telefon"
                 required
+                maxLength={MAX_CHARS_SHORT}
                 type="tel"
                 inputMode="tel"
                 pattern="(\+47)?[0-9 ]{8,}"
@@ -341,6 +347,7 @@ export default function SoknadSkjema() {
             <input
               id="epost"
               required
+              maxLength={MAX_CHARS_SHORT}
               type="email"
               className={inputWithError("epost")}
               value={epost}
@@ -391,6 +398,7 @@ export default function SoknadSkjema() {
             <textarea
               id="hva-stotte"
               required
+              maxLength={MAX_CHARS}
               rows={4}
               className={inputWithError("hvaStotte")}
               value={hvaStotte}
@@ -412,6 +420,7 @@ export default function SoknadSkjema() {
             <textarea
               id="begrunnelse"
               required
+              maxLength={MAX_CHARS}
               rows={4}
               className={inputWithError("begrunnelse")}
               value={begrunnelse}
@@ -433,6 +442,7 @@ export default function SoknadSkjema() {
             <textarea
               id="konsekvenser"
               required
+              maxLength={MAX_CHARS}
               rows={3}
               className={inputWithError("konsekvenser")}
               value={konsekvenser}
@@ -454,6 +464,7 @@ export default function SoknadSkjema() {
             <textarea
               id="andre-soknader"
               rows={3}
+              maxLength={MAX_CHARS}
               className={inputClass}
               value={andreSoknader}
               onChange={(e) => setAndreSoknader(e.target.value)}
@@ -477,6 +488,7 @@ export default function SoknadSkjema() {
                   required
                   className={inputClass}
                   placeholder="Utgift"
+                  maxLength={MAX_CHARS_SHORT}
                   aria-label={`Utgift ${i + 1}`}
                   value={post.utgift}
                   onChange={(e) =>
@@ -546,6 +558,7 @@ export default function SoknadSkjema() {
           <textarea
             aria-label="Tilleggsinformasjon"
             rows={4}
+            maxLength={MAX_CHARS}
             className={inputClass}
             value={tillegg}
             onChange={(e) => setTillegg(e.target.value)}

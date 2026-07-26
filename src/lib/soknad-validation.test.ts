@@ -10,6 +10,9 @@ import {
   MIN_WORDS,
   MIN_SUM,
   MAX_SUM,
+  MAX_CHARS,
+  MAX_CHARS_SHORT,
+  MAX_BUDSJETT_POSTER,
 } from "./soknad-validation";
 
 const longText = Array.from({ length: MIN_WORDS }, (_, i) => `ord${i}`).join(
@@ -178,3 +181,51 @@ describe("validateSoknad", () => {
     expect(validateSoknad({ ...valid, begrunnelse: padded })).toMatch(/ord/);
   });
 });
+
+describe("lengdegrenser", () => {
+  it("avviser fritekstfelt over tegngrensen", () => {
+    expect(
+      validateSoknad({ ...valid, begrunnelse: "a".repeat(MAX_CHARS + 1) }),
+    ).toMatch(/for lange/);
+    expect(
+      validateSoknad({ ...valid, tillegg: "a".repeat(MAX_CHARS + 1) }),
+    ).toMatch(/for lange/);
+    expect(
+      validateSoknad({ ...valid, andreSoknader: "a".repeat(MAX_CHARS + 1) }),
+    ).toMatch(/for lange/);
+  });
+
+  it("avviser korte felt over kortgrensen", () => {
+    expect(
+      validateSoknad({ ...valid, epost: "a".repeat(MAX_CHARS_SHORT) + "@b.no" }),
+    ).toMatch(/for lange/);
+  });
+
+  it("avviser for mange budsjettposter", () => {
+    const budsjett = Array.from({ length: MAX_BUDSJETT_POSTER + 1 }, () => ({
+      utgift: "Leie av lokale",
+      sum: "6000",
+    }));
+    expect(validateSoknad({ ...valid, budsjett })).toMatch(/budsjettposter/);
+  });
+
+  it("slipper gjennom en helt vanlig søknad", () => {
+    expect(
+      validateSoknad({ ...valid, tillegg: "Kort tillegg", andreSoknader: "Ingen" }),
+    ).toBeNull();
+  });
+});
+
+describe("budsjettsum-lengde", () => {
+  it("avviser en sum-streng over kortgrensen selv om Number() er endelig", () => {
+    const langSum = "0".repeat(MAX_CHARS_SHORT) + "1";
+    expect(Number.isFinite(Number(langSum))).toBe(true);
+    expect(
+      validateSoknad({
+        ...valid,
+        budsjett: [{ utgift: "Leie av lokale", sum: langSum }],
+      }),
+    ).toMatch(/for lange/);
+  });
+});
+

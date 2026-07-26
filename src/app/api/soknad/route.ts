@@ -6,9 +6,28 @@ import {
   type EmailContentBlock,
 } from "@/lib/send-email";
 import { validateSoknad } from "@/lib/soknad-validation";
+import { clientIp } from "@/lib/rate-limit";
+import { perIp, globalt } from "@/lib/soknad-limits";
 
 export async function POST(request: NextRequest) {
-  const body = await request.json();
+  if (!perIp.check(clientIp(request)) || !globalt.check("all")) {
+    return NextResponse.json(
+      { error: "For mange søknader på kort tid. Prøv igjen senere." },
+      { status: 429 },
+    );
+  }
+
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: "Ugyldig forespørsel" }, { status: 400 });
+  }
+  // Gyldig JSON er ikke nødvendigvis et objekt: "null" parser fint, og
+  // destructuringen under ville da kastet og gitt 500 i stedet for 400.
+  if (typeof body !== "object" || body === null || Array.isArray(body)) {
+    return NextResponse.json({ error: "Ugyldig forespørsel" }, { status: 400 });
+  }
 
   const {
     sokerNavn,

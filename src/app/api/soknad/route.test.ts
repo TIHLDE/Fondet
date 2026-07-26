@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import type { NextRequest } from "next/server";
 import { POST } from "./route";
 import { MIN_WORDS } from "@/lib/soknad-validation";
+import { resetSoknadLimits } from "@/lib/soknad-limits";
 
 const longText = Array.from({ length: MIN_WORDS }, (_, i) => `ord${i}`).join(
   " ",
@@ -33,6 +34,8 @@ function post(body: unknown) {
 }
 
 beforeEach(() => {
+  // Limiterne er modulnivå, så uten dette teller tidligere tester med.
+  resetSoknadLimits();
   process.env.PHOTON_API_URL = "https://photon.example.org/";
   process.env.PHOTON_EMAIL_API_KEY = "test-key";
 });
@@ -89,3 +92,55 @@ describe("POST /api/soknad", () => {
     expect(res.status).toBe(500);
   });
 });
+
+describe("misbruksvern", () => {
+  it("svarer 400, ikke 500, på ugyldig JSON", async () => {
+    const res = await POST(
+      new Request("http://localhost:3000/api/soknad", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: "ikke json{",
+      }) as NextRequest,
+    );
+    expect(res.status).toBe(400);
+  });
+
+  it("stopper den fjerde søknaden fra samme IP med 429", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response("{}", { status: 200 }),
+    );
+    const send = () =>
+      POST(
+        new Request("http://localhost:3000/api/soknad", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-forwarded-for": "203.0.113.5",
+          },
+          body: JSON.stringify(valid),
+        }) as NextRequest,
+      );
+    expect((await send()).status).toBe(200);
+    expect((await send()).status).toBe(200);
+    expect((await send()).status).toBe(200);
+    expect((await send()).status).toBe(429);
+  });
+});
+
+describe("kropp som ikke er et objekt", () => {
+  const send = (raw: string) =>
+    POST(
+      new Request("http://localhost:3000/api/soknad", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: raw,
+      }) as NextRequest,
+    );
+
+  it("svarer 400 på gyldig JSON som ikke er et objekt", async () => {
+    expect((await send("null")).status).toBe(400);
+    expect((await send("123")).status).toBe(400);
+    expect((await send("[]")).status).toBe(400);
+  });
+});
+

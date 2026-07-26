@@ -257,14 +257,23 @@ export interface SeriesPoint {
 
 // Funds return percentage development directly; indexes return absolute
 // levels, so those are rebased to percent from the first point.
+// Identifikatorene Nordnet bruker er UUID-er for fond og korte alfanumeriske
+// id-er for indekser. Alt annet er ikke noe vi har sendt fra oss selv.
+export function isValidIdentifier(s: string): boolean {
+  return /^[A-Za-z0-9._-]{1,64}$/.test(s);
+}
+
 export async function getSeries(
   identifier: string,
   period: SeriesPeriod,
   isFund: boolean,
 ): Promise<SeriesPoint[]> {
   const fundParam = isFund ? "?fundType=FUND_NOK" : "";
+  // encodeURIComponent, ikke rå interpolasjon: identifikatoren stammer fra en
+  // query-parameter, og uten dette kan "../.." eller "?x=1" endre hvilken sti
+  // på Nordnet vi faktisk kaller. Ruten validerer også, dette er andre lag.
   const data = await getJSON<TimeSeries>(
-    `${MARKET_DATA}/v3/price-time-series/period/${period}/identifier/${identifier}${fundParam}`,
+    `${MARKET_DATA}/v3/price-time-series/period/${period}/identifier/${encodeURIComponent(identifier)}${fundParam}`,
     marketDataHeaders,
   );
   if (!data?.pricePoints?.length) return [];
