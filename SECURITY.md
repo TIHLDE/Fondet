@@ -1,21 +1,37 @@
-# Security Policy
+# Sikkerhet
 
-## Supported Versions
+## Hva som støttes
 
-Use this section to tell people about which versions of your project are
-currently being supported with security updates.
+Fondet er én kontinuerlig utrullet nettside, ikke et bibliotek med versjoner.
+Det er alltid `main` som kjører i produksjon, og det er den eneste koden som
+får sikkerhetsfikser. Gamle commits og brancher støttes ikke.
 
-| Version | Supported          |
-| ------- | ------------------ |
-| 5.1.x   | :white_check_mark: |
-| 5.0.x   | :x:                |
-| 4.0.x   | :white_check_mark: |
-| < 4.0   | :x:                |
+## Melde fra om en sårbarhet
 
-## Reporting a Vulnerability
+Meld fra på **fondet@tihlde.org**, eller via
+[GitHub Security Advisories](https://github.com/TIHLDE/Fondet/security/advisories/new)
+hvis du vil ha en privat tråd med historikk.
 
-Use this section to tell people how to report a vulnerability.
+Ikke åpne et vanlig issue for sikkerhetsfeil — issues er offentlige, og da
+ligger detaljene ute mens hullet fortsatt er åpent.
 
-Tell them where to go, how often they can expect to get an update on a
-reported vulnerability, what to expect if the vulnerability is accepted or
-declined, etc.
+Ta med det du har: hva du fant, hvordan man reproduserer det, og hva du tror
+konsekvensen er. En URL og en beskrivelse holder langt; du trenger ikke en
+ferdig exploit.
+
+Forvaltningsgruppen drifter siden ved siden av studiene, så svartiden
+varierer. Regn med noen dager, og purr gjerne hvis det blir stille.
+
+## Hva du kan forvente
+
+Vi bekrefter at meldingen er mottatt, sier fra om vi regner det som en
+sårbarhet eller ikke, og gir beskjed når den er fikset. Si fra hvis du vil
+krediteres — vi gjør det gjerne, men spør først.
+
+## Omfang
+
+Dette gjelder koden i dette repoet og siden på fondet.tihlde.org.
+
+Siden henter porteføljedata fra Nordnets offentlige API-er. Feil i Nordnets
+tjenester hører hjemme hos Nordnet, ikke her. Det samme gjelder Photon, som
+eier e-postutsendingen.
