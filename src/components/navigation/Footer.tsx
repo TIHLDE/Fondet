@@ -119,6 +119,12 @@ const Footer = () => {
           </a>
         </div>
       </div>
+
+      <Separator className="mt-12 mb-6" />
+      <p className="text-sm text-foreground-secondary text-center">
+        Utviklet av Bjørnar Østtveit, Tri Tac Le, Sigurd Evensen, Mathias
+        Strøm, Anton Tveito og Lars Stangeland
+      </p>
     </div>
   );
 };
