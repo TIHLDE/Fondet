@@ -252,8 +252,10 @@ premissene deres holder.
 ## Hosting og deploy
 
 Appen bygges som et Docker-image (`output: "standalone"`) og publiseres til
-GitHub Container Registry av GitHub Actions. Push til `main` gir tag `:latest`.
-CI (lint, typesjekk, tester, build) kjører på alle pusher og pull requests.
+GitHub Container Registry av TIHLDEs gjenbrukbare GitHub Actions-workflow.
+Push til `main` gir taggene `:latest` og commit-SHA. Etter et vellykket bygg
+varsles Adelie-mottakeren, som starter deploy av det nye imaget. CI (lint,
+typesjekk, tester, build) kjører på alle pusher og pull requests.
 
 Leveransekjeden er delt i tillitssoner med enveis flyt: artefakter beveger seg
 bare fremover gjennom kvalitetsporter, og kjøretidssonen har ingen åpne
@@ -302,17 +304,18 @@ tilbakerulling er å publisere forrige image på nytt, ikke en egen kodesti.
 
 Standalone-bygg er valgt fordi det gir et lite image uten `node_modules`, som
 starter raskt og ikke trenger en kjørende Node-verktøykjede på serveren.
-Deploy-mekanismen er bevisst enkel: `--pull=always` i systemd-enheten betyr at
-en restart av tjenesten er hele oppdateringen, det finnes ingen egen
-deploy-pipeline å vedlikeholde.
+Deploy-workflowen bruker `DEPLOY_RECEIVER_TOKEN` til å varsle Adelie etter at
+imaget er publisert. Mottakeren trekker det nye imaget og restarter tjenesten;
+`--pull=always` i systemd-enheten sikrer at `:latest` blir oppdatert.
 
 Dev-miljøet kjører på en hjemmeserver bak Cloudflare Tunnel på
 fondet.tritacle.no. Serveren kjører `systemd/fondet.service` som en
 brukertjeneste. `PHOTON_EMAIL_API_KEY` ligger i `.env` på serveren, aldri i imaget
 eller i repoet.
 
-Prod kan settes opp likt med `:latest`-taggen. Vil TIHLDE slippe serverdrift,
-er Railway nærmeste alternativ: deploy imaget fra ghcr.io, monter et volum på
+Prod kan settes opp med `:latest`-taggen og registreres hos Adelie-mottakeren.
+Vil TIHLDE slippe serverdrift, er Railway nærmeste alternativ: deploy imaget
+fra ghcr.io, monter et volum på
 `/app/data` og sett miljøvariablene fra `.env.example`. Vercel og Netlify
 fungerer ikke, de mangler vedvarende filsystem og adminområdet skriver til
 disk.
