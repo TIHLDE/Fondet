@@ -1,0 +1,31 @@
+name: 'build -> push -> deploy'
+on:
+  push:
+    branches: [main]
+    paths:
+      - '**'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    permissions:
+      contents: read
+      packages: write
+    uses: TIHLDE/tihlde-workflows/.github/workflows/_ci_ghcr.yml@main
+    with:
+      context: .
+      dockerfile: ./Dockerfile
+      build_args: |
+        APP_VERSION=${{ github.ref_name }}
+        GIT_SHA=${{ github.sha }}
+
+  deploy:
+    needs: build
+    if: github.event_name != 'pull_request'
+    uses: TIHLDE/tihlde-workflows/.github/workflows/_notify_deploy.yml@main
+    secrets:
+      DEPLOY_RECEIVER_TOKEN: ${{ secrets.DEPLOY_RECEIVER_TOKEN }}

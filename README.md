@@ -252,37 +252,37 @@ premissene deres holder.
 ## Hosting og deploy
 
 Appen bygges som et Docker-image (`output: "standalone"`) og publiseres til
-GitHub Container Registry av GitHub Actions. Push til `main` gir tag `:latest`.
-CI (lint, typesjekk, tester, build) kjører på alle pusher og pull requests.
+GitHub Container Registry av GitHub Actions. Push til `main` gir taggene
+`:latest` og `:<commit-sha>`. CI (lint, typesjekk, tester, build) kjører på alle
+pusher og pull requests.
 
-Leveransekjeden er delt i tillitssoner med enveis flyt: artefakter beveger seg
-bare fremover gjennom kvalitetsporter, og kjøretidssonen har ingen åpne
-innkommende porter; den henter selv, både image fra registeret og trafikk via
-tunnelens utgående tilkobling.
+Fondet kjører på TIHLDE-serveren `king`. Workflowen ([`deploy.yml`](.github/workflows/deploy.yml)) er den samme som i de andre
+TIHLDE-repoene og bruker de delte workflowene i `TIHLDE/tihlde-workflows`.
 
 ```mermaid
 flowchart LR
     subgraph S1 [Developer zone]
-        DEV[git push]
+        DEV[git push to main]
     end
     subgraph S2 [CI zone: quality gates]
         GATE[Lint, typecheck, tests, build]
         IMG[Immutable image]
     end
     subgraph S3 [Distribution]
-        REG[Container registry]
+        REG[ghcr.io/tihlde/fondet]
     end
-    subgraph S4 [Runtime zone: no open inbound ports]
-        SVC[systemd user service]
-        CT[Container]
-        VOL[(Mounted volume: mutable state)]
+    subgraph S4 [Runtime zone: king]
+        RCV[Deploy receiver]
+        SH[deploy.sh + docker compose]
+        CT[Container on 127.0.0.1:1440]
+        VOL[(./data: mutable state)]
     end
     DEV --> GATE
     GATE -->|only on green CI| IMG --> REG
-    SVC -->|pull on restart: restarting is the whole deploy| REG
-    SVC --> CT --- VOL
-    CT -->|outbound tunnel| CF[Cloudflare edge]
-    B[Visitors] --> CF
+    IMG -->|notify with token| RCV --> SH
+    SH -->|pull_policy: always| REG
+    SH --> CT --- VOL
+    B[Visitors] --> PX[Reverse proxy] --> CT
     CT -->|ISR, 30 min| NN[Nordnet APIs]
     classDef devzone fill:#6b728040,stroke:#6b7280
     classDef cizone fill:#3b82f640,stroke:#3b82f6
@@ -293,31 +293,19 @@ flowchart LR
     class S2 cizone
     class S3 dist
     class S4 runtime
-    class CF,B,NN ext
+    class PX,B,NN ext
 ```
 
-At omstart er deploy-mekanismen betyr at utrulling og tilbakerulling er samme
-operasjon: tjenesten starter alltid nyeste image i registeret, så en
-tilbakerulling er å publisere forrige image på nytt, ikke en egen kodesti.
+Hvert push til `main` bygger imaget, pusher det og varsler deploy-mottakeren
+på `king` (`DEPLOY_RECEIVER_TOKEN` er en repo-secret). Mottakeren kjører
+`deploy.sh <image>` i `~/apps/Fondet`, som starter containeren på nytt med
+nyeste image. Selve `deploy.sh` og `docker-compose.yml` ligger på serveren, ikke
+i dette repoet.
 
 Standalone-bygg er valgt fordi det gir et lite image uten `node_modules`, som
 starter raskt og ikke trenger en kjørende Node-verktøykjede på serveren.
-Deploy-mekanismen er bevisst enkel: `--pull=always` i systemd-enheten betyr at
-en restart av tjenesten er hele oppdateringen, det finnes ingen egen
-deploy-pipeline å vedlikeholde.
 
-Dev-miljøet kjører på en hjemmeserver bak Cloudflare Tunnel på
-fondet.tritacle.no. Serveren kjører `systemd/fondet.service` som en
-brukertjeneste. `PHOTON_EMAIL_API_KEY` ligger i `.env` på serveren, aldri i imaget
-eller i repoet.
-
-Prod kan settes opp likt med `:latest`-taggen. Vil TIHLDE slippe serverdrift,
-er Railway nærmeste alternativ: deploy imaget fra ghcr.io, monter et volum på
-`/app/data` og sett miljøvariablene fra `.env.example`. Vercel og Netlify
-fungerer ikke, de mangler vedvarende filsystem og adminområdet skriver til
-disk.
-
-Volumet (`~/srv/Fondet/data` på serveren, montert som `/app/data`) ser slik ut:
+Volumet (`~/apps/Fondet/data` på serveren, montert som `/app/data`) ser slik ut:
 
 - `members/` - portretter og gruppebilder lastet opp via adminområdet
 - `reports/` - opplastede PDF-er, servert via `/api/reports/<fil>`
@@ -353,8 +341,8 @@ flowchart TD
 - Gruppebilde: legg `group.jpg` (eller png/webp) i samme mappe.
 - Mangler bildet, vises en nøytral plassholder. Ingenting knekker.
 - I produksjon ligger bildene på et montert volum, ikke i repoet: sett
-  `MEMBERS_IMAGE_DIR` til volum-mappen (systemd-enheten monterer
-  `~/srv/Fondet/data/members` til `/app/data/members`). Nye bilder legges
+  `MEMBERS_IMAGE_DIR` til volum-mappen (`docker-compose.yml` på serveren monterer
+  `~/apps/Fondet/data/members` til `/app/data/members`). Nye bilder legges
   der på serveren, ikke i `public/members`. Er `MEMBERS_IMAGE_DIR` ikke satt,
   brukes `public/members` (lokal utvikling og CI), som også er reserve i
   produksjon slik at allerede committede bilder fortsatt virker.

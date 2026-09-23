@@ -4,6 +4,5 @@ node_modules
 .git
 .github
 .playwright-mcp
-systemd
 README.md
 *.log
